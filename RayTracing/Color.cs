@@ -14,6 +14,5 @@
      public void Stampa()
      {
          Console.WriteLine($"{r_c}, {g_c}, {b_c}");
-         
      }
  }
