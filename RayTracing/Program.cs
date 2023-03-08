@@ -1,14 +1,16 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-Color c = new Color(2f, 3f, 5f);
-Color a = new Color(3f, 6f, 7f);
-Color b = new Color(1f, 8f, 3f);
+Color c = new Color(1.0f , 2.0f, 3.0f);
+Color d = new Color(5.0f, 6.0f, 7.0f);
 Console.WriteLine("Hello, World!");
 Console.WriteLine("Hello, GEM!");
-c.stampa();
-/*
-c = c * 3;
-c.stampa();
-*/
-c = a * b;
-c.stampa();
+Color s = new Color();
+Color p = new Color();
+s = c + d;
+c.Stampa();
+d.Stampa();
+s.Stampa();
+p = c * d;
+p.Stampa();
+p = p*4f;
+p.Stampa();
+
+
