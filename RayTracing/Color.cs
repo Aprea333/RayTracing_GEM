@@ -51,5 +51,9 @@ public class Color
         
          return prod;
      }
+     public static bool AreClose(float a, float b)
+     {
+         return Math.Abs(a - b) < 1e-5;
+     }
+    
  }
-
