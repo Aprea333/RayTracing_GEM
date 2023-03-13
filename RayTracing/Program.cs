@@ -5,6 +5,8 @@ Console.WriteLine("Hello, GEM!");
 Color s = new Color();
 Color p = new Color();
 s = c + d;
+
+Console.WriteLine(Color.AreClose(d, d));
 c.Stampa();
 d.Stampa();
 s.Stampa();

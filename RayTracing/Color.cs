@@ -52,8 +52,9 @@ public class Color
          return prod;
      }
      
-     public static bool AreClose(Color colore1, Color colore2, double epsilon = 1e-5)
+     public static bool AreClose (Color colore1, Color colore2)
      {
+         double epsilon = 1e-5;
          float diffRed = colore1.r_c - colore2.r_c;
          float diffGreen = colore1.g_c - colore2.g_c;
          float diffBlue = colore1.b_c - colore2.b_c;
