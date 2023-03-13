@@ -18,6 +18,6 @@ public class Tests
     {
         Color color1 = new Color(1.0, 2.0, 3.0)
         Color color2 = new Color(5.0, 6.0, 7.0)
-        Debug.Assert(Color.AreClose(color1*color2, (5.0, 12.0, 21.0))
+        Debug.Assert(Color.AreClose(color1*color2, (5.0, 12.0, 21.0), 1e-5)
 
     }
