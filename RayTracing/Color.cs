@@ -3,9 +3,9 @@ namespace RayTracing;
 
 public class Colore
 {
-    float r_c;
-    float g_c;
-    float b_c;
+    public float r_c;
+    public float g_c;
+    public float b_c;
 
     public Colore()
     {

@@ -17,4 +17,9 @@ p.Stampa();
 p = p*4f;
 p.Stampa();
 
+int a = 30;
+int b = 40;
+
+HDR culo = new HDR(a ,b);
+
 

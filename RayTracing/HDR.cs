@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Diagnostics;
-using System.Net.Mime;
 
 namespace RayTracing;
 
@@ -8,7 +5,7 @@ public class HDR
 {
     public int width;
     public int height;
-    public List<Colore> hdr_image;
+    public List<Colore> hdr_image = new List<Colore> ();
     public HDR()
     {
         width = 0;
@@ -19,7 +16,7 @@ public class HDR
     {
         width = w;
         height = h;
-        hdr_image.Capacity = w * h;
+        hdr_image.Capacity = width * height;
         for (int i = 0; i < w*h; i++)
         {
             Colore c = new Colore();
