@@ -1,12 +1,12 @@
-Color c = new Color(1.0f , 2.0f, 3.0f);
-Color d = new Color(5.0f, 6.0f, 7.0f);
+Colore c = new Colore(1.0f , 2.0f, 3.0f);
+Colore d = new Colore(5.0f, 6.0f, 7.0f);
 Console.WriteLine("Hello, World!");
 Console.WriteLine("Hello, GEM!");
-Color s = new Color();
-Color p = new Color();
+Colore s = new Colore();
+Colore p = new Colore();
 s = c + d;
 
-Console.WriteLine(Color.AreClose(d, d));
+Console.WriteLine(Colore.AreClose(d, d));
 c.Stampa();
 d.Stampa();
 s.Stampa();

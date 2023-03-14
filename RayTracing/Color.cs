@@ -1,18 +1,18 @@
 
 using System.Runtime.CompilerServices;
-public class Color
+public class Colore
  {
      float r_c ;
      float g_c ;
      float b_c ;
 
-     public Color()
+     public Colore()
      {
          r_c = 0;
          g_c = 0;
          b_c = 0;
      }
-     public Color (float r, float g, float b)
+     public Colore (float r, float g, float b)
      {
          r_c = r;
          g_c = g;
@@ -24,16 +24,16 @@ public class Color
          Console.WriteLine($"{r_c}, {g_c}, {b_c}");
      }
 
-     public static Color operator +(Color a, Color b)
+     public static Colore operator +(Colore a, Colore b)
      {
-         Color c = new Color();
+         Colore c = new Colore();
          c.r_c = a.r_c + b.r_c;
          c.g_c = a.g_c + b.g_c;
          c.b_c = a.b_c + b.b_c;
          return c;
      }
      
-     public static Color operator *(Color cc, float alpha)
+     public static Colore operator *(Colore cc, float alpha)
      {
          cc.r_c *= alpha;
          cc.g_c *= alpha;
@@ -42,9 +42,9 @@ public class Color
          return cc;
      }
 
-     public static Color operator *(Color a, Color b)
+     public static Colore operator *(Colore a, Colore b)
      {
-         Color prod = new Color();
+         Colore prod = new Colore();
          prod.r_c = a.r_c * b.r_c;
          prod.g_c = a.g_c * b.g_c;
          prod.b_c = a.b_c * b.b_c;
@@ -52,7 +52,7 @@ public class Color
          return prod;
      }
      
-     public static bool AreClose (Color colore1, Color colore2)
+     public static bool AreClose (Colore colore1, Colore colore2)
      {
          double epsilon = 1e-5;
          float diffRed = colore1.r_c - colore2.r_c;
