@@ -4,6 +4,11 @@ using System.Globalization;
 
 namespace RayTracing;
 
+using System;
+using System.IO;
+using System.Text;
+
+
 [Serializable]
 public class InvalidPfmFileFormatException : Exception
 {
@@ -13,6 +18,7 @@ public class InvalidPfmFileFormatException : Exception
     public InvalidPfmFileFormatException(string message, Exception inner)
         : base(message, inner) { }
 }
+
 
 public class HDR
 {
@@ -52,32 +58,50 @@ public class HDR
         return hdr_image[y * width + x];
     }
 
-    public bool parse_endianness_isLittle(string line3)
+
+    public static string read_line(Stream myStream)
     {
-        float end;
-        try
+        var result = "";
+        int my_byte;
+        while (true)
         {
-            float.Parse(line3, CultureInfo.InvariantCulture.NumberFormat);
+            my_byte = myStream.ReadByte();
+            if (my_byte is -1 or '\n')
+                return result;
+            result += (char)my_byte;
         }
-        catch (FormatException ex)
-        {
-            throw new InvalidPfmFileFormatException("Impossible parse " + line3 + " to float", ex);
-        }
-
-        end = float.Parse(line3, CultureInfo.InvariantCulture.NumberFormat);
-        if (end == 0)
-        {
-            throw new InvalidPfmFileFormatException("'0' invalid value, a positive or negative value is required");
-        }
-
-        return (end < 0);
     }
-    public static float _read_float(Stream inputStream, bool le)
-    {
-        byte[] bytes = new byte[4];
-        if (le) Array.Reverse(bytes);
-        try
+
+    public bool parse_endianness_isLittle(string line3)
         {
+            float end;
+            try
+            {
+                float.Parse(line3, CultureInfo.InvariantCulture.NumberFormat);
+            }
+            catch (FormatException ex)
+            {
+                throw new InvalidPfmFileFormatException("Impossible parse " + line3 + " to float", ex);
+            }
+
+            end = float.Parse(line3, CultureInfo.InvariantCulture.NumberFormat);
+            if (end == 0)
+            {
+                throw new InvalidPfmFileFormatException("'0' invalid value, a positive or negative value is required");
+            }
+
+            return (end < 0);
+        }
+
+
+    public static float _read_float(Stream inputStream, bool le)
+        {
+            
+
+            byte [] bytes = new byte[4];
+            if (le) Array.Reverse(bytes);
+            try
+            {
             bytes[0] = (byte)inputStream.ReadByte(); // legge un singolo byte dello stream e lo assegna al primo elemento dell'array bytes.
             bytes[1] = (byte)inputStream.ReadByte();
             bytes[2] = (byte)inputStream.ReadByte();
@@ -115,5 +139,6 @@ public class HDR
             throw new InvalidPfmFileFormatException("Invalid width/height", e);
         }
     }
+
 }
 
