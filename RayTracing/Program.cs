@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using RayTracing;
 
 Colore c = new Colore(1.0f , 2.0f, 3.0f);
@@ -9,17 +10,12 @@ Colore p = new Colore();
 s = c + d;
 
 Console.WriteLine(Colore.AreClose(d, d));
-c.Stampa();
-d.Stampa();
-s.Stampa();
-p = c * d;
-p.Stampa();
-p = p*4f;
-p.Stampa();
 
 int a = 30;
 int b = 40;
 
-HDR culo = new HDR(a ,b);
 
+HDR culo = new HDR(a ,b);
+Console.WriteLine(culo.parse_endianness_isLittle("-222"));
+culo.set_pixel(s,3,4);
 
