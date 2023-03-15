@@ -100,19 +100,18 @@ public class HDR
             if (le) Array.Reverse(bytes);
             try
             {
-            bytes[0] = (byte)inputStream
-                .ReadByte(); // legge un singolo byte dello stream e lo assegna al primo elemento dell'array bytes.
-            bytes[1] = (byte)inputStream.ReadByte();
-            bytes[2] = (byte)inputStream.ReadByte();
-            bytes[3] = (byte)inputStream.ReadByte();
-        }
-        catch
-        {
-            throw new InvalidPfmFileFormatException("impossible to read binary data from the file");
-        }
+                bytes[0] = (byte)inputStream.ReadByte(); // legge un singolo byte dello stream e lo assegna al primo elemento dell'array bytes.
+                bytes[1] = (byte)inputStream.ReadByte();
+                bytes[2] = (byte)inputStream.ReadByte();
+                bytes[3] = (byte)inputStream.ReadByte();
+            }
+            catch
+            {
+                throw new InvalidPfmFileFormatException("impossible to read binary data from the file");
+            }
 
-        return BitConverter.ToSingle(bytes, 0);
-    }
+            return BitConverter.ToSingle(bytes, 0);
+        }
 
 
     public static (int, int) Parse_Img_Size(string line)
