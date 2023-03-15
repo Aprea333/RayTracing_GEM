@@ -43,7 +43,6 @@ public class HDR
             hdr_image.Insert(i, c);
         }
     }
-
     public bool Valid_Coordinates(int x, int y)
         => x >= 0 && x < width && y < height && y >= 0;
 
@@ -94,9 +93,12 @@ public class HDR
             return (end < 0);
         }
 
+
     public static float _read_float(Stream inputStream, bool le)
         {
-            byte[] bytes = new byte[4];
+            
+
+            byte [] bytes = new byte[4];
             if (le) Array.Reverse(bytes);
             try
             {
@@ -112,8 +114,7 @@ public class HDR
 
             return BitConverter.ToSingle(bytes, 0);
         }
-
-
+    
     public static (int, int) Parse_Img_Size(string line)
     {
         var elements = line.Split(" ");
@@ -121,7 +122,7 @@ public class HDR
         {
             throw new InvalidPfmFileFormatException("Invalid Image Size Specification");
         }
-
+        
         try
         {
             var dim = Array.ConvertAll(elements, int.Parse);
@@ -137,6 +138,32 @@ public class HDR
         {
             throw new InvalidPfmFileFormatException("Invalid width/height", e);
         }
+    }
+
+    public HDR read_pfm_image(Stream myStream)
+    {
+        string magic = read_line(myStream);
+        if (magic != "PF")
+        {
+            throw new InvalidPfmFileFormatException("Invalid magic in PFM file");
+        }
+
+        (int width, int height) = Parse_Img_Size(read_line(myStream));
+        bool endianness = parse_endianness_isLittle(read_line(myStream));
+        HDR result = new HDR(width, height);
+        for (int y = height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                float r = _read_float(myStream, endianness);
+                float g = _read_float(myStream, endianness);
+                float b = _read_float(myStream, endianness);
+                result.set_pixel( new Colore(r,g,b), x, y);
+            }
+        }
+
+        return result;
+
     }
 
 }
