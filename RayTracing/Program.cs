@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using RayTracing;
 
 Colore c = new Colore(1.0f , 2.0f, 3.0f);
@@ -21,5 +22,6 @@ int a = 30;
 int b = 40;
 
 HDR culo = new HDR(a ,b);
+Console.WriteLine(culo.whatEndianness("1.0"));
 
 
