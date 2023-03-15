@@ -45,7 +45,7 @@ public class HDRTests
     [Test]
     public void test_read_line()
     {
-        var line = Encoding.ASCII.GetBytes($"hello\nworld"); //ASCII poi stream
+        var line = Encoding.ASCII.GetBytes($"hello\nworld"); 
         MemoryStream stream = new MemoryStream(line);
         Assert.True(HDR.read_line(stream) == "hello");
         Assert.True(HDR.read_line(stream) == "world");

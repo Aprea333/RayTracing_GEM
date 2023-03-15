@@ -18,4 +18,3 @@ int b = 40;
 HDR culo = new HDR(a ,b);
 Console.WriteLine(culo.parse_endianness_isLittle("-222"));
 culo.set_pixel(s,3,4);
-

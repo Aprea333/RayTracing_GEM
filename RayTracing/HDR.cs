@@ -100,19 +100,18 @@ public class HDR
             if (le) Array.Reverse(bytes);
             try
             {
-            bytes[0] = (byte)inputStream
-                .ReadByte(); // legge un singolo byte dello stream e lo assegna al primo elemento dell'array bytes.
-            bytes[1] = (byte)inputStream.ReadByte();
-            bytes[2] = (byte)inputStream.ReadByte();
-            bytes[3] = (byte)inputStream.ReadByte();
-        }
-        catch
-        {
-            throw new InvalidPfmFileFormatException("impossible to read binary data from the file");
-        }
+                bytes[0] = (byte)inputStream.ReadByte(); // legge un singolo byte dello stream e lo assegna al primo elemento dell'array bytes.
+                bytes[1] = (byte)inputStream.ReadByte();
+                bytes[2] = (byte)inputStream.ReadByte();
+                bytes[3] = (byte)inputStream.ReadByte();
+            }
+            catch
+            {
+                throw new InvalidPfmFileFormatException("impossible to read binary data from the file");
+            }
 
-        return BitConverter.ToSingle(bytes, 0);
-    }
+            return BitConverter.ToSingle(bytes, 0);
+        }
 
 
     public static (int, int) Parse_Img_Size(string line)
@@ -138,6 +137,32 @@ public class HDR
         {
             throw new InvalidPfmFileFormatException("Invalid width/height", e);
         }
+    }
+
+    public HDR read_pfm_image(Stream myStream)
+    {
+        string magic = read_line(myStream);
+        if (magic != "PF")
+        {
+            throw new InvalidPfmFileFormatException("Invalid magic in PFM file");
+        }
+
+        (int width, int height) = Parse_Img_Size(read_line(myStream));
+        bool endianness = parse_endianness_isLittle(read_line(myStream));
+        HDR result = new HDR(width, height);
+        for (int y = height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                float r = _read_float(myStream, endianness);
+                float g = _read_float(myStream, endianness);
+                float b = _read_float(myStream, endianness);
+                result.set_pixel( new Colore(r,g,b), x, y);
+            }
+        }
+
+        return result;
+
     }
 
 }
