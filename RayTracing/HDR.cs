@@ -1,5 +1,18 @@
 
+using System.ComponentModel.DataAnnotations;
+using System.Xml;
+
 namespace RayTracing;
+
+[Serializable]
+public class InvalidPfmFileFormatException : Exception
+{
+    public InvalidPfmFileFormatException () {}
+    public InvalidPfmFileFormatException(string message)
+        : base(message) { }
+    public InvalidPfmFileFormatException(string message, Exception inner)
+        : base(message, inner) { }
+}
 
 public class HDR
 {
@@ -35,6 +48,31 @@ public class HDR
     {
         return hdr_image[y * width + x];
     }
+
+    private static (int, int) Parse_Img_Size(string line)
+    {
+        var elements = line.Split("");
+        if (elements.Length != 2)
+        {
+            throw new InvalidPfmFileFormatException("Invalid Image Size Specification");
+        }
+
+        try
+        {
+            var dim = Array.ConvertAll(elements, int.Parse);
+            if (dim[0] < 0 || dim[1] < 0)
+            {
+                throw new InvalidPfmFileFormatException("Number cannot be negative");
+            }
+            var dimension = (width: dim[0], height: dim[1]);
+            return dimension;
+        }
+        catch (FormatException e)
+        {
+            throw new InvalidPfmFileFormatException("invalid width/height");
+        }
+    }
+    
 }
 
 
