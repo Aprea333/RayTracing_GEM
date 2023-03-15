@@ -1,6 +1,11 @@
 
 namespace RayTracing;
 
+using System;
+using System.IO;
+using System.Text;
+
+
 public class HDR
 {
     public int width;
@@ -35,6 +40,22 @@ public class HDR
     {
         return hdr_image[y * width + x];
     }
+
+    public static string read_line(Stream myStream)
+    {
+        var result = "";
+        int my_byte;
+        while (true)
+        {
+            my_byte = myStream.ReadByte();
+            if (my_byte is -1 or '\n')
+                return result;
+            result += (char)my_byte;
+        }
+    }
+
+
+
 }
 
 

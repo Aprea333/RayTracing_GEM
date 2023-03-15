@@ -1,4 +1,6 @@
-﻿namespace RayTracing.Test;
+﻿using System.Text;
+
+namespace RayTracing.Test;
 
 public class HDRTests
 {
@@ -39,5 +41,14 @@ public class HDRTests
         testHdr.hdr_image[1].b_c = 1;
         Assert.False(tuttizeri());
         testHdr.hdr_image[1].b_c = 0; //rimettiamolo a posto
+    }
+
+    public void test_read_line()
+    {
+        var line = Encoding.ASCII.GetBytes($"hello\nworld"); //ASCII poi stream
+        MemoryStream stream = new MemoryStream(line);
+        Assert.True(HDR.read_line(stream) == "hello");
+        Assert.True(HDR.read_line(stream) == "world");
+        Assert.True(HDR.read_line(stream) == "");
     }
 }
