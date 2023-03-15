@@ -36,7 +36,6 @@ public class HDR
             hdr_image.Insert(i, c);
         }
     }
-    
     public void set_pixel(Colore c, int x, int y)
     {
         hdr_image.Insert(y*width+x,c); 
