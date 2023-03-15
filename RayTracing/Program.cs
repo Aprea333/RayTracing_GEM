@@ -22,6 +22,5 @@ int a = 30;
 int b = 40;
 
 HDR culo = new HDR(a ,b);
-Console.WriteLine(culo.whatEndianness("1.0"));
-
-
+Console.WriteLine(culo.parse_endianness_isLittle("-222"));
+culo.set_pixel(s,3,4);
