@@ -37,7 +37,6 @@ public class HDR
             hdr_image.Insert(i, c);
         }
     }
-
     public bool Valid_Coordinates(int x, int y)
         => x >= 0 && x < width && y < height && y >= 0;
 
@@ -73,17 +72,13 @@ public class HDR
 
         return (end < 0);
     }
-
-
-
     public static float _read_float(Stream inputStream, bool le)
     {
         byte[] bytes = new byte[4];
         if (le) Array.Reverse(bytes);
         try
         {
-            bytes[0] = (byte)inputStream
-                .ReadByte(); // legge un singolo byte dello stream e lo assegna al primo elemento dell'array bytes.
+            bytes[0] = (byte)inputStream.ReadByte(); // legge un singolo byte dello stream e lo assegna al primo elemento dell'array bytes.
             bytes[1] = (byte)inputStream.ReadByte();
             bytes[2] = (byte)inputStream.ReadByte();
             bytes[3] = (byte)inputStream.ReadByte();
@@ -96,7 +91,6 @@ public class HDR
         return BitConverter.ToSingle(bytes, 0);
     }
 
-
     public static (int, int) Parse_Img_Size(string line)
     {
         var elements = line.Split(" ");
@@ -104,7 +98,7 @@ public class HDR
         {
             throw new InvalidPfmFileFormatException("Invalid Image Size Specification");
         }
-
+        
         try
         {
             var dim = Array.ConvertAll(elements, int.Parse);
