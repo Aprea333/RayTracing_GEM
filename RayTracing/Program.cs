@@ -9,17 +9,9 @@ Colore p = new Colore();
 s = c + d;
 
 Console.WriteLine(Colore.AreClose(d, d));
-c.Stampa();
-d.Stampa();
-s.Stampa();
-p = c * d;
-p.Stampa();
-p = p*4f;
-p.Stampa();
 
 int a = 30;
 int b = 40;
 
-HDR culo = new HDR(a ,b);
-
+HDR prova = new HDR(a ,b);
 

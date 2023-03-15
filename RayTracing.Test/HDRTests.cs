@@ -31,7 +31,6 @@ public class HDRTests
                     return false;
                 }
             }
-
             return true;
         }
 
@@ -39,5 +38,13 @@ public class HDRTests
         testHdr.hdr_image[1].b_c = 1;
         Assert.False(tuttizeri());
         testHdr.hdr_image[1].b_c = 0; //rimettiamolo a posto
+    }
+
+    [Test]
+    public static void Parseimagesize_Test()
+    {
+        Assert.True(HDR.Parse_Img_Size("3 2") == (3,2) );
+        Assert.Throws<InvalidPfmFileFormatException>(() => HDR.Parse_Img_Size("-1 3 "));
+        Assert.Throws<InvalidPfmFileFormatException>(() => HDR.Parse_Img_Size("3 2 1 "));
     }
 }

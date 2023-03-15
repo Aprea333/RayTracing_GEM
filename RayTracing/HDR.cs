@@ -36,9 +36,7 @@ public class HDR
             hdr_image.Insert(i, c);
         }
     }
-        
-     
-
+    
     public void set_pixel(Colore c, int x, int y)
     {
         hdr_image.Insert(y*width+x,c); 
@@ -49,9 +47,26 @@ public class HDR
         return hdr_image[y * width + x];
     }
 
-    private static (int, int) Parse_Img_Size(string line)
+    public static float _read_float(Stream inputStream, bool islittleendian)
     {
-        var elements = line.Split("");
+        byte[] bytes = new byte[4];
+        if (islittleendian) Array.Reverse(bytes);
+        try
+        {
+            bytes[0] = (byte)inputStream.ReadByte(); // legge un singolo byte dello stream e lo assegna al primo elemento dell'array bytes.
+            bytes[1] = (byte)inputStream.ReadByte();
+            bytes[2] = (byte)inputStream.ReadByte();
+            bytes[3] = (byte)inputStream.ReadByte();
+        }
+        catch
+        {throw new InvalidPfmFileFormatException("impossible to read binary data from the file");
+        }
+
+        return BitConverter.ToSingle(bytes, 0);
+    }
+    public static (int, int) Parse_Img_Size(string line)
+    {
+        var elements = line.Split(" ");
         if (elements.Length != 2)
         {
             throw new InvalidPfmFileFormatException("Invalid Image Size Specification");
