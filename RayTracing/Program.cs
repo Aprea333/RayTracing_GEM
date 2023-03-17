@@ -1,20 +1,19 @@
 using System.Runtime.InteropServices;
 using RayTracing;
 
-Colore c = new Colore(1.0f , 2.0f, 3.0f);
-Colore d = new Colore(5.0f, 6.0f, 7.0f);
-Console.WriteLine("Hello, World!");
-Console.WriteLine("Hello, GEM!");
-Colore s = new Colore();
-Colore p = new Colore();
-s = c + d;
+HDR culo = new HDR();
 
-Console.WriteLine(Colore.AreClose(d, d));
+string path = @"C:\Users\Utente\Desktop\reference_le.pfm";
+FileStream reference_file_reader =  File.Open(path, FileMode.Open);
+culo.read_pfm_image(reference_file_reader);
 
-int a = 30;
-int b = 40;
+for (int i = 0; i < 2; i++)
+{
+    for (int j = 0; j < 3; j++)
+    {
+        Console.WriteLine(culo.get_pixel(j,i).r_c);
+        Console.WriteLine(culo.get_pixel(j,i).g_c);
+        Console.WriteLine(culo.get_pixel(j,i).b_c);
+    }
+}
 
-
-HDR culo = new HDR(a ,b);
-Console.WriteLine(culo.parse_endianness_isLittle("-222"));
-culo.set_pixel(s,3,4);

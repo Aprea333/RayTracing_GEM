@@ -1,6 +1,7 @@
 
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace RayTracing;
 
@@ -49,7 +50,7 @@ public class HDR
     public void set_pixel(Colore c, int x, int y)
     {
         Debug.Assert(Valid_Coordinates(x, y), "Invalid coordinates");
-        hdr_image.Insert(y * width + x, c);
+        hdr_image[y * width + x] = c;
     }
 
     public Colore get_pixel(int x, int y)
@@ -72,7 +73,7 @@ public class HDR
         }
     }
 
-    public bool parse_endianness_isLittle(string line3)
+    public static bool parse_endianness_isLittle(string line3)
         {
             float end;
             try
@@ -99,7 +100,7 @@ public class HDR
             
 
             byte [] bytes = new byte[4];
-            if (le) Array.Reverse(bytes);
+            if (!le) Array.Reverse(bytes);
             try
             {
                 bytes[0] = (byte)inputStream.ReadByte(); // legge un singolo byte dello stream e lo assegna al primo elemento dell'array bytes.
@@ -111,7 +112,8 @@ public class HDR
             {
                 throw new InvalidPfmFileFormatException("impossible to read binary data from the file");
             }
-
+            
+            
             return BitConverter.ToSingle(bytes, 0);
         }
     
@@ -126,12 +128,12 @@ public class HDR
         try
         {
             var dim = Array.ConvertAll(elements, int.Parse);
-            if (dim[0] < 0 || dim[1] < 0)
+            if (dim[0] <= 0 || dim[1] <= 0)
             {
                 throw new InvalidPfmFileFormatException("Number cannot be negative");
             }
 
-            var dimension = (width: dim[0], height: dim[1]);
+            var dimension = (dim[0], dim[1]);
             return dimension;
         }
         catch (FormatException e)
@@ -140,7 +142,7 @@ public class HDR
         }
     }
 
-    public HDR read_pfm_image(Stream myStream)
+    public void read_pfm_image(Stream myStream)
     {
         string magic = read_line(myStream);
         if (magic != "PF")
@@ -148,9 +150,15 @@ public class HDR
             throw new InvalidPfmFileFormatException("Invalid magic in PFM file");
         }
 
-        (int width, int height) = Parse_Img_Size(read_line(myStream));
+        (width, height) = Parse_Img_Size(read_line(myStream));
         bool endianness = parse_endianness_isLittle(read_line(myStream));
-        HDR result = new HDR(width, height);
+        hdr_image.Capacity = width * height;
+        for (int i = 0; i < width * height; i++) // pezzo di codice importante, da mettere insieme
+        {     
+            Colore c = new Colore();
+            hdr_image.Insert(i,c);
+        }
+        //HDR result = new HDR(width, height);          Secondo me non aveva senso metterlo
         for (int y = height - 1; y >= 0; y--)
         {
             for (int x = 0; x < width; x++)
@@ -158,12 +166,9 @@ public class HDR
                 float r = _read_float(myStream, endianness);
                 float g = _read_float(myStream, endianness);
                 float b = _read_float(myStream, endianness);
-                result.set_pixel( new Colore(r,g,b), x, y);
+                set_pixel( new Colore(r,g,b), x, y);
             }
         }
-
-        return result;
-
     }
 
 }
