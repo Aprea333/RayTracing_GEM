@@ -1,6 +1,7 @@
 
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
 namespace RayTracing;
@@ -93,6 +94,7 @@ public class HDR
 
             return (end < 0);
         }
+    
 
 
     public static float _read_float(Stream inputStream, bool le)
