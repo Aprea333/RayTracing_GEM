@@ -64,13 +64,13 @@ public class HDR
     public static string read_line(Stream myStream)
     {
         var result = "";
-        int my_byte;
+        int mybyte;
         while (true)
         {
-            my_byte = myStream.ReadByte();
-            if (my_byte is -1 or '\n')
+            mybyte = myStream.ReadByte();
+            if (mybyte is -1 or '\n')
                 return result;
-            result += (char)my_byte;
+            result += (char)mybyte;
         }
     }
 
@@ -94,30 +94,34 @@ public class HDR
 
             return (end < 0);
         }
-    
 
-
-    public static float _read_float(Stream inputStream, bool le)
+    public static float _read_float(Stream mystream, bool le)
+    {
+        byte[] bytes = new byte[4];
+        try
         {
-            
-
-            byte [] bytes = new byte[4];
-            if (!le) Array.Reverse(bytes);
-            try
-            {
-                bytes[0] = (byte)inputStream.ReadByte(); // legge un singolo byte dello stream e lo assegna al primo elemento dell'array bytes.
-                bytes[1] = (byte)inputStream.ReadByte();
-                bytes[2] = (byte)inputStream.ReadByte();
-                bytes[3] = (byte)inputStream.ReadByte();
-            }
-            catch
-            {
-                throw new InvalidPfmFileFormatException("impossible to read binary data from the file");
-            }
-            
-            
-            return BitConverter.ToSingle(bytes, 0);
+            bytes[0] = (byte)mystream.ReadByte();
+            bytes[1] = (byte)mystream.ReadByte();
+            bytes[2] = (byte)mystream.ReadByte();
+            bytes[3] = (byte)mystream.ReadByte();
         }
+        catch
+        {
+            throw new InvalidPfmFileFormatException("Impossible to read data from the file");
+        }
+        
+        if (!le && BitConverter.IsLittleEndian)
+        {
+            Array.Reverse(bytes);
+        }
+
+        if (le && !BitConverter.IsLittleEndian)
+        {
+            Array.Reverse(bytes);
+        }
+
+        return BitConverter.ToSingle(bytes);
+    }
     
     public static (int, int) Parse_Img_Size(string line)
     {

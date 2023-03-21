@@ -67,7 +67,7 @@ public class HDRTests
     {
         Assert.True(HDR.parse_endianness_isLittle("-0.2"));
         Assert.False(HDR.parse_endianness_isLittle("10.2"));
-        Assert.Throws<InvalidPfmFileFormatException>(() => HDR.parse_endianness_isLittle("culo"));
+        Assert.Throws<InvalidPfmFileFormatException>(() => HDR.parse_endianness_isLittle("0"));
         Assert.Throws<InvalidPfmFileFormatException>(() => HDR.parse_endianness_isLittle("0"));
 
     }
@@ -75,25 +75,31 @@ public class HDRTests
     [Test]
     public void read_pfm_image()
     {
-        HDR image = new HDR();
-        string path = @"C:\Users\miche\RayTracing_GEM\reference_le.pfm"; //mio percorso per il file, da cambiare
-        FileStream reference_file_reader =  File.Open(path, FileMode.Open);
-        image.read_pfm_image(reference_file_reader);
+        string[] path = new string[2];
+        path[0] = @"C:\Users\miche\RayTracing_GEM\reference_le.pfm";
+        path[1] = @"C:\Users\miche\RayTracing_GEM\reference_be.pfm";
+        for (int i = 0; i < 2; i++)
+        {
+            HDR image = new HDR();
+            FileStream reference_file_reader =  File.Open(path[i], FileMode.Open);
+            image.read_pfm_image(reference_file_reader);
 
-        Assert.True(image.hdr_image.Capacity == 6);
-        Assert.True(image.width == 3);
-        Assert.True(image.height == 2);
-        Assert.True(Colore.AreClose(image.get_pixel(0,0), new Colore(10,20,30)));
-        Assert.True(Colore.AreClose(image.get_pixel(1,0), new Colore(40,50,60)));
-        Assert.True(Colore.AreClose(image.get_pixel(2,0), new Colore(70,80,90)));
-        Assert.True(Colore.AreClose(image.get_pixel(0,1), new Colore(100,200,300)));
-        Assert.True(Colore.AreClose(image.get_pixel(1,1), new Colore(400,500,600)));
-        Assert.True(Colore.AreClose(image.get_pixel(2,1), new Colore(700,800,900))); 
-        Assert.True(image.hdr_image.Capacity == 6);
+            Assert.True(image.hdr_image.Capacity == 6);
+            Assert.True(image.width == 3);
+            Assert.True(image.height == 2);
+            Assert.True(Colore.AreClose(image.get_pixel(0,0), new Colore(10,20,30)));
+            Assert.True(Colore.AreClose(image.get_pixel(1,0), new Colore(40,50,60)));
+            Assert.True(Colore.AreClose(image.get_pixel(2,0), new Colore(70,80,90)));
+            Assert.True(Colore.AreClose(image.get_pixel(0,1), new Colore(100,200,300)));
+            Assert.True(Colore.AreClose(image.get_pixel(1,1), new Colore(400,500,600)));
+            Assert.True(Colore.AreClose(image.get_pixel(2,1), new Colore(700,800,900))); 
+            Assert.True(image.hdr_image.Capacity == 6);
+        }
+        
     }
 
     [Test]
-    public void read_pfm_image_Le()
+    public void read_pfm_image2()
     {
         byte[] LE_REFERENCE_BYTES =
         {
@@ -105,26 +111,6 @@ public class HDRTests
             0x00, 0x00, 0x20, 0x42, 0x00, 0x00, 0x48, 0x42, 0x00, 0x00, 0x70, 0x42,
             0x00, 0x00, 0x8c, 0x42, 0x00, 0x00, 0xa0, 0x42, 0x00, 0x00, 0xb4, 0x42
         };
-
-        
-        Stream streamLe = new MemoryStream(LE_REFERENCE_BYTES);
-        HDR imageLe = new HDR();
-        imageLe.read_pfm_image(streamLe);
-
-        Assert.True(imageLe.hdr_image.Capacity == 6);
-        Assert.True(imageLe.width == 3);
-        Assert.True(imageLe.height == 2);
-        Assert.True(Colore.AreClose(imageLe.get_pixel(0, 0), new Colore(10, 20, 30)));
-        Assert.True(Colore.AreClose(imageLe.get_pixel(1, 0), new Colore(40, 50, 60)));
-        Assert.True(Colore.AreClose(imageLe.get_pixel(2, 0), new Colore(70, 80, 90)));
-        Assert.True(Colore.AreClose(imageLe.get_pixel(0, 1), new Colore(100, 200, 300)));
-        Assert.True(Colore.AreClose(imageLe.get_pixel(1, 1), new Colore(400, 500, 600)));
-        Assert.True(Colore.AreClose(imageLe.get_pixel(2, 1), new Colore(700, 800, 900)));
-    }
-
-    [Test]
-    public void read_pfm_image_Be()
-    {
         byte[] BE_REFERENCE_BYTES =
         {
             0x50, 0x46, 0x0a, 0x33, 0x20, 0x32, 0x0a, 0x31, 0x2e, 0x30, 0x0a, 0x42,
@@ -135,20 +121,28 @@ public class HDRTests
             0x20, 0x00, 0x00, 0x42, 0x48, 0x00, 0x00, 0x42, 0x70, 0x00, 0x00, 0x42,
             0x8c, 0x00, 0x00, 0x42, 0xa0, 0x00, 0x00, 0x42, 0xb4, 0x00, 0x00
         };
-        
-        Stream streamBe = new MemoryStream(BE_REFERENCE_BYTES);
-        HDR imageBe = new HDR();
-        imageBe.read_pfm_image(streamBe);
-        
-        Assert.True(imageBe.hdr_image.Capacity == 6);
-        Assert.True(imageBe.width == 3);
-        Assert.True(imageBe.height == 2);
-        Assert.True(Colore.AreClose(imageBe.get_pixel(0, 1), new Colore(10, 20, 30)));
-        Assert.True(Colore.AreClose(imageBe.get_pixel(1, 1), new Colore(40, 50, 60)));
-        Assert.True(Colore.AreClose(imageBe.get_pixel(2, 1), new Colore(70, 80, 90)));
-        Assert.True(Colore.AreClose(imageBe.get_pixel(0, 0), new Colore(100, 200, 300)));
-        Assert.True(Colore.AreClose(imageBe.get_pixel(1, 0), new Colore(400, 500, 600)));
-        Assert.True(Colore.AreClose(imageBe.get_pixel(2, 0), new Colore(700, 800, 900)));
 
+        Stream streamLe = new MemoryStream(LE_REFERENCE_BYTES);
+        Stream streamBe = new MemoryStream(BE_REFERENCE_BYTES);
+        Stream[] mystream = new Stream[2];
+        mystream[0] = streamLe;
+        mystream[1] = streamBe;
+        for (int i = 0; i < 2; i++)
+        {
+            HDR image = new HDR();
+            image.read_pfm_image(mystream[i]);
+
+            Assert.True(image.hdr_image.Capacity == 6);
+            Assert.True(image.width == 3);
+            Assert.True(image.height == 2);
+            Assert.True(Colore.AreClose(image.get_pixel(0, 0), new Colore(10, 20, 30)));
+            Assert.True(Colore.AreClose(image.get_pixel(1, 0), new Colore(40, 50, 60)));
+            Assert.True(Colore.AreClose(image.get_pixel(2, 0), new Colore(70, 80, 90)));
+            Assert.True(Colore.AreClose(image.get_pixel(0, 1), new Colore(100, 200, 300)));
+            Assert.True(Colore.AreClose(image.get_pixel(1, 1), new Colore(400, 500, 600)));
+            Assert.True(Colore.AreClose(image.get_pixel(2, 1), new Colore(700, 800, 900)));
+        }
+        
     }
+    
 }
