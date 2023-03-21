@@ -3,13 +3,13 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using System.Text;
+using static System.Text.Encoding;
 
 namespace RayTracing;
 
 using System;
 using System.IO;
-using System.Text;
-
 
 [Serializable]
 public class InvalidPfmFileFormatException : Exception
@@ -175,6 +175,32 @@ public class HDR
                 set_pixel( new Colore(r,g,b), x, y);
             }
         }
+    }
+
+    public void write_float(Stream mystream, float value)
+    {
+        var seq = BitConverter.GetBytes(value);
+        mystream.Write(seq, 0, seq.Length);
+    }
+    public void write_pfm(Stream mystream, bool end)
+    {
+        var endString = end == BitConverter.IsLittleEndian ? "-1.0" : "1.0";
+        string header = $"PF\n{width} {height}\n{endString}\n";
+        //Convert header into a sequence of bytes
+        mystream.Write(Encoding.ASCII.GetBytes(header));
+        
+        //Write the image
+        for (int y = height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                Colore col = get_pixel(x, y); 
+                write_float(mystream, col.r_c);
+                write_float(mystream, col.g_c);
+                write_float(mystream, col.b_c);
+            }
+        }
+        
     }
 
 }
