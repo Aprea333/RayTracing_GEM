@@ -100,7 +100,6 @@ public class HDR
             
 
             byte [] bytes = new byte[4];
-            if (!le) Array.Reverse(bytes);
             try
             {
                 bytes[0] = (byte)inputStream.ReadByte(); // legge un singolo byte dello stream e lo assegna al primo elemento dell'array bytes.
@@ -112,6 +111,7 @@ public class HDR
             {
                 throw new InvalidPfmFileFormatException("impossible to read binary data from the file");
             }
+            if (!le) Array.Reverse(bytes);
             
             
             return BitConverter.ToSingle(bytes, 0);
