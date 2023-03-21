@@ -1,14 +1,15 @@
 
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using System.Text;
+using static System.Text.Encoding;
 
 namespace RayTracing;
 
 using System;
 using System.IO;
-using System.Text;
-
 
 [Serializable]
 public class InvalidPfmFileFormatException : Exception
@@ -63,13 +64,13 @@ public class HDR
     public static string read_line(Stream myStream)
     {
         var result = "";
-        int my_byte;
+        int mybyte;
         while (true)
         {
-            my_byte = myStream.ReadByte();
-            if (my_byte is -1 or '\n')
+            mybyte = myStream.ReadByte();
+            if (mybyte is -1 or '\n')
                 return result;
-            result += (char)my_byte;
+            result += (char)mybyte;
         }
     }
 
@@ -94,28 +95,33 @@ public class HDR
             return (end < 0);
         }
 
-
-    public static float _read_float(Stream inputStream, bool le)
+    public static float _read_float(Stream mystream, bool le)
+    {
+        byte[] bytes = new byte[4];
+        try
         {
-            
-
-            byte [] bytes = new byte[4];
-            try
-            {
-                bytes[0] = (byte)inputStream.ReadByte(); // legge un singolo byte dello stream e lo assegna al primo elemento dell'array bytes.
-                bytes[1] = (byte)inputStream.ReadByte();
-                bytes[2] = (byte)inputStream.ReadByte();
-                bytes[3] = (byte)inputStream.ReadByte();
-            }
-            catch
-            {
-                throw new InvalidPfmFileFormatException("impossible to read binary data from the file");
-            }
-            if (!le) Array.Reverse(bytes);
-            
-            
-            return BitConverter.ToSingle(bytes, 0);
+            bytes[0] = (byte)mystream.ReadByte();
+            bytes[1] = (byte)mystream.ReadByte();
+            bytes[2] = (byte)mystream.ReadByte();
+            bytes[3] = (byte)mystream.ReadByte();
         }
+        catch
+        {
+            throw new InvalidPfmFileFormatException("Impossible to read data from the file");
+        }
+        
+        if (!le && BitConverter.IsLittleEndian)
+        {
+            Array.Reverse(bytes);
+        }
+
+        if (le && !BitConverter.IsLittleEndian)
+        {
+            Array.Reverse(bytes);
+        }
+        
+        return BitConverter.ToSingle(bytes);
+    }
     
     public static (int, int) Parse_Img_Size(string line)
     {
@@ -169,6 +175,32 @@ public class HDR
                 set_pixel( new Colore(r,g,b), x, y);
             }
         }
+    }
+
+    public void write_float(Stream mystream, float value)
+    {
+        var seq = BitConverter.GetBytes(value);
+        mystream.Write(seq, 0, seq.Length);
+    }
+    public void write_pfm(Stream mystream, bool end)
+    {
+        var endString = end == BitConverter.IsLittleEndian ? "-1.0" : "1.0";
+        string header = $"PF\n{width} {height}\n{endString}\n";
+        //Convert header into a sequence of bytes
+        mystream.Write(Encoding.ASCII.GetBytes(header));
+        
+        //Write the image
+        for (int y = height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                Colore col = get_pixel(x, y); 
+                write_float(mystream, col.r_c);
+                write_float(mystream, col.g_c);
+                write_float(mystream, col.b_c);
+            }
+        }
+        
     }
 
 }
