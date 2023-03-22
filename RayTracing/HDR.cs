@@ -5,6 +5,8 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
 using static System.Text.Encoding;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
 
 namespace RayTracing;
 
@@ -45,6 +47,7 @@ public class HDR
             hdr_image.Insert(i, c);
         }
     }
+
     public bool Valid_Coordinates(int x, int y)
         => x >= 0 && x < width && y < height && y >= 0;
 
@@ -75,25 +78,25 @@ public class HDR
     }
 
     public static bool parse_endianness_isLittle(string line3)
+    {
+        float end;
+        try
         {
-            float end;
-            try
-            {
-                float.Parse(line3, CultureInfo.InvariantCulture.NumberFormat);
-            }
-            catch (FormatException ex)
-            {
-                throw new InvalidPfmFileFormatException("Impossible parse " + line3 + " to float", ex);
-            }
-
-            end = float.Parse(line3, CultureInfo.InvariantCulture.NumberFormat);
-            if (end == 0)
-            {
-                throw new InvalidPfmFileFormatException("'0' invalid value, a positive or negative value is required");
-            }
-
-            return (end < 0);
+            float.Parse(line3, CultureInfo.InvariantCulture.NumberFormat);
         }
+        catch (FormatException ex)
+        {
+            throw new InvalidPfmFileFormatException("Impossible parse " + line3 + " to float", ex);
+        }
+
+        end = float.Parse(line3, CultureInfo.InvariantCulture.NumberFormat);
+        if (end == 0)
+        {
+            throw new InvalidPfmFileFormatException("'0' invalid value, a positive or negative value is required");
+        }
+
+        return (end < 0);
+    }
 
     public static float _read_float(Stream mystream, bool le)
     {
@@ -109,7 +112,7 @@ public class HDR
         {
             throw new InvalidPfmFileFormatException("Impossible to read data from the file");
         }
-        
+
         if (!le && BitConverter.IsLittleEndian)
         {
             Array.Reverse(bytes);
@@ -119,10 +122,10 @@ public class HDR
         {
             Array.Reverse(bytes);
         }
-        
+
         return BitConverter.ToSingle(bytes);
     }
-    
+
     public static (int, int) Parse_Img_Size(string line)
     {
         var elements = line.Split(" ");
@@ -130,7 +133,7 @@ public class HDR
         {
             throw new InvalidPfmFileFormatException("Invalid Image Size Specification");
         }
-        
+
         try
         {
             var dim = Array.ConvertAll(elements, int.Parse);
@@ -148,6 +151,11 @@ public class HDR
         }
     }
 
+    /// <summary>
+    /// Function that read a pfm file
+    /// </summary>
+    /// <param name="myStream"></param>
+    /// <exception cref="InvalidPfmFileFormatException"></exception>
     public void read_pfm_image(Stream myStream)
     {
         string magic = read_line(myStream);
@@ -160,10 +168,11 @@ public class HDR
         bool endianness = parse_endianness_isLittle(read_line(myStream));
         hdr_image.Capacity = width * height;
         for (int i = 0; i < width * height; i++) // pezzo di codice importante, da mettere insieme
-        {     
+        {
             Colore c = new Colore();
-            hdr_image.Insert(i,c);
+            hdr_image.Insert(i, c);
         }
+
         //HDR result = new HDR(width, height);          Secondo me non aveva senso metterlo
         for (int y = height - 1; y >= 0; y--)
         {
@@ -172,7 +181,7 @@ public class HDR
                 float r = _read_float(myStream, endianness);
                 float g = _read_float(myStream, endianness);
                 float b = _read_float(myStream, endianness);
-                set_pixel( new Colore(r,g,b), x, y);
+                set_pixel(new Colore(r, g, b), x, y);
             }
         }
     }
@@ -182,25 +191,26 @@ public class HDR
         var seq = BitConverter.GetBytes(value);
         mystream.Write(seq, 0, seq.Length);
     }
+
     public void write_pfm(Stream mystream, bool end)
     {
         var endString = end == BitConverter.IsLittleEndian ? "-1.0" : "1.0";
         string header = $"PF\n{width} {height}\n{endString}\n";
         //Convert header into a sequence of bytes
         mystream.Write(Encoding.ASCII.GetBytes(header));
-        
+
         //Write the image
         for (int y = height - 1; y >= 0; y--)
         {
             for (int x = 0; x < width; x++)
             {
-                Colore col = get_pixel(x, y); 
+                Colore col = get_pixel(x, y);
                 write_float(mystream, col.r_c);
                 write_float(mystream, col.g_c);
                 write_float(mystream, col.b_c);
             }
         }
-        
+
     }
 
     public float average_luminosity(float delta = 1e-5f)
@@ -211,12 +221,12 @@ public class HDR
             cumsum += (float)Math.Log10(delta + pix.Luminosity());
         }
 
-        return (float)Math.Pow(10, cumsum/hdr_image.Capacity);
+        return (float)Math.Pow(10, cumsum / hdr_image.Capacity);
     }
 
 
     /// <summary>
-    /// 
+    /// Tuning map of pixels
     /// </summary>
     /// <param name="factor"></param>
     /// <param name="luminosity"></param>
@@ -231,7 +241,7 @@ public class HDR
         }
     }
 
-    public float _clamp(float x)
+    private float _clamp(float x)
     {
         return x / (1 + x);
     }
@@ -245,5 +255,33 @@ public class HDR
             pix.b_c = _clamp(pix.b_c);
         }
     }
+
+    /// <summary>
+    /// Write a ldr file and saving in png
+    /// </summary>
+    /// <param name="mystream"></param>
+    /// <param name="format"></param>
+    /// <param name="gamma"></param>
+    public void write_ldr_image(Stream mystream, string? format, float? gamma = null)
+    {
+        var g = gamma ?? 1.0;
+        var f = format ?? ".png";
+        var bitmap = new Image<Rgb24>(Configuration.Default, width, height);
+        for (int i = 0; i < height; i++)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                var curColor = get_pixel(j, i);
+                bitmap[j, i] = new Rgb24((byte)(255 * Math.Pow(curColor.r_c, 1 / g)),
+                    (byte)(255 * Math.Pow(curColor.g_c, 1 / g)), (byte)(255 * Math.Pow(curColor.b_c, 1 / g)));
+
+            }
+        }
+        using (mystream = File.OpenWrite("output.png")) {
+            bitmap.Save(mystream, new PngEncoder());
+        }
+    }
+
 }
+    
 
