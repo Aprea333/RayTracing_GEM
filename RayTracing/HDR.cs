@@ -203,5 +203,16 @@ public class HDR
         
     }
 
+    public float average_luminosity(float delta = 1e-5f)
+    {
+        int cumsum = 0;
+        foreach (Colore pix in hdr_image)
+        {
+            cumsum += Math.Log10(delta + pix.Luminosity());
+        }
+
+        return (float)Math.Pow(10, cumsum/hdr_image.Capacity);
+    }
+
 }
 

@@ -144,5 +144,15 @@ public class HDRTests
         }
         
     }
+
+    [Test]
+    public void average_luminosity_test()
+    {
+        HDR Img = new HDR(2, 1);
+        Img.set_pixel(new Colore(5.0f,10.0f,15.0f),0,0);
+        Img.set_pixel(new Colore(500.0f,1000.0f,1500.0f),1,0);
+        
+        Assert.True(Math.Round(100 - Img.average_luminosity(0.0f),5) == 0.0f);
+    }
     
 }
