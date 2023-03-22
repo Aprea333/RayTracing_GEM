@@ -203,5 +203,20 @@ public class HDR
         
     }
 
+    /// <summary>
+    ///Normalization: 
+    /// </summary>
+    public void NormalizeImage(float factor, float? luminosity = null)
+    {
+        var lum = luminosity ?? average_luminosity();
+        for (int i = 0; i < hdr_image.Count; i++)
+        {
+            hdr_image[i].r_c = hdr_image[i].r_c * (factor / lum);
+            hdr_image[i].g_c = hdr_image[i].g_c * (factor / lum);
+            hdr_image[i].b_c = hdr_image[i].b_c * (factor / lum);
+        }
+    }
+    
+    
 }
 

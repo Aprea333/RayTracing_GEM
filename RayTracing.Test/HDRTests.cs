@@ -1,5 +1,7 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
+using SixLabors.ImageSharp;
 
 namespace RayTracing.Test;
 
@@ -145,4 +147,14 @@ public class HDRTests
         
     }
     
+    [Test]
+    public void NormalizeImageTest()
+    {
+        HDR image = new HDR(2, 1);
+        image.set_pixel(new Colore((float)5.0, (float)10.0, (float)15.0), 0, 0);
+        image.set_pixel(new Colore((float)500.0, (float)1000.0, (float)1500.0), 1,0);
+        image.NormalizeImage((float)1000.0, (float)100.0);
+        Assert.True(Colore.AreClose(image.get_pixel(0,0), new Colore((float)0.5e2, (float)1.0e2, (float)1.5e2)));
+        Assert.True(Colore.AreClose(image.get_pixel(1,0), new Colore((float)0.5e4, (float)1.0e4, (float)1.5e4)));
+    }    
 }
