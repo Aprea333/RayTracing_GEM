@@ -25,11 +25,21 @@ public class ColorTest
         Colore c = new Colore(5.0f, 12.0f, 21.0f);
         Assert.True(Colore.AreClose(c, a*b));
     }
-
+    
     [Test]
     public void Prodotto_scalare()
     {
         Colore c = new Colore(2.0f, 4.0f, 6.0f);
         Assert.True(Colore.AreClose(c, a*f));
+    }
+    /// <summary>
+    /// Test for the Luminosity
+    /// </summary>
+    [Test]
+    public void LuminosityTest()
+    {
+        Colore c = new Colore(9.0f, 5.0f, 7.0f);
+        Assert.True(Math.Abs(Colore.Luminosity(a) - 2.0) < 1e-5);
+        Assert.True(Math.Abs(Colore.Luminosity(c) - 7.0) < 1e-5);
     }
 }

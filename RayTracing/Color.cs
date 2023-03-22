@@ -19,7 +19,7 @@ public class Colore
         g_c = g;
         b_c = b;
     }
-    
+
     public static Colore operator +(Colore a, Colore b)
     {
         Colore c = new Colore();
@@ -36,7 +36,7 @@ public class Colore
         cc.b_c *= alpha;
         return cc;
     }
-    
+
     public static Colore operator *(float alpha, Colore cc)
     {
         cc.r_c *= alpha;
@@ -46,7 +46,7 @@ public class Colore
     }
 
     public void Stampa()
-    { 
+    {
         Console.WriteLine($"{r_c}, {g_c}, {b_c}");
     }
 
@@ -68,4 +68,17 @@ public class Colore
         float diffBlue = colore1.b_c - colore2.b_c;
         return Math.Sqrt(diffRed * diffRed + diffGreen * diffGreen + diffBlue * diffBlue) < epsilon;
     }
+
+    /// <summary>
+    /// Function that return the luminosity of a color
+    /// </summary>
+    /// <param name="colore1"></param>
+    /// <returns></returns>
+    public static float Luminosity(Colore colore1)
+    {
+        return (Math.Max(Math.Max(colore1.r_c, colore1.g_c), colore1.b_c) +
+                Math.Min(Math.Min(colore1.r_c, colore1.g_c), colore1.b_c)) / 2;
+    }
+
 }
+    
