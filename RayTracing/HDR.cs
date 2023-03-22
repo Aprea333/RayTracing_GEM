@@ -203,9 +203,22 @@ public class HDR
         
     }
 
+    public float average_luminosity(float delta = 1e-5f)
+    {
+        float cumsum = 0;
+        foreach (Colore pix in hdr_image)
+        {
+            cumsum += (float)Math.Log10(delta + pix.Luminosity());
+        }
+
+        return (float)Math.Pow(10, cumsum/hdr_image.Capacity);
+    }
+    
     /// <summary>
-    ///Normalization: 
+    /// 
     /// </summary>
+    /// <param name="factor"></param>
+    /// <param name="luminosity"></param>
     public void NormalizeImage(float factor, float? luminosity = null)
     {
         var lum = luminosity ?? average_luminosity();
@@ -216,7 +229,5 @@ public class HDR
             hdr_image[i].b_c = hdr_image[i].b_c * (factor / lum);
         }
     }
-    
-    
 }
 
