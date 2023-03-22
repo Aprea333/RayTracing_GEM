@@ -7,19 +7,19 @@ public class HDRTests
 {
     public static int wtest = 100;
     public static int htest = 40;
-    public HDR testHdr = new HDR(wtest,htest); //Test per il costruttore che inizializza a qualcosa
-    public HDR testHdr0 = new HDR();           // Test per il costruttore che inizializza tutto a 0
-    
+    public HDR testHdr = new HDR(wtest, htest); //Test per il costruttore che inizializza a qualcosa
+    public HDR testHdr0 = new HDR(); // Test per il costruttore che inizializza tutto a 0
+
     [Test]
     public void CheckCapacityCostruttore()
     {
-        Assert.True(htest*wtest == testHdr.hdr_image.Capacity);
+        Assert.True(htest * wtest == testHdr.hdr_image.Capacity);
     }
-    
+
     [Test]
     public void CheckCostruttoreNullo()
     {
-        Assert.True((testHdr0.height,testHdr0.width) == (0,0));
+        Assert.True((testHdr0.height, testHdr0.width) == (0, 0));
     }
 
     [Test]
@@ -34,6 +34,7 @@ public class HDRTests
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -46,7 +47,7 @@ public class HDRTests
     [Test]
     public void test_read_line()
     {
-        var line = Encoding.ASCII.GetBytes($"hello\nworld"); 
+        var line = Encoding.ASCII.GetBytes($"hello\nworld");
         MemoryStream stream = new MemoryStream(line);
         Assert.True(HDR.read_line(stream) == "hello");
         Assert.True(HDR.read_line(stream) == "world");
@@ -57,11 +58,11 @@ public class HDRTests
     [Test]
     public static void Parseimagesize_Test()
     {
-        Assert.True(HDR.Parse_Img_Size("3 2") == (3,2) );
+        Assert.True(HDR.Parse_Img_Size("3 2") == (3, 2));
         Assert.Throws<InvalidPfmFileFormatException>(() => HDR.Parse_Img_Size("-1 3 "));
         Assert.Throws<InvalidPfmFileFormatException>(() => HDR.Parse_Img_Size("3 2 1 "));
     }
-    
+
     [Test]
     public void parse_endianness_isLittle_test()
     {
@@ -81,21 +82,21 @@ public class HDRTests
         for (int i = 0; i < 2; i++)
         {
             HDR image = new HDR();
-            FileStream reference_file_reader =  File.Open(path[i], FileMode.Open);
+            FileStream reference_file_reader = File.Open(path[i], FileMode.Open);
             image.read_pfm_image(reference_file_reader);
 
             Assert.True(image.hdr_image.Capacity == 6);
             Assert.True(image.width == 3);
             Assert.True(image.height == 2);
-            Assert.True(Colore.AreClose(image.get_pixel(0,0), new Colore(10,20,30)));
-            Assert.True(Colore.AreClose(image.get_pixel(1,0), new Colore(40,50,60)));
-            Assert.True(Colore.AreClose(image.get_pixel(2,0), new Colore(70,80,90)));
-            Assert.True(Colore.AreClose(image.get_pixel(0,1), new Colore(100,200,300)));
-            Assert.True(Colore.AreClose(image.get_pixel(1,1), new Colore(400,500,600)));
-            Assert.True(Colore.AreClose(image.get_pixel(2,1), new Colore(700,800,900))); 
+            Assert.True(Colore.AreClose(image.get_pixel(0, 0), new Colore(10, 20, 30)));
+            Assert.True(Colore.AreClose(image.get_pixel(1, 0), new Colore(40, 50, 60)));
+            Assert.True(Colore.AreClose(image.get_pixel(2, 0), new Colore(70, 80, 90)));
+            Assert.True(Colore.AreClose(image.get_pixel(0, 1), new Colore(100, 200, 300)));
+            Assert.True(Colore.AreClose(image.get_pixel(1, 1), new Colore(400, 500, 600)));
+            Assert.True(Colore.AreClose(image.get_pixel(2, 1), new Colore(700, 800, 900)));
             Assert.True(image.hdr_image.Capacity == 6);
         }
-        
+
     }
 
     [Test]
@@ -142,17 +143,35 @@ public class HDRTests
             Assert.True(Colore.AreClose(image.get_pixel(1, 1), new Colore(400, 500, 600)));
             Assert.True(Colore.AreClose(image.get_pixel(2, 1), new Colore(700, 800, 900)));
         }
-        
+
     }
 
     [Test]
     public void average_luminosity_test()
     {
         HDR Img = new HDR(2, 1);
-        Img.set_pixel(new Colore(5.0f,10.0f,15.0f),0,0);
-        Img.set_pixel(new Colore(500.0f,1000.0f,1500.0f),1,0);
-        
-        Assert.True(Math.Round(100 - Img.average_luminosity(0.0f),5) == 0.0f);
+        Img.set_pixel(new Colore(5.0f, 10.0f, 15.0f), 0, 0);
+        Img.set_pixel(new Colore(500.0f, 1000.0f, 1500.0f), 1, 0);
+
+        Assert.True(Math.Round(100 - Img.average_luminosity(0.0f), 5) == 0.0f);
     }
-    
+
+    [Test]
+    public void clamp_image()
+    {
+        HDR Img = new HDR(2, 1);
+        Img.set_pixel(new Colore(5.0f, 10.0f, 15.0f), 0, 0);
+        Img.set_pixel(new Colore(500.0f, 1000.0f, 1500.0f), 1, 0);
+        
+        Img.clamp_image();
+
+        foreach (Colore pix in Img.hdr_image)
+        {
+            Assert.True(pix.r_c >= 0 && pix.r_c <= 0);  
+            Assert.True(pix.g_c >= 0 && pix.g_c <= 0);  
+            Assert.True(pix.b_c >= 0 && pix.b_c <= 0);  
+        }
+
+    }
+
 }

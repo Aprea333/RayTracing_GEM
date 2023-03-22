@@ -214,5 +214,19 @@ public class HDR
         return (float)Math.Pow(10, cumsum/hdr_image.Capacity);
     }
 
+    public float _clamp(float x)
+    {
+        return x / (1 + x);
+    }
+
+    public void clamp_image()
+    {
+        foreach (var pix in hdr_image)
+        {
+            pix.r_c = _clamp(pix.r_c);
+            pix.g_c = _clamp(pix.g_c);
+            pix.b_c = _clamp(pix.b_c);
+        }
+    }
 }
 
