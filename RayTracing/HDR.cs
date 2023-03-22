@@ -213,7 +213,8 @@ public class HDR
 
         return (float)Math.Pow(10, cumsum/hdr_image.Capacity);
     }
-    
+
+
     /// <summary>
     /// 
     /// </summary>
@@ -222,11 +223,26 @@ public class HDR
     public void NormalizeImage(float factor, float? luminosity = null)
     {
         var lum = luminosity ?? average_luminosity();
-        for (int i = 0; i < hdr_image.Count; i++)
+        foreach (var t in hdr_image)
         {
-            hdr_image[i].r_c = hdr_image[i].r_c * (factor / lum);
-            hdr_image[i].g_c = hdr_image[i].g_c * (factor / lum);
-            hdr_image[i].b_c = hdr_image[i].b_c * (factor / lum);
+            t.r_c = t.r_c * (factor / lum);
+            t.g_c = t.g_c * (factor / lum);
+            t.b_c = t.b_c * (factor / lum);
+        }
+    }
+
+    public float _clamp(float x)
+    {
+        return x / (1 + x);
+    }
+
+    public void clamp_image()
+    {
+        foreach (var pix in hdr_image)
+        {
+            pix.r_c = _clamp(pix.r_c);
+            pix.g_c = _clamp(pix.g_c);
+            pix.b_c = _clamp(pix.b_c);
         }
     }
 }

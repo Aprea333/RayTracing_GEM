@@ -1,4 +1,3 @@
-
 namespace RayTracing;
 
 public class Colore
