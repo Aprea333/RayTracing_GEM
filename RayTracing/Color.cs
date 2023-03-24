@@ -19,7 +19,12 @@ public class Colore
         g_c = g;
         b_c = b;
     }
-
+/// <summary>
+/// Function that makes the sum of two colors
+/// </summary>
+/// <param name="a"></param>
+/// <param name="b"></param>
+/// <returns></returns>
     public static Colore operator +(Colore a, Colore b)
     {
         Colore c = new Colore();
@@ -28,7 +33,12 @@ public class Colore
         c.b_c = a.b_c + b.b_c;
         return c;
     }
-
+/// <summary>
+/// function that returns the product between a scalar and a color
+/// </summary>
+/// <param name="cc"></param>
+/// <param name="alpha"></param>
+/// <returns></returns>
     public static Colore operator *(Colore cc, float alpha)
     {
         cc.r_c *= alpha;
@@ -44,12 +54,19 @@ public class Colore
         cc.b_c *= alpha;
         return cc;
     }
-
+/// <summary>
+/// Function that print the value of the three value of color: Red, green and blue
+/// </summary>
     public void Stampa()
     {
         Console.WriteLine($"{r_c}, {g_c}, {b_c}");
     }
-
+/// <summary>
+/// function that returns the product between two colors
+/// </summary>
+/// <param name="a"></param>
+/// <param name="b"></param>
+/// <returns></returns>
     public static Colore operator *(Colore a, Colore b)
     {
         Colore prod = new Colore();
@@ -59,7 +76,12 @@ public class Colore
 
         return prod;
     }
-
+/// <summary>
+/// Function that assures me that two colors are equal within an arbitrary confidence interval
+/// </summary>
+/// <param name="colore1"></param>
+/// <param name="colore2"></param>
+/// <returns></returns>
     public static bool AreClose(Colore colore1, Colore colore2)
     {
         double epsilon = 1e-5;
