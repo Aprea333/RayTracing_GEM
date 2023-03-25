@@ -127,9 +127,7 @@ public class HDRTests
 
         Stream streamLe = new MemoryStream(LE_REFERENCE_BYTES);
         Stream streamBe = new MemoryStream(BE_REFERENCE_BYTES);
-        Stream[] mystream = new Stream[2];
-        mystream[0] = streamLe;
-        mystream[1] = streamBe;
+        Stream[] mystream = { streamLe, streamBe };
         for (int i = 0; i < 2; i++)
         {
             HDR image = new HDR();
