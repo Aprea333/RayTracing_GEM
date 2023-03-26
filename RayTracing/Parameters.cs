@@ -2,10 +2,10 @@
 
 public class Parameters
 {
-    public static string input_pfm_file_name = "";
-    private float factor;
-    private float gamma;
-    public static string output_png_file_name = "";
+    public string input_pfm_file_name = "";
+    public float factor;
+    public float gamma;
+    public string output_png_file_name = "";
 
     public void parse_command(string[] argv)
     {

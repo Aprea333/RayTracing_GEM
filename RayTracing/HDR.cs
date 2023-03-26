@@ -277,9 +277,9 @@ public class HDR
 
             }
         }
-        using (mystream = File.OpenWrite("output.png")) {
-            bitmap.Save(mystream, new PngEncoder());
-        }
+        
+        bitmap.Save(mystream, new PngEncoder());
+        
     }
 
 }
