@@ -84,11 +84,12 @@ public class Colore
 /// <returns></returns>
     public static bool AreClose(Colore colore1, Colore colore2)
     {
-        double epsilon = 1e-5;
-        float diffRed = colore1.r_c - colore2.r_c;
-        float diffGreen = colore1.g_c - colore2.g_c;
-        float diffBlue = colore1.b_c - colore2.b_c;
-        return Math.Sqrt(diffRed * diffRed + diffGreen * diffGreen + diffBlue * diffBlue) < epsilon;
+             double epsilon = 1e-5;
+             float diffRed = colore1.r_c - colore2.r_c;
+             float diffGreen = colore1.g_c - colore2.g_c;
+             float diffBlue = colore1.b_c - colore2.b_c;
+             return Math.Sqrt(diffRed * diffRed + diffGreen * diffGreen + diffBlue * diffBlue) < epsilon;
+       
     }
 
     /// <summary>

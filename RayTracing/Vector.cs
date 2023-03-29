@@ -1,8 +1,8 @@
 ﻿namespace RayTracing;
 
-public struct Vector
+public struct Vec
 {
-    public float x;
-    public float y;
-    public float z;
+    public float X;
+    public float Y;
+    public float Z;
 }
