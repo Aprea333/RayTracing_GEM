@@ -1,15 +1,18 @@
 ﻿using System.Numerics;
 
+
 namespace RayTracing;
 
 /// <summary>
 /// Vector in 3D space
 /// </summary>
+
 public struct Vec
 {
     public float X;
     public float Y;
     public float Z;
+
 
     public Vec(float x, float y, float z)
     {
@@ -17,6 +20,7 @@ public struct Vec
         Y = y;
         Z = z;
     }
+
     public static bool are_close(Vec a, Vec b)
     {
         return (a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y) + (a.Z - b.Z) * (a.Z - b.Z) < 0.00001;
@@ -162,3 +166,4 @@ public struct Vec
         return n;
     }
 }
+
