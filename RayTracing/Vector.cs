@@ -11,7 +11,12 @@ public struct Vec
     public float Y;
     public float Z;
 
-  
+    public Vec(float x, float y, float z)
+    {
+        X = x;
+        Y = y;
+        Z = z;
+    }
     public static bool are_close(Vec a, Vec b)
     {
         return (a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y) + (a.Z - b.Z) * (a.Z - b.Z) < 0.00001;
