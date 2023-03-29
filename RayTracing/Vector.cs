@@ -30,7 +30,7 @@ public struct Vec
     /// Convert Vec to String
     /// </summary>
     /// <returns></returns>
-    public string toString()
+    public string ToString()
     {
         return "Vec(x=" + X + ", y=" + Y + ", z=" + Z + ")";
     }
@@ -157,7 +157,7 @@ public struct Vec
     /// Convert Vec to Normal
     /// </summary>
     /// <returns></returns>
-    public Normal toNormal()
+    public Normal ToNormal()
     {
         Normal n;
         n.x = X;
