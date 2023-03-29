@@ -42,7 +42,7 @@ public struct Point
     }
 
     
-    public static Point operator + (Point a, Vec v)
+    public static Point operator +(Point a, Vec v)
     {
         float sumX = a.X + v.X;
         float sumY = a.Y + v.Y;
@@ -68,7 +68,7 @@ public struct Point
 
     public Vec Convert()
     {
-        return new Vec(this.X, this.Y, this.Z);
+        return new Vec(X,Y,Z);
     }
     
 }
