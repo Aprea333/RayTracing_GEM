@@ -18,7 +18,7 @@ public class NormalTest
         Assert.True(Normal.are_close(new Normal(0.4f, 1.3f, 0.7f), a));
         Assert.False(Normal.are_close(new Normal(0.3f, 1.2f,0.5f), a));
     }
-
+    
     [Test]
     public void neg_test()
     {
@@ -35,23 +35,27 @@ public class NormalTest
     }
 
     [Test]
-    public void prod_scalare()
+    public void prod_scalar()
     {
         float f = 4.12f;
         Assert.True(Math.Abs(v*a - f)<epsilon);
         Assert.False(Math.Abs(v*a - f)>epsilon);
+        Assert.True(Math.Abs(a*v - f)<epsilon);
+        Assert.False(Math.Abs(a*v - f)>epsilon);
     }
 
     [Test]
-    public void prod_vettoriale()
+    public void cross_prod()
     {
         Vec w = new Vec(-0.74f, 0.33f, -0.19f);
         Assert.True(Vec.are_close(v^a, w));
         Assert.False(Vec.are_close(v^a, new Vec(-0.6f, 0.5f, 0.3f)));
+        Assert.True(Vec.are_close(a^v, w.neg()));
+        Assert.False(Vec.are_close(a^v, new Vec(0.6f,  -0.5f,  - 0.3f)));
     }
 
     [Test]
-    public void prod_vettore_norm()
+    public void cross_prod_norm()
     {
         Normal c = new Normal(1.92f, -0.02f, -1.06f);
         Assert.True(Normal.are_close(a^b, c));

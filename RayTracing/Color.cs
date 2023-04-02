@@ -19,8 +19,9 @@ public class Colore
         g_c = g;
         b_c = b;
     }
+    
 /// <summary>
-/// Function that makes the sum of two colors
+/// Function that sums two colors
 /// </summary>
 /// <param name="a"></param>
 /// <param name="b"></param>
@@ -34,7 +35,7 @@ public class Colore
         return c;
     }
 /// <summary>
-/// function that returns the product between a scalar and a color
+/// Function that returns the product between a scalar and a color
 /// </summary>
 /// <param name="cc"></param>
 /// <param name="alpha"></param>
@@ -93,7 +94,7 @@ public class Colore
     }
 
     /// <summary>
-    /// Luminosità
+    /// Function that returns the luminosity of a pixel
     /// </summary>
     /// <returns></returns>
     public float Luminosity()

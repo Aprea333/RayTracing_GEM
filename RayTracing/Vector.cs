@@ -20,7 +20,13 @@ public struct Vec
         Y = y;
         Z = z;
     }
-
+    
+    /// <summary>
+    /// Function that tests if two vectors are equal in a confidence interval
+    /// </summary>
+    /// <param name="a">First vector</param>
+    /// <param name="b">second vector</param>
+    /// <returns></returns>
     public static bool are_close(Vec a, Vec b)
     {
         return (a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y) + (a.Z - b.Z) * (a.Z - b.Z) < 0.00001;
