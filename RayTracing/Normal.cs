@@ -8,9 +8,9 @@ public struct Normal
 
     public Normal()
     {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+        x = 0;
+        y = 0;
+        z = 0;
     }
     
     public Normal(float x, float y, float z)
@@ -25,7 +25,7 @@ public struct Normal
         return $"Normal (x = {this.x}, y = {this.y}, z = {this.z})";
     }
 
-    public static bool NorAreClose(Normal a, Normal b)
+    public static bool are_close(Normal a, Normal b)
     {
         double epsilon = 1e-5;
         float x = a.x - b.x;
@@ -37,7 +37,7 @@ public struct Normal
 
     public Normal neg_normal()
     {
-        return new Normal(-this.x, -this.y, -this.z);
+        return new Normal(-x, -y, -z);
     }
 
     public static Normal operator *(float scal, Normal n)
@@ -70,17 +70,17 @@ public struct Normal
 
     public float squared_norm()
     {
-        return this.x * this.x * this.y * this.y * this.z * this.z;
+        return x * x + y * y + z * z;
     }
 
     public float norm()
     {
-        return (float)Math.Sqrt(this.squared_norm());
+        return (float)Math.Sqrt(squared_norm());
     }
 
     public Normal normalization()
     {
-        float scal = 1/this.squared_norm();
+        float scal = 1/squared_norm();
         return scal * this;
     }
 }
