@@ -1,4 +1,4 @@
-﻿namespace RayTracing.Tests;
+﻿namespace RayTracing.Test;
 
 public class ColorTest
 {
