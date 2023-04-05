@@ -16,10 +16,6 @@ public class ColorTest
     public void Somma()
     {
         Colore c = new Colore(6.0f, 8.0f, 10.0f);
-        Console.WriteLine("c = ");
-        c.Stampa();
-        Console.WriteLine("a + b = ");
-        (a+b).Stampa();
         Assert.True(Colore.AreClose(c, a + b));
     }
     
