@@ -1,5 +1,6 @@
 ﻿namespace RayTracing;
 
+
 public class Tran
 {
     public float [] m;
@@ -70,4 +71,34 @@ public class Tran
         float[] prod = matr_prod(m, minv);
         return are_matr_close(prod, new float [] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1} );
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Tran Rotation_x(float angle) //angle in deg
+    {
+        float rad = (float)(angle * Math.PI / 180.0);
+        float[] mat = {1,0,0,0,(float)Math.Cos(rad),-(float)Math.Sin(rad),0,(float)Math.Sin(rad),(float)Math.Cos(rad)};
+        float[] inv = {1,0,0,0,(float)Math.Cos(rad),(float)Math.Sin(rad),0,-(float)Math.Sin(rad),(float)Math.Cos(rad)};
+        return new Tran(mat, inv);
+    }
+    
+    public Tran Rotation_y(float angle) //angle in deg
+    {
+        float rad = (float)(angle * Math.PI / 180.0);
+        float[] mat = {(float)Math.Cos(rad), 0, (float)Math.Sin(rad),0,1,0, -(float)Math.Sin(rad),0,(float)Math.Cos(rad)};
+        float[] inv = {(float)Math.Cos(rad), 0, -(float)Math.Sin(rad),0,1,0, (float)Math.Sin(rad),0,(float)Math.Cos(rad)};
+        return new Tran(mat, inv);
+    }
+    
+    public Tran Rotation_z(float angle) //angle in deg
+    {
+        float rad = (float)(angle * Math.PI / 180.0);
+        float[] mat = {(float)Math.Cos(rad), -(float)Math.Sin(rad), 0, (float)Math.Sin(rad), (float)Math.Cos(rad), 0, 0, 0, 1};
+        float[] inv = {(float)Math.Cos(rad), (float)Math.Sin(rad), 0, -(float)Math.Sin(rad), (float)Math.Cos(rad), 0, 0, 0, 1};
+        return new Tran(mat, inv);
+    }
+
+    
 }
