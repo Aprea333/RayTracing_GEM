@@ -51,6 +51,7 @@ public class Tran
         return prod;
     }
 
+
     /// <summary>
     /// function that return the translation af a Point by matrix of translation 4x4;
     /// </summary>
@@ -58,9 +59,10 @@ public class Tran
     /// <param name="T"></param>
     /// <param name="p"></param>
     /// <returns></returns>
+    
+
     public static Point Translation_Point(Tran T, Point p)
     {
-        
         float x = p.X * T.m[0] + p.Y * T.m[1] + p.Z * T.m[2] + T.m[3];
         float y = p.X * T.m[4] + p.Y * T.m[5] + p.Z * T.m[6] + T.m[7];
         float z = p.X * T.m[8] + p.Y * T.m[9] + p.Z * T.m[10] + T.m[11];
@@ -79,11 +81,12 @@ public class Tran
         }
         
     }
-
+    
 public static Vec Translation_Vec(Tran T, Vec v)
 {
     return v;
 }
+      
     
     /// <summary>
     /// Control element per element if 2 matrices are close up to 10^-5
@@ -130,7 +133,30 @@ public static Vec Translation_Vec(Tran T, Vec v)
         float[] prod = matr_prod(m, minv);
         return are_matr_close(prod, new float [] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1} );
     }
+    
+    public Tran scale_matrix(float a, float b, float c)
+    {
+        return new Tran(new float[] { a, 0, 0, 0, 0, b, 0, 0, 0, 0, c, 0, 0, 0, 0, 0 },
+            new float[] { 1 / a, 0, 0, 0, 0, 1 / b, 0, 0, 0, 0, 1 / c, 0, 0, 0, 0, 0 });
+    }
 
+    public Vec scale_transformation(Vec a)
+    {
+        Vec res = new Vec(a.X * m[0], a.Y * m[5], a.Z * m[10]);
+        return res;
+    }
+    
+    public Normal scale_transformation(Normal a)
+    {
+        Normal res = new Normal(a.x / m[0], a.y / m[5], a.z / m[10]);
+        return res;
+    }
+    
+    public Point scale_transformation(Point a)
+    {
+        Point res = new Point(a.X * m[0], a.Y * m[5], a.Z * m[10]);
+        return res;
+    }
 
     /// <summary>
     /// 
@@ -160,6 +186,4 @@ public static Vec Translation_Vec(Tran T, Vec v)
         return new Tran(mat, inv);
     }
 
-
-    
 }
