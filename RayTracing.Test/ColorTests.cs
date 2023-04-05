@@ -15,8 +15,6 @@ public class ColorTest
     [Test]
     public void Somma()
     {
-        Colore a = new Colore(1.0f, 2.0f, 3.0f);
-        Colore b = new Colore(5.0f, 6.0f, 7.0f);
         Colore c = new Colore(6.0f, 8.0f, 10.0f);
         Console.WriteLine("c = ");
         c.Stampa();
