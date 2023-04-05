@@ -5,6 +5,7 @@ public class Tran
     public float [] m;
     public float[] minv;
 
+    
     /// <summary>
     /// Constructor for m and minv
     /// </summary>
@@ -19,7 +20,13 @@ public class Tran
         m = matr;
         minv = matr_inv;
     }
-    
+
+    public Tran Translation_matr(Vec v)
+    {
+        float[] m = new float[] { 1, 0, 0, v.X, 0, 1, 0, v.Y, 0, 0, 1, v.Z, 0, 0, 0, 1 };
+        float[] invm = new float[] { 1, 0, 0, -v.X, 0, 1, 0, -v.Y, 0, 0, 1, -v.Z, 0, 0, 0, 1 };
+        return new Tran(m, minv);
+    }
     /// <summary>
     /// Matrix product
     /// </summary>
@@ -41,7 +48,37 @@ public class Tran
         }
         return prod;
     }
+/// <summary>
+/// function that return the translation af a vector by matrix of translation 4x4;
+/// </summary>
+/// <param name="a"></param>
+/// <param name="p"></param>
+/// <returns></returns>
+    public Point Translation_Point(Point p)
+    {
+        float x = p.X * m[0] + p.Y * m[1] + p.Z * m[2] + m[3];
+        float y = p.X * m[4] + p.Y * m[5] + p.Z * m[6] + m[7];
+        float z = p.X * m[8] + p.Y * m[9] + p.Z * m[10] + m[11];
+        float w = p.X * m[12] + p.Y * m[13] + p.Z * m[14] + m[15];
+        
+        Point newp = new Point(x,y,z);
+        
+        if (Math.Abs(w - 1) < 1e-5)
+        {
+            return newp;
+        }
 
+        else
+        {
+            return new Point(x/w, y/w, z/w);
+        }
+    }
+
+public Vec Translation_Vec(Vec v)
+{
+    return v;
+}
+    
     /// <summary>
     /// Control element per element if 2 matrices are close up to 10^-5
     /// </summary>
@@ -70,4 +107,5 @@ public class Tran
         float[] prod = matr_prod(m, minv);
         return are_matr_close(prod, new float [] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1} );
     }
+    
 }
