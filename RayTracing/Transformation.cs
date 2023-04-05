@@ -22,12 +22,13 @@ public class Tran
         minv = matr_inv;
     }
 
-    public Tran Translation_matr(Vec v)
+    public static Tran Translation_matr(Vec v)
     {
-        float[] m = new float[] { 1, 0, 0, v.X, 0, 1, 0, v.Y, 0, 0, 1, v.Z, 0, 0, 0, 1 };
-        float[] invm = new float[] { 1, 0, 0, -v.X, 0, 1, 0, -v.Y, 0, 0, 1, -v.Z, 0, 0, 0, 1 };
-        return new Tran(m, minv);
+        float[] mat = new float[]{ 1, 0, 0, v.X, 0, 1, 0, v.Y, 0, 0, 1, v.Z, 0, 0, 0, 1 };
+        float[] mat_1 = new float[] { 1, 0, 0, -v.X, 0, 1, 0, -v.Y, 0, 0, 1, -v.Z, 0, 0, 0, 1 };
+        return new  Tran(mat, mat_1);
     }
+    
     /// <summary>
     /// Matrix product
     /// </summary>
@@ -49,18 +50,21 @@ public class Tran
         }
         return prod;
     }
-/// <summary>
-/// function that return the translation af a vector by matrix of translation 4x4;
-/// </summary>
-/// <param name="a"></param>
-/// <param name="p"></param>
-/// <returns></returns>
-    public Point Translation_Point(Point p)
+
+    /// <summary>
+    /// function that return the translation af a Point by matrix of translation 4x4;
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="T"></param>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    public static Point Translation_Point(Tran T, Point p)
     {
-        float x = p.X * m[0] + p.Y * m[1] + p.Z * m[2] + m[3];
-        float y = p.X * m[4] + p.Y * m[5] + p.Z * m[6] + m[7];
-        float z = p.X * m[8] + p.Y * m[9] + p.Z * m[10] + m[11];
-        float w = p.X * m[12] + p.Y * m[13] + p.Z * m[14] + m[15];
+        
+        float x = p.X * T.m[0] + p.Y * T.m[1] + p.Z * T.m[2] + T.m[3];
+        float y = p.X * T.m[4] + p.Y * T.m[5] + p.Z * T.m[6] + T.m[7];
+        float z = p.X * T.m[8] + p.Y * T.m[9] + p.Z * T.m[10] + T.m[11];
+        float w = p.X * T.m[12] + p.Y * T.m[13] + p.Z * T.m[14] + T.m[15];
         
         Point newp = new Point(x,y,z);
         
@@ -73,9 +77,10 @@ public class Tran
         {
             return new Point(x/w, y/w, z/w);
         }
+        
     }
 
-public Vec Translation_Vec(Vec v)
+public static Vec Translation_Vec(Tran T, Vec v)
 {
     return v;
 }
@@ -97,7 +102,24 @@ public Vec Translation_Vec(Vec v)
         }
         return true;
     }
-
+/// <summary>
+/// Check that two transformation are similar into a confident number epsilon
+/// </summary>
+/// <param name="T1"></param>
+/// <param name="T2"></param>
+/// <returns></returns>
+    public static bool Are_Tran_close(Tran T1, Tran T2)
+    {
+        
+        for (int i = 0; i < 16; i++)
+        {
+            if (Math.Abs(T1.m[i] - T2.m[i]) > 1e-5 && Math.Abs(T1.minv[i]-T2.minv[i])>1e-5)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
     /// <summary>
     /// Check if m and minv are one the inverse of the other: the matrix product has to be
     /// the identity matrix 4x4

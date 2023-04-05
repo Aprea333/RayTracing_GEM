@@ -40,4 +40,33 @@ public class TransformationTest
     {
         Assert.True(tr.is_consistent());
     }
+
+    [Test]
+
+    public void Translation_matr_test()
+    {
+        
+        float[] matr = new float[] { 1.0f, 0, 0, 2.0f, 0f, 1f, 0, 3.0f, 0, 0, 1, 4.0f, 0, 0, 0, 1 };
+        float[] matr1 = new float[] { 1, 0, 0, -2.0f, 0, 1, 0, -3.0f, 0, 0, 1, -4.0f, 0, 0, 0, 1 };
+        
+        Assert.True(Tran.Are_Tran_close(Tran.Translation_matr(new Vec(2.0f, 3.0f, 4.0f)), new Tran(matr,matr1)));
+        Assert.False(Tran.Are_Tran_close(Tran.Translation_matr(new Vec(4.0f, 3.0f, 4.0f)), new Tran(matr,matr1)));
+    }
+    
+    [Test]
+    public void Translation_Point_Test()
+    {
+        float[] matr = new float[] { 1.0f, 0, 0, 2.0f, 0, 1f, 0, 3.0f, 0, 0, 1, 4.0f, 0, 0, 0, 1 };
+        float[] matr1 = new float[] { 1, 0, 0, -2.0f, 0, 1f, 0, -3.0f, 0, 0, 1, -4.0f, 0, 0, 0, 1 };
+        
+        Assert.True(Point.AreClose(Tran.Translation_Point(new Tran(matr,matr1),new Point(1.0f, 2.0f,3.0f)),new Point(3.0f,5.0f,7.0f)));
+        Assert.False(Point.AreClose(Tran.Translation_Point(new Tran(matr,matr1),new Point(1.0f, 2.0f,3.0f)),new Point(2.0f,5.0f,7.0f)));
+    }
+    [Test]
+    public void Translation_Vec_Test()
+    {
+        Assert.True(Vec.are_close(Tran.Translation_Vec(tr,new Vec(1.0f, 2.0f, 3.0f)),new Vec(1.0f,2.0f,3.0f)));
+        Assert.False(Vec.are_close(Tran.Translation_Vec(tr,new Vec(1.0f, 2.0f, 3.0f)),new Vec(4.0f,2.0f,3.0f)));
+    }
 }
+
