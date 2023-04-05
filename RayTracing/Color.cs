@@ -42,18 +42,20 @@ public class Colore
 /// <returns></returns>
     public static Colore operator *(Colore cc, float alpha)
     {
-        cc.r_c *= alpha;
-        cc.g_c *= alpha;
-        cc.b_c *= alpha;
-        return cc;
+        Colore result = new Colore();
+        result.r_c = cc.r_c * alpha;
+        result.g_c = cc.g_c * alpha;
+        result.b_c= cc.b_c * alpha;
+        return result;
     }
 
     public static Colore operator *(float alpha, Colore cc)
     {
-        cc.r_c *= alpha;
-        cc.g_c *= alpha;
-        cc.b_c *= alpha;
-        return cc;
+        Colore result = new Colore();
+        result.r_c = cc.r_c * alpha;
+        result.g_c = cc.g_c * alpha;
+        result.b_c= cc.b_c * alpha;
+        return result;
     }
 /// <summary>
 /// Function that print the value of the three value of color: Red, green and blue

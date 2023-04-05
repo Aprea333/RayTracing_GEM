@@ -74,10 +74,9 @@ public class HDRTests
         Assert.Throws<InvalidPfmFileFormatException>(() => HDR.parse_endianness_isLittle("0"));
 
     }
-
-
-    /*[Test]
     
+/*
+    [Test]
     public void read_pfm_image()
     {
         string[] path = new string[2];
@@ -100,7 +99,6 @@ public class HDRTests
             Assert.True(Colore.AreClose(image.get_pixel(2, 1), new Colore(700, 800, 900)));
             Assert.True(image.hdr_image.Capacity == 6);
         }
-
 
     }*/
 
