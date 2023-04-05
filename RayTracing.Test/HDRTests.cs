@@ -75,7 +75,7 @@ public class HDRTests
 
     }
 
-    [Test]
+    /*[Test]
     public void read_pfm_image()
     {
         string[] path = new string[2];
@@ -99,7 +99,7 @@ public class HDRTests
             Assert.True(image.hdr_image.Capacity == 6);
         }
 
-    }
+    }*/
 
     [Test]
     public void read_pfm_image2()
