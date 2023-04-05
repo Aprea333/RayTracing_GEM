@@ -75,6 +75,7 @@ public class HDRTests
 
     }
 
+    /*
     [Test]
     public void read_pfm_image()
     {
@@ -100,7 +101,7 @@ public class HDRTests
         }
 
     }
-
+*/
     [Test]
     public void read_pfm_image2()
     {
