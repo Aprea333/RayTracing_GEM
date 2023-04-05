@@ -70,4 +70,30 @@ public class Tran
         float[] prod = matr_prod(m, minv);
         return are_matr_close(prod, new float [] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1} );
     }
+
+    public Tran scale_matrix(float a, float b, float c)
+    {
+        return new Tran(new float[] { a, 0, 0, 0, 0, b, 0, 0, 0, 0, c, 0, 0, 0, 0, 0 },
+            new float[] { 1 / a, 0, 0, 0, 0, 1 / b, 0, 0, 0, 0, 1 / c, 0, 0, 0, 0, 0 });
+    }
+
+    public Vec scale_transformation(Vec a)
+    {
+        Vec res = new Vec(a.X * m[0], a.Y * m[5], a.Z * m[10]);
+        return res;
+    }
+    
+    public Normal scale_transformation(Normal a)
+    {
+        Normal res = new Normal(a.x / m[0], a.y / m[5], a.z / m[10]);
+        return res;
+    }
+    
+    public Point scale_transformation(Point a)
+    {
+        Point res = new Point(a.X * m[0], a.Y * m[5], a.Z * m[10]);
+        return res;
+    }
+    
+    
 }
