@@ -1,4 +1,7 @@
-﻿namespace RayTracing;
+﻿using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+
+namespace RayTracing;
 
 
 public class Tran
@@ -28,7 +31,7 @@ public class Tran
         float[] mat_1 = new float[] { 1, 0, 0, -v.X, 0, 1, 0, -v.Y, 0, 0, 1, -v.Z, 0, 0, 0, 1 };
         return new  Tran(mat, mat_1);
     }
-    
+
     /// <summary>
     /// Matrix product
     /// </summary>
@@ -38,7 +41,7 @@ public class Tran
     public float [] matr_prod (float [] a, float [] b)
     {
         float[] prod = new float[16];
-        for (int i = 0; i < 4; i++)
+        /*for (int i = 0; i < 4; i++)
         {
             for (int l = 0; l < 4; l++)
             {
@@ -46,6 +49,17 @@ public class Tran
                 {
                     prod[i * 4 + l] += a[i * 4 + k] * b[k * 4 + l];
                 }
+            }
+        }*/
+        
+        for (int i = 0; i < 16; i++)
+        {
+            int j = i / 4;
+            int c = j*4;
+            for (int k = i%4; k < 16; k += 4)
+            {
+                prod[i] += a[c] * b[k];
+                c++;
             }
         }
         return prod;
@@ -159,31 +173,87 @@ public static Vec Translation_Vec(Tran T, Vec v)
     }
 
     /// <summary>
-    /// 
+    /// Function that computes the rotation of an angle along x-axis 
     /// </summary>
-    /// <returns></returns>
-    public Tran Rotation_x(float angle) //angle in deg
+    /// <param name="angle">angle in deg</param>
+    /// <returns>the transformation due to rotation</returns>
+    public static Tran Rotation_x(float angle) //angle in deg
     {
         float rad = (float)(angle * Math.PI / 180.0);
-        float[] mat = {1,0,0,0,(float)Math.Cos(rad),-(float)Math.Sin(rad),0,(float)Math.Sin(rad),(float)Math.Cos(rad)};
-        float[] inv = {1,0,0,0,(float)Math.Cos(rad),(float)Math.Sin(rad),0,-(float)Math.Sin(rad),(float)Math.Cos(rad)};
+        float[] mat = {1,0,0,0,0,(float)Math.Cos(rad),-(float)Math.Sin(rad),0,0,(float)Math.Sin(rad),(float)Math.Cos(rad),0,0,0,0,1};
+        float[] inv = {1,0,0,0,0,(float)Math.Cos(rad),(float)Math.Sin(rad),0,0,-(float)Math.Sin(rad),(float)Math.Cos(rad),0,0,0,0,1};
         return new Tran(mat, inv);
     }
     
-    public Tran Rotation_y(float angle) //angle in deg
+    /// <summary>
+    /// Function that computes the rotation of an angle along y-axis 
+    /// </summary>
+    /// <param name="angle">angle in deg</param>
+    /// <returns>the transformation due to rotation</returns>
+    public static Tran Rotation_y(float angle) //angle in deg
     {
         float rad = (float)(angle * Math.PI / 180.0);
-        float[] mat = {(float)Math.Cos(rad), 0, (float)Math.Sin(rad),0,1,0, -(float)Math.Sin(rad),0,(float)Math.Cos(rad)};
-        float[] inv = {(float)Math.Cos(rad), 0, -(float)Math.Sin(rad),0,1,0, (float)Math.Sin(rad),0,(float)Math.Cos(rad)};
+        float[] mat = {(float)Math.Cos(rad), 0, (float)Math.Sin(rad),0,0,1,0,0, -(float)Math.Sin(rad),0,(float)Math.Cos(rad),0,0,0,0,1};
+        float[] inv = {(float)Math.Cos(rad), 0, -(float)Math.Sin(rad),0,0,1,0,0, (float)Math.Sin(rad),0,(float)Math.Cos(rad),0,0,0,0,1};
         return new Tran(mat, inv);
     }
     
-    public Tran Rotation_z(float angle) //angle in deg
+    /// <summary>
+    /// Function that computes the rotation of an angle along z-axis 
+    /// </summary>
+    /// <param name="angle">angle in deg</param>
+    /// <returns>the transformation due to rotation</returns>
+    public static Tran Rotation_z(float angle) //angle in deg
     {
         float rad = (float)(angle * Math.PI / 180.0);
-        float[] mat = {(float)Math.Cos(rad), -(float)Math.Sin(rad), 0, (float)Math.Sin(rad), (float)Math.Cos(rad), 0, 0, 0, 1};
-        float[] inv = {(float)Math.Cos(rad), (float)Math.Sin(rad), 0, -(float)Math.Sin(rad), (float)Math.Cos(rad), 0, 0, 0, 1};
+        float[] mat = {(float)Math.Cos(rad), -(float)Math.Sin(rad), 0,0, (float)Math.Sin(rad), (float)Math.Cos(rad), 0,0, 0, 0, 1,0,0,0,0,1};
+        float[] inv = {(float)Math.Cos(rad), (float)Math.Sin(rad), 0,0, -(float)Math.Sin(rad), (float)Math.Cos(rad), 0,0,0,0, 1,0,0,0,0,1};
         return new Tran(mat, inv);
+    }
+
+    public static Tran operator *(Tran A, Tran B)
+    {
+        float[] c1 = new float[16];
+        float[] c2 = new float[16];
+        
+        c1 = A.matr_prod(A.m, B.m);
+        c2 = A.matr_prod(B.minv, A.minv);
+        Tran C = new Tran(c1, c2);
+        return C;
+    }
+
+    public static Point operator *(Tran t, Point p)
+    {
+        Point r = new Point
+        {
+            X = t.m[0] * p.X + t.m[1] * p.Y + t.m[2] * p.Z + t.m[3],
+            Y = t.m[4] * p.X + t.m[5] * p.Y + t.m[6] * p.Z + t.m[7],
+            Z = t.m[8] * p.X + t.m[9] * p.Y + t.m[10] * p.Z + t.m[11]
+        };
+        float w = t.m[12] * p.X + t.m[13] * p.Y + t.m[14] * p.Z + t.m[15];
+        if (w != 1)
+        {
+            r.X = r.X / w;
+            r.Y = r.Y / w;
+            r.Z = r.Z / w;
+        }
+
+        return r;
+
+    }
+
+    public static Vec operator *(Tran t, Vec v)
+    {
+        Vec r = new Vec
+        {
+            X = t.m[0] * v.X + t.m[1] * v.Y + t.m[2] * v.Z,
+            Y = t.m[4] * v.X + t.m[5] * v.Y + t.m[6] * v.Z,
+            Z = t.m[8] * v.X + t.m[9] * v.Y + t.m[10] * v.Z
+        };
+        float w = t.m[12] * v.X + t.m[13] * v.Y + t.m[14] * v.Z;
+        
+
+        return r;
     }
 
 }

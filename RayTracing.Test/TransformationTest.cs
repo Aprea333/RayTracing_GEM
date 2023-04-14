@@ -56,8 +56,8 @@ public class TransformationTest
     [Test]
     public void Translation_Point_Test()
     {
-        float[] matr = new float[] { 1.0f, 0, 0, 2.0f, 0, 1f, 0, 3.0f, 0, 0, 1, 4.0f, 0, 0, 0, 1 };
-        float[] matr1 = new float[] { 1, 0, 0, -2.0f, 0, 1f, 0, -3.0f, 0, 0, 1, -4.0f, 0, 0, 0, 1 };
+        float[] matr = { 1.0f, 0, 0, 2.0f, 0, 1f, 0, 3.0f, 0, 0, 1, 4.0f, 0, 0, 0, 1 };
+        float[] matr1 = { 1, 0, 0, -2.0f, 0, 1f, 0, -3.0f, 0, 0, 1, -4.0f, 0, 0, 0, 1 };
         
         Assert.True(Point.AreClose(Tran.Translation_Point(new Tran(matr,matr1),new Point(1.0f, 2.0f,3.0f)),new Point(3.0f,5.0f,7.0f)));
         Assert.False(Point.AreClose(Tran.Translation_Point(new Tran(matr,matr1),new Point(1.0f, 2.0f,3.0f)),new Point(2.0f,5.0f,7.0f)));
@@ -101,6 +101,59 @@ public class TransformationTest
         Assert.True(Math.Abs(tr1.scale_transformation(p).Z - p.Z * m1[10]) < 0.00001);
 
 
+    }
+
+    [Test]
+    public void Rotation_test()
+    {
+        float alfa = 60.0f;
+        //Test to verify if the rotation matrix is equal to its inverse 
+        Tran test_x = Tran.Rotation_x(alfa);
+        Tran test_y = Tran.Rotation_y(alfa);
+        Tran test_z = Tran.Rotation_z(alfa);
+        Assert.True(test_x.is_consistent());
+        Assert.True(test_y.is_consistent());
+        Assert.True(test_z.is_consistent());
+        //Test to verify the rotation
+    }
+
+    [Test]
+    public void Tran_test_ope()
+    {
+        float[] ma = { 1, 2, 3, 1, 1, 1, 4, 1, 2, 4, 7, 4, 0, -3, 3, -1 };
+        float[] inv_a = { -18, 29, -5, -9, 5, -7, 1, 2, 4, -6, 1, 2, -3, 3, 0, -1 };
+        float[] mb = { 1.0f, 0, 0, 2.0f, 0, 1f, 0, 3.0f, 0, 0, 1, 4.0f, 1, 0, 0, 1 };
+        float[] inv_b = { -1, 0, 0, 2, -3, 1, 0, 3, -4, 0, 1, 4, 1, 0, 0, -1 };
+        float[] mc = { 2,2,3,21,2,1,4,22,6,4,7,48,-1,-3,3,2};
+        float[] inv_c = { 12,-23,5,7,50,-85,16,26,64,-110,21,34,-15,26,-5,-8};
+        Tran A = new Tran(ma, inv_a);
+        Tran B = new Tran(mb, inv_b);
+        Tran C = A*B;
+        Assert.True(C.are_matr_close(mc, C.m));
+        Assert.True(C.are_matr_close(inv_c, C.minv));
+
+    }
+
+    [Test]
+    public void Test_point_tran()
+    {
+        float[] matr = { 1.0f, 0, 0, 2.0f, 0, 1f, 0, 3.0f, 0, 0, 1, 4.0f, 0, 0, 0, 1 };
+        float[] matr1 = { 1, 0, 0, -2.0f, 0, 1f, 0, -3.0f, 0, 0, 1, -4.0f, 0, 0, 0, 1 };
+        Tran T = new Tran(matr, matr1);
+        Point p = new Point(1.0f, 2.0f, 3.0f);
+        Point r = T * p;
+        Assert.True(Point.AreClose(r, new Point(3.0f, 5.0f,7.0f)));
+    }
+
+    [Test]
+    public void Test_vec_tran()
+    {
+        Vec v = new Vec(1.0f, 2.0f, 3.0f);
+        float[] matr = { 1.0f, 0, 0, 2.0f, 0, 5f, 0, 3.0f, 0, 0, 2, 4.0f, 0, 0, 0, 1 };
+        float[] matr1 = { 1, 0, 0, -2.0f, 0, 1/5f, 0, -3/5f, 0, 0, 0.5f, -2.0f, 0, 0, 0, 1 };
+        Tran T = new Tran(matr, matr1);
+        Vec w = T * v;
+        Assert.True(Vec.are_close(w,new Vec(1.0f,10.0f,6.0f)));
     }
 }
 
