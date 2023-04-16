@@ -10,8 +10,8 @@ public class PointTest
 
     public void Constructor()
     {
-        Assert.True(Point.AreClose(_p1,new Point(1.0f,2.0f,3.0f)));
-        Assert.False(Point.AreClose(_p1,new Point(1.0f,7.0f,3.0f)));
+        Assert.True(Point.are_close(_p1,new Point(1.0f,2.0f,3.0f)));
+        Assert.False(Point.are_close(_p1,new Point(1.0f,7.0f,3.0f)));
         
     }
 /// <summary>
@@ -21,8 +21,8 @@ public class PointTest
 
 public void Sum_PointVec()
 {
-    Assert.True(Point.AreClose(_p1+_v,new Point(3.0f,5.0f,7.0f) ));
-    Assert.False(Point.AreClose(_p1+_v,new Point(7.0f,5.0f,7.0f) ));
+    Assert.True(Point.are_close(_p1+_v,new Point(3.0f,5.0f,7.0f) ));
+    Assert.False(Point.are_close(_p1+_v,new Point(7.0f,5.0f,7.0f) ));
     
 }
 
@@ -46,8 +46,8 @@ public void Diff_Points()
 
 public void Diff_VecPoint()
 {
-    Assert.True(Point.AreClose(_p1-_v, new Point(-1.0f, -1.0f, -1.0f)));
-    Assert.False(Point.AreClose(_p1-_v, new Point(1.0f, 1.0f, 1.0f)));
+    Assert.True(Point.are_close(_p1-_v, new Point(-1.0f, -1.0f, -1.0f)));
+    Assert.False(Point.are_close(_p1-_v, new Point(1.0f, 1.0f, 1.0f)));
 }
 /// <summary>
 /// check that the function Convert(), convert a point into a vector

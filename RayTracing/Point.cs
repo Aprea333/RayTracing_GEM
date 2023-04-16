@@ -32,7 +32,7 @@ public struct Point
     /// <summary>
     /// comparison between two point
     /// </summary>
-    public static bool AreClose(Point a, Point b)
+    public static bool are_close(Point a, Point b)
     {
         double epsilon = 1e-5;
         float diffX = a.X - b.X;

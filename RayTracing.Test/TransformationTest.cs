@@ -59,8 +59,8 @@ public class TransformationTest
         float[] matr = { 1.0f, 0, 0, 2.0f, 0, 1f, 0, 3.0f, 0, 0, 1, 4.0f, 0, 0, 0, 1 };
         float[] matr1 = { 1, 0, 0, -2.0f, 0, 1f, 0, -3.0f, 0, 0, 1, -4.0f, 0, 0, 0, 1 };
         
-        Assert.True(Point.AreClose(Tran.Translation_Point(new Tran(matr,matr1),new Point(1.0f, 2.0f,3.0f)),new Point(3.0f,5.0f,7.0f)));
-        Assert.False(Point.AreClose(Tran.Translation_Point(new Tran(matr,matr1),new Point(1.0f, 2.0f,3.0f)),new Point(2.0f,5.0f,7.0f)));
+        Assert.True(Point.are_close(Tran.Translation_Point(new Tran(matr,matr1),new Point(1.0f, 2.0f,3.0f)),new Point(3.0f,5.0f,7.0f)));
+        Assert.False(Point.are_close(Tran.Translation_Point(new Tran(matr,matr1),new Point(1.0f, 2.0f,3.0f)),new Point(2.0f,5.0f,7.0f)));
     }
     [Test]
     public void Translation_Vec_Test()
@@ -107,6 +107,7 @@ public class TransformationTest
     public void Rotation_test()
     {
         float alfa = 60.0f;
+        float alfarad = alfa * (float)Math.PI / 180f;
         //Test to verify if the rotation matrix is equal to its inverse 
         Tran test_x = Tran.Rotation_x(alfa);
         Tran test_y = Tran.Rotation_y(alfa);
@@ -115,10 +116,24 @@ public class TransformationTest
         Assert.True(test_y.is_consistent());
         Assert.True(test_z.is_consistent());
         //Test to verify the rotation
+        float cos = (float)Math.Cos(alfarad);
+        float sin = (float)Math.Sin(alfarad);
+        Point p = new Point(1.0f, 2.0f, 3.0f);
+        Point px = test_x * p;
+        Assert.True(Point.are_close(px, new Point(1,2*cos-3*sin,2*sin+3*cos)));
+        Vec v = new Vec(1.0f, 2.0f, 3.0f);
+        Vec vy = test_y * v;
+        Assert.True(Vec.are_close(vy, new Vec(cos+3*sin,2,-sin+3*cos)));
+        Normal n = new Normal(1.0f, 2.0f, 3.0f);
+        Normal nz = test_z * n;
+        Assert.True(Normal.are_close(nz, new Normal(cos-2*sin, sin+2*cos, 3.0f)));
     }
 
+    /// <summary>
+    /// Test to verify the operator multiplication between two transformations
+    /// </summary>
     [Test]
-    public void Tran_test_ope()
+    public void Mult_tran_tran()
     {
         float[] ma = { 1, 2, 3, 1, 1, 1, 4, 1, 2, 4, 7, 4, 0, -3, 3, -1 };
         float[] inv_a = { -18, 29, -5, -9, 5, -7, 1, 2, 4, -6, 1, 2, -3, 3, 0, -1 };
@@ -135,18 +150,18 @@ public class TransformationTest
     }
 
     [Test]
-    public void Test_point_tran()
+    public void Mult_point_tran()
     {
         float[] matr = { 1.0f, 0, 0, 2.0f, 0, 1f, 0, 3.0f, 0, 0, 1, 4.0f, 0, 0, 0, 1 };
         float[] matr1 = { 1, 0, 0, -2.0f, 0, 1f, 0, -3.0f, 0, 0, 1, -4.0f, 0, 0, 0, 1 };
         Tran T = new Tran(matr, matr1);
         Point p = new Point(1.0f, 2.0f, 3.0f);
         Point r = T * p;
-        Assert.True(Point.AreClose(r, new Point(3.0f, 5.0f,7.0f)));
+        Assert.True(Point.are_close(r, new Point(3.0f, 5.0f,7.0f)));
     }
 
     [Test]
-    public void Test_vec_tran()
+    public void Mult_vec_tran()
     {
         Vec v = new Vec(1.0f, 2.0f, 3.0f);
         float[] matr = { 1.0f, 0, 0, 2.0f, 0, 5f, 0, 3.0f, 0, 0, 2, 4.0f, 0, 0, 0, 1 };
@@ -154,6 +169,17 @@ public class TransformationTest
         Tran T = new Tran(matr, matr1);
         Vec w = T * v;
         Assert.True(Vec.are_close(w,new Vec(1.0f,10.0f,6.0f)));
+    }
+
+    [Test]
+    public void Mult_nor_tran()
+    {
+        float[] matr = { 1.0f, 0, 0, 2.0f, 0, 5f, 0, 3.0f, 0, 0, 2, 4.0f, 0, 0, 0, 1 };
+        float[] matr1 = { 1, 0, 0, -2.0f, 0, 1/5f, 0, -3/5f, 0, 0, 0.5f, -2.0f, 0, 0, 0, 1 };
+        Tran T = new Tran(matr, matr1);
+        Normal n = new Normal(0.4f, 1.3f, 0.7f);
+        Normal r = T * n;
+        Assert.True(Normal.are_close(r, new Normal(0.4f, (float)1.3/5,0.35f)));
     }
 }
 

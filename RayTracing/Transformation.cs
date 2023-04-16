@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using SixLabors.ImageSharp.Metadata.Profiles.Exif;
 
 namespace RayTracing;
 
@@ -210,7 +211,13 @@ public static Vec Translation_Vec(Tran T, Vec v)
         float[] inv = {(float)Math.Cos(rad), (float)Math.Sin(rad), 0,0, -(float)Math.Sin(rad), (float)Math.Cos(rad), 0,0,0,0, 1,0,0,0,0,1};
         return new Tran(mat, inv);
     }
-
+    
+    /// <summary>
+    /// Operator multiplication between two transformations
+    /// </summary>
+    /// <param name="A">first transformation</param>
+    /// <param name="B">second transformation</param>
+    /// <returns>transformation</returns>
     public static Tran operator *(Tran A, Tran B)
     {
         float[] c1 = new float[16];
@@ -222,6 +229,12 @@ public static Vec Translation_Vec(Tran T, Vec v)
         return C;
     }
 
+    /// <summary>
+    /// Operator multiplication between a transformation and a point
+    /// </summary>
+    /// <param name="t">transformation on the left</param>
+    /// <param name="p">point on the right</param>
+    /// <returns>point</returns>
     public static Point operator *(Tran t, Point p)
     {
         Point r = new Point
@@ -242,6 +255,12 @@ public static Vec Translation_Vec(Tran T, Vec v)
 
     }
 
+    /// <summary>
+    /// Operator multiplication between a transformation and a vector
+    /// </summary>
+    /// <param name="t">transformation</param>
+    /// <param name="v">vector</param>
+    /// <returns>vector</returns>
     public static Vec operator *(Tran t, Vec v)
     {
         Vec r = new Vec
@@ -251,9 +270,29 @@ public static Vec Translation_Vec(Tran T, Vec v)
             Z = t.m[8] * v.X + t.m[9] * v.Y + t.m[10] * v.Z
         };
         float w = t.m[12] * v.X + t.m[13] * v.Y + t.m[14] * v.Z;
-        
-
+        if (w != 0)
+        {
+            throw new Exception("Error: the fourth element must be equal to zero");
+        }
         return r;
     }
+
+    /// <summary>
+    /// Operator multiplication between a transformation and a vector
+    /// </summary>
+    /// <param name="t"></param>
+    /// <param name="n"></param>
+    /// <returns></returns>
+    public static Normal operator *(Tran t, Normal n)
+    {
+        Normal r = new Normal()
+        {
+            x = t.minv[0] * n.x + t.minv[4] * n.y + t.minv[8] * n.z,
+            y = t.minv[1] * n.x + t.minv[5] * n.y + t.minv[9] * n.z,
+            z = t.minv[2] * n.x + t.minv[6] * n.y + t.minv[10] * n.z
+        };
+        return r;
+    }
+    
 
 }
