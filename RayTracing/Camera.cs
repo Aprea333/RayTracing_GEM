@@ -1,6 +1,6 @@
 ﻿namespace RayTracing;
 
-public class Camera
+interface camera
 {
-    
+    void fire_ray(float u, float v);
 }
