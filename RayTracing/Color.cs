@@ -19,8 +19,9 @@ public class Colore
         g_c = g;
         b_c = b;
     }
+    
 /// <summary>
-/// Function that makes the sum of two colors
+/// Function that sums two colors
 /// </summary>
 /// <param name="a"></param>
 /// <param name="b"></param>
@@ -34,7 +35,7 @@ public class Colore
         return c;
     }
 /// <summary>
-/// function that returns the product between a scalar and a color
+/// Function that returns the product between a scalar and a color
 /// </summary>
 /// <param name="cc"></param>
 /// <param name="alpha"></param>
@@ -86,15 +87,16 @@ public class Colore
 /// <returns></returns>
     public static bool AreClose(Colore colore1, Colore colore2)
     {
-        double epsilon = 1e-5;
-        float diffRed = colore1.r_c - colore2.r_c;
-        float diffGreen = colore1.g_c - colore2.g_c;
-        float diffBlue = colore1.b_c - colore2.b_c;
-        return Math.Sqrt(diffRed * diffRed + diffGreen * diffGreen + diffBlue * diffBlue) < epsilon;
+             double epsilon = 1e-5;
+             float diffRed = colore1.r_c - colore2.r_c;
+             float diffGreen = colore1.g_c - colore2.g_c;
+             float diffBlue = colore1.b_c - colore2.b_c;
+             return Math.Sqrt(diffRed * diffRed + diffGreen * diffGreen + diffBlue * diffBlue) < epsilon;
+       
     }
 
     /// <summary>
-    /// Luminosità
+    /// Function that returns the luminosity of a pixel
     /// </summary>
     /// <returns></returns>
     public float Luminosity()

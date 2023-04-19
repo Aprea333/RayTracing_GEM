@@ -74,6 +74,7 @@ public class HDRTests
         Assert.Throws<InvalidPfmFileFormatException>(() => HDR.parse_endianness_isLittle("0"));
 
     }
+    
 /*
     [Test]
     public void read_pfm_image()
@@ -99,8 +100,9 @@ public class HDRTests
             Assert.True(image.hdr_image.Capacity == 6);
         }
 
-    }
-*/
+    }*/
+
+
     [Test]
     public void read_pfm_image2()
     {
