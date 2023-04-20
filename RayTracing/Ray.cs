@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using SixLabors.ImageSharp.Formats.Png;
 
 namespace RayTracing;
@@ -32,9 +33,14 @@ public struct Ray
 
       }
 
-    public Point At(float t)
+    public Point At (float t)
     {
-        return Origin + Dir * t;
+        return Origin + (Dir * t);
     }
-    
+
+    public static Ray Transform(Tran T, Ray r1)
+    {
+        return new Ray(T * r1.Origin, T * r1.Dir, r1.Tmin, r1.Tmax, r1.Depth);
+        
+    }
 }
