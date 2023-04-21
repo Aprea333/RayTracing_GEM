@@ -10,6 +10,11 @@ public class Tran
     public float [] m;
     public float[] minv;
 
+    public Tran()
+    {
+        m = new float[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+        minv = new float[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+    }
     
     /// <summary>
     /// Constructor for m and minv
