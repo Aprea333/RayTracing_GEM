@@ -10,6 +10,11 @@ public class Tran
     public float [] m;
     public float[] minv;
 
+    public Tran()
+    {
+        m = new float[16];
+        minv = new float[16];
+    }
     
     /// <summary>
     /// Constructor for m and minv
