@@ -12,8 +12,13 @@ public class Tran
 
     public Tran()
     {
+
         m = new float[16];
         minv = new float[16];
+
+        m = new float[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+        minv = new float[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+
     }
     
     /// <summary>
