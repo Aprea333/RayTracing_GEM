@@ -8,5 +8,5 @@ public abstract class Shape
         transformation = tr;
     }
 
-    public abstract HitRecord ray_intersection(Ray r);
+    public abstract HitRecord? ray_intersection(Ray r);
 }
