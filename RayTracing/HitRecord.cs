@@ -4,9 +4,9 @@ namespace RayTracing;
 
 public struct HitRecord
 {
-    public Point world_point;
-    public Normal normal;
-    public Vector2 surface_point;
-    public float t;
-    public Ray ray;
+    public Point world_point { get; set; }
+    public Normal normal { get; set; }
+    public Vector2 surface_point { get; set; }
+    public float t { get; set; }
+    public Ray ray { get; set; }
 }

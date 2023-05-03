@@ -303,6 +303,11 @@ public static Vec Translation_Vec(Tran T, Vec v)
         };
         return r;
     }
+
+    public static Tran inverse(Tran t)
+    {
+        return new Tran(t.minv, t.m);
+    }
     
 
 }
