@@ -59,5 +59,12 @@ public class VectorTests
         Assert.True(Math.Abs(n.squared_norm() - 1) < 0.0001);
     }
 
-    
+    [Test]
+    public void test_vec2d()
+    {
+        Vec2D v = new Vec2D(2.0f, 3.0f);
+        Vec2D w = new Vec2D();
+        Assert.True(Vec2D.are_close(v, new Vec2D(2.0f,3.0f)), "Test constructor");
+        Assert.True(Vec2D.are_close(w, new Vec2D(0.0f, 0.0f)), "Test null constructor");
+    }
 }

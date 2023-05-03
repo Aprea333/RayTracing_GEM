@@ -173,3 +173,26 @@ public struct Vec
     }
 }
 
+public struct Vec2D
+{
+    //First component
+    public float u = 0.0f;
+    
+    //Second component
+    public float v = 0.0f;
+
+    public Vec2D(float u, float v)
+    {
+        this.u = u;
+        this.v = v;
+    }
+
+    public static bool are_close(Vec2D a, Vec2D b)
+    {
+        float eps = 1e-5f;
+        float diff_u = Math.Abs(a.u - b.u);
+        float diff_v = Math.Abs(a.v - b.v);
+        return diff_u < eps && diff_v < eps;
+    }
+}
+
