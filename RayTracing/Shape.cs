@@ -2,10 +2,18 @@
 
 public abstract class Shape
 {
-    public Tran transformation;
-    public Shape(Tran tr)
+    public Tran tr;
+    public Shape(Tran? Tr)
     {
-        transformation = tr;
+        if (Tr != null)
+        {
+            tr= Tr;
+        }
+        else
+        {
+            tr = new Tran();
+        }
+        
     }
 
     public abstract HitRecord? ray_intersection(Ray r);

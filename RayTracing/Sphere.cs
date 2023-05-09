@@ -5,14 +5,13 @@ namespace RayTracing;
 
 public class Sphere:Shape
 {
-    public Sphere(Tran tr) : base(tr)
+    public Sphere(Tran? tr = null) : base(tr)
     {
     }
 
     public override HitRecord? ray_intersection(Ray r)
     {
-        //throw new NotImplementedException();
-        Ray inv_ray = Ray.Transform(Tran.inverse(transformation), r);
+        Ray inv_ray = Ray.Transform(tr.inverse(), r);
         Vec O = inv_ray.Origin.Convert();
         float b = O * inv_ray.Dir;
         float a = inv_ray.Dir.squared_norm();
@@ -36,13 +35,8 @@ public class Sphere:Shape
         else return null;
 
         Point hit_point = inv_ray.At(hit_t);
-        HitRecord result = new HitRecord();
-        result.world_point = transformation * hit_point;
-        result.normal = transformation * sphere_normal(hit_point, r.Dir);
-        result.surface_point = sphere_point_to_uv(hit_point);
-        result.t = hit_t;
-        result.ray = r;
-        return result;
+        return new HitRecord(tr * hit_point, tr * sphere_normal(hit_point, r.Dir),
+            sphere_point_to_uv(hit_point),hit_t, r);
     }
 
     public Normal sphere_normal(Point p, Vec dir)
@@ -52,10 +46,10 @@ public class Sphere:Shape
         return result;
     }
 
-    public Vector2 sphere_point_to_uv(Point p)
+    public Vec2D sphere_point_to_uv(Point p)
     {
         float u = (float)(Single.Atan2(p.Y, p.X)/(2*Math.PI));
         float v = (float)(Single.Acos(p.Z)/Math.PI);
-        return new Vector2(u, v);
+        return new Vec2D(u, v);
     }
 }

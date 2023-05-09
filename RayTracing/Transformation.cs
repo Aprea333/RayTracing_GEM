@@ -304,9 +304,9 @@ public static Vec Translation_Vec(Tran T, Vec v)
         return r;
     }
 
-    public static Tran inverse(Tran t)
+    public Tran inverse()
     {
-        return new Tran(t.minv, t.m);
+        return new Tran(this.minv, this.m);
     }
     
 
