@@ -74,25 +74,26 @@ public class Program
             camera cam = new PerspectiveCamera();
         }
     }
+    
     [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
     {
         [Option("factor", Default = 0.2f, HelpText = "Multiplicative factor")]
         public float Factor { get; set; }
+        
         [Option("gamma", Default = 1.0f, HelpText = "value to be used for gamma correction")]
         public float Gamma { get; set; }
-        [Option("input", HelpText = "Name of input file")]
+        
+        [Option("input_file", Required = true, HelpText = "path + input file name + .pfm")]
         public string input { get; set; }
-        [Option("output", HelpText = "Name of output file")]
+        
+        [Option("output_file", Default = "image.png", HelpText = "path + output file name + .png")]
         public string output { get; set; }
     }
     
     static void RunOptionPfm(pfm2png_option opts)
     {
         HDR img = new HDR();
-        
-        Console.WriteLine($"\nFactor: {opts.Factor}" );
-        Console.WriteLine($"\nGamma: {opts.Gamma}" );
 
         using (FileStream in_pfm = File.Open(opts.input, FileMode.Open))
         {
@@ -111,18 +112,24 @@ public class Program
         out_png.Close();
         
     }
-
     
     static void HandleError(IEnumerable<Error> errors)
     {
+        Console.WriteLine("culo");
+        var sentenceBuilder = SentenceBuilder.Create();
+        foreach (var error in errors)
+            Console.WriteLine(sentenceBuilder.FormatError(error));
     }
-    
+
     static void Main(string[] args)
     {
-        CommandLine.Parser.Default.ParseArguments<pfm2png_option>(args)
-            .WithParsed<pfm2png_option>(RunOptionPfm)
-
-            .WithNotParsed(HandleError);
+        var result = CommandLine.Parser.Default.ParseArguments<pfm2png_option>(args);
+        result.WithParsed<pfm2png_option>(RunOptionPfm);
+        result.WithNotParsed(errors => {
+            var sentenceBuilder = SentenceBuilder.Create();
+            foreach (var error in errors)
+                Console.WriteLine(sentenceBuilder.FormatError(error));
+        });
     }
 }
 
