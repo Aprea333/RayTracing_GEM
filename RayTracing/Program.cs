@@ -50,30 +50,59 @@ main(args);
 public class Program
 {
 
-    [Verb("demo", HelpText = "Demo")]
+    [Verb( "demo", HelpText = "Demo")]
     class demo_option
     {
         [Option("width", Default = 640, HelpText = "Width of the image to render")]
             public int Width { get; set; }
+            
         [Option("heigh", Default = 480, HelpText = "Height of the image to render")]
             public int Height { get; set; }
-        [Option("angle_deg", Default = 0.0, HelpText = "Angle of view")]
+            
+        [Option("angle_deg", Default = 0.0f, HelpText = "Angle of view")]
             public float Angle { get; set; }
+            
         [Option("camera", Default = "perspective", HelpText = "Type of camera")]
             public string Camera { get; set; }
     }
 
     static void RunOptionDemo(demo_option opts)
     {
+        HDR image = new HDR(opts.Width, opts.Height);
+        ImageTracer imageTracer;
         if (opts.Camera != "perspective")
         {
-            camera cam = new Orthogonal_Camera(aspect_ratio:opts.Width/opts.Height);
+            imageTracer = new ImageTracer(image,
+                new Orthogonal_Camera(aspect_ratio: opts.Width / opts.Height));
         }
         else
         {
-            camera cam = new PerspectiveCamera();
+            imageTracer = new ImageTracer(image,
+                new PerspectiveCamera());
         }
+
+        World world = new World();
+        Sphere s = new Sphere(Tran.Translation_matr(new Vec(0.5f, 0.5f, 0.5f)));
+        world.add(s);
+
+        for (int i = 0; i < opts.Width; i++)
+        {
+            for (int j = 0; j < opts.Height; j++)
+            {
+                if (world.ray_intersection(imageTracer.fire_ray(i, j)) != null)
+                {
+                    imageTracer.Image.set_pixel(new Colore(100.0f, 100.0f, 100.0f), i,j);
+                }
+                else
+                {
+                    imageTracer.Image.set_pixel(new Colore(0.0f, 0.0f, 0.0f), i,j);
+                }
+            }
+        }
+        Stream file_out = File.Open(@"C:\Users\Utente\Desktop\RayTracing_GEM\image.png", FileMode.Open, FileAccess.Write, FileShare.None);
+        imageTracer.Image.write_pfm(file_out, true);
     }
+    
     
     [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
@@ -122,8 +151,9 @@ public class Program
 
     static void Main(string[] args)
     {
-        var result = CommandLine.Parser.Default.ParseArguments<pfm2png_option>(args);
+        var result = CommandLine.Parser.Default.ParseArguments<pfm2png_option, demo_option>(args);
         result.WithParsed<pfm2png_option>(RunOptionPfm);
+        result.WithParsed<demo_option>(RunOptionDemo);
         result.WithNotParsed(errors => {
             var sentenceBuilder = SentenceBuilder.Create();
             foreach (var error in errors)
