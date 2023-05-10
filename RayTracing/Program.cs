@@ -46,9 +46,9 @@ public class Program
     [Verb("pfm2png", HelpText = "Add file contents to the index.")]
     class Options
     {
-        [Option("--factor", Default = 0.2f, HelpText = "multiplicative factor")]
+        [Option("factor", Default = 0.2f, HelpText = "multiplicative factor")]
         public float Factor { get; set; }
-        [Option("--gamma", Default = 1.0f, HelpText = "value to be used for gamma correction")]
+        [Option("gamma", Default = 1.0f, HelpText = "value to be used for gamma correction")]
         public float Gamma { get; set; }
         [Option("Input name", HelpText = "name of file to read")]
         public string Input { get; set; }
@@ -56,48 +56,37 @@ public class Program
         public string Output { get; set; }
     }
 
-    [Verb("add", HelpText = "Add file contents to the index.")]
-    class AddOptions {
-        [Option("stdin",
-            Default = false,
-            HelpText = "Read from stdin")]
-        public bool stdin { get; set; }
-    }
-    [Verb("commit", HelpText = "Record changes to the repository.")]
-    class CommitOptions {
-        //commit options here
-    }
-    [Verb("clone", HelpText = "Clone a repository into a new directory.")]
-    class CloneOptions {
-        //clone options here
-    }
-    static void RunAddAndReturnExitCode(AddOptions opts)
+    static void RunoptionPfm(Options opts)
     {
-        if (opts.stdin)
+        Console.WriteLine(opts.Factor);
+        HDR img = new HDR();
+        
+        using (FileStream in_pfm = File.Open(opts.Input, FileMode.Open))
         {
-            Console.WriteLine("Culo");
+            img.read_pfm_image(in_pfm);
         }
-    }
-    
-    static void RunCommitAndReturnExitCode(CommitOptions opts)
-    {
-        //handle options
-    }
-    
-    static void RunCloneAndReturnExitCode(CloneOptions opts)
-    {
-        //handle options
-    }
 
+        Console.WriteLine($"File {opts.Input} has been read from disk");
+
+        img.NormalizeImage(opts.Factor);
+        img.clamp_image();
+
+        File.CreateText(opts.Output).Close();
+        Stream out_png = File.Open(opts.Output, FileMode.Open, FileAccess.Write, FileShare.None);
+        img.write_ldr_image(out_png, ".png", opts.Gamma);
+        Console.WriteLine($"File {opts.Output} has been written to disk");
+        out_png.Close();
+        
+    }
+    
+    
     static void HandleError(IEnumerable<Error> errors)
     {
     }
     static void Main(string[] args)
     {
-        CommandLine.Parser.Default.ParseArguments<AddOptions, CommitOptions, CloneOptions>(args)
-            .WithParsed<AddOptions>(RunAddAndReturnExitCode)
-            .WithParsed<CommitOptions>(RunCommitAndReturnExitCode)
-            .WithParsed<CloneOptions>(RunCloneAndReturnExitCode)
+        CommandLine.Parser.Default.ParseArguments<Options>(args)
+            .WithParsed<Options>( RunoptionPfm)
             .WithNotParsed(HandleError);
     }
 }
