@@ -6,53 +6,16 @@ using RayTracing;
 using SixLabors.ImageSharp.Formats.Png;
 using CommandLine;
 
-
-/*
-
-class Program
-{
-    static void main(string[] args)
-    {
-        Parameters param = new Parameters();
-        HDR img = new HDR();
-        try
-        {
-            param.parse_command(args);
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Error: ", e);
-        }
-
-        using (FileStream in_pfm = File.Open(param.input_pfm_file_name, FileMode.Open))
-        {
-            img.read_pfm_image(in_pfm);
-        }
-
-        Console.WriteLine($"File {param.input_pfm_file_name} has been read from disk");
-        
-        img.NormalizeImage(param.factor);
-        img.clamp_image();
-    
-        File.CreateText(param.output_png_file_name).Close();
-        Stream out_png = File.Open(param.output_png_file_name, FileMode.Open, FileAccess.Write, FileShare.None);
-        img.write_ldr_image(out_png, ".png", param.gamma);
-        Console.WriteLine($"File {param.output_png_file_name} has been written to disk");
-        out_png.Close();
-    
-    
-    }
-}
-
-main(args);
-*/
-
 public class Program
 {
-
     [Verb("demo", HelpText = "Demo")]
-    class demo_option
+    class DemoOption
     {
+        public DemoOption(string camera)
+        {
+            Camera = camera;
+        }
+
         [Option("width", Default = 640, HelpText = "Width of the image to render")]
             public int Width { get; set; }
         [Option("heigh", Default = 480, HelpText = "Height of the image to render")]
@@ -63,17 +26,12 @@ public class Program
             public string Camera { get; set; }
     }
 
-    static void RunOptionDemo(demo_option opts)
+    static void RunDemo(DemoOption opts)
     {
-        if (opts.Camera != "perspective")
-        {
-            camera cam = new Orthogonal_Camera(aspect_ratio:opts.Width/opts.Height);
-        }
-        else
-        {
-            camera cam = new PerspectiveCamera();
-        }
+        
+        
     }
+
     [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
     {
@@ -117,8 +75,9 @@ public class Program
     
     static void Main(string[] args)
     {
-        CommandLine.Parser.Default.ParseArguments<pfm2png_option>(args)
+        CommandLine.Parser.Default.ParseArguments<pfm2png_option,DemoOption>(args)
             .WithParsed<pfm2png_option>(RunOptionPfm)
+            .WithParsed<DemoOption>(RunDemo)
 
             .WithNotParsed(HandleError);
     }
