@@ -53,11 +53,7 @@ public class Program
 
     [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
-
     {
-        
-        
-
         [Option("factor", Default = 0.2f, HelpText = "Multiplicative factor")]
         public float Factor { get; set; }
         [Option("gamma", Default = 1.0f, HelpText = "value to be used for gamma correction")]
@@ -66,7 +62,6 @@ public class Program
         public string input { get; set; }
         [Option("output", HelpText = "Name of output file")]
         public string output { get; set; }
-      
     }
     
     static void RunOptionPfm(pfm2png_option opts)
@@ -95,8 +90,7 @@ public class Program
         
     }
 
-
-
+    
     static void HandleError(IEnumerable<Error> errors)
     {
     }
