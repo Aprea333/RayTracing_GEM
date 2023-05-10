@@ -49,8 +49,31 @@ main(args);
 
 public class Program
 {
-    
 
+    [Verb("demo", HelpText = "Demo")]
+    class demo_option
+    {
+        [Option("width", Default = 640, HelpText = "Width of the image to render")]
+            public int Width { get; set; }
+        [Option("heigh", Default = 480, HelpText = "Height of the image to render")]
+            public int Height { get; set; }
+        [Option("angle_deg", Default = 0.0, HelpText = "Angle of view")]
+            public float Angle { get; set; }
+        [Option("camera", Default = "perspective", HelpText = "Type of camera")]
+            public string Camera { get; set; }
+    }
+
+    static void RunOptionDemo(demo_option opts)
+    {
+        if (opts.Camera != "perspective")
+        {
+            camera cam = new Orthogonal_Camera(aspect_ratio:opts.Width/opts.Height);
+        }
+        else
+        {
+            camera cam = new PerspectiveCamera();
+        }
+    }
     [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
     {
@@ -66,7 +89,6 @@ public class Program
     
     static void RunOptionPfm(pfm2png_option opts)
     {
-        
         HDR img = new HDR();
         
         Console.WriteLine($"\nFactor: {opts.Factor}" );
