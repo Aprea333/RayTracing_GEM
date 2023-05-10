@@ -4,27 +4,19 @@ using CommandLine;
 using CommandLine.Text;
 using RayTracing;
 using SixLabors.ImageSharp.Formats.Png;
+using CommandLine;
 
 
-[Verb("pfm2png", HelpText = "")]
-class pfm2png
-{
-    [Option("factor", Default = 0.2f, HelpText = "Multiplicative factor")]
-        public float Factor { get; set; }
-    [Option("gamma", Default = 1.0f, HelpText = "Value to  be used for gamma correction")]
-        public float Gamma { get; set; }
-    [Option("input", HelpText = "Name of input file")]
-        public string input { get; set; }
-    [Option("output", HelpText = "Name of output file")]
-        public string output { get; set; }
-}
+
+
+
 
 [Verb("demo", HelpText = "demo??")]
 class demo
 {
     
 }
-
+/*
 
 class Program
 {
@@ -61,7 +53,93 @@ class Program
     }
 }
 
+main(args);
+*/
 
+public class Program
+{
+    
+    [Verb("pfm2png", HelpText = "Pfm image")]
+    class pfm2png_option
 
+    {
+        [Option("factor", Default = 0.2f, HelpText = "Multiplicative factor")]
+        public float Factor { get; set; }
+        [Option("gamma", Default = 1.0f, HelpText = "Value to  be used for gamma correction")]
+        public float Gamma { get; set; }
+        [Option("input", HelpText = "Name of input file")]
+        public string input { get; set; }
+        [Option("output", HelpText = "Name of output file")]
+        public string output { get; set; }
+      
+    }
 
-//main(args);
+    static void RunOptionPfm(pfm2png_option opts)
+    {
+        
+        HDR img = new HDR();
+        
+        using (FileStream in_pfm = File.Open(opts.input, FileMode.Open))
+        {
+            img.read_pfm_image(in_pfm);
+        }
+
+        Console.WriteLine($"File {opts.input} has been read from disk");
+        
+        img.NormalizeImage(opts.Factor);
+        img.clamp_image();
+    
+        File.CreateText(opts.output).Close();
+        Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
+        img.write_ldr_image(out_png, ".png", opts.Gamma);
+        Console.WriteLine($"File {opts.output} has been written to disk");
+        out_png.Close();
+    }
+    
+    [Verb("add", HelpText = "Add file contents to the index.")]
+    class AddOptions {
+        [Option("stdin",
+            Default = false,
+            HelpText = "Read from stdin")]
+        public bool stdin { get; set; }
+    }
+    [Verb("commit", HelpText = "Record changes to the repository.")]
+    class CommitOptions {
+        //commit options here
+    }
+    [Verb("clone", HelpText = "Clone a repository into a new directory.")]
+    class CloneOptions {
+        //clone options here
+    }
+    static void RunAddAndReturnExitCode(AddOptions opts)
+    {
+        if (opts.stdin)
+        {
+            Console.WriteLine("Prova");
+        }
+    }
+    
+    static void RunCommitAndReturnExitCode(CommitOptions opts)
+    {
+        //handle options
+    }
+    
+    static void RunCloneAndReturnExitCode(CloneOptions opts)
+    {
+        //handle options
+    }
+
+    static void HandleError(IEnumerable<Error> errors)
+    {
+    }
+    
+    static void Main(string[] args)
+    {
+        CommandLine.Parser.Default.ParseArguments<AddOptions, CommitOptions, CloneOptions>(args)
+            .WithParsed<AddOptions>(RunAddAndReturnExitCode)
+            .WithParsed<CommitOptions>(RunCommitAndReturnExitCode)
+            .WithParsed<CloneOptions>(RunCloneAndReturnExitCode)
+            .WithNotParsed(HandleError);
+    }
+}
+
