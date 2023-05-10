@@ -7,15 +7,6 @@ using SixLabors.ImageSharp.Formats.Png;
 using CommandLine;
 
 
-
-
-
-
-[Verb("demo", HelpText = "demo??")]
-class demo
-{
-    
-}
 /*
 
 class Program
@@ -59,6 +50,7 @@ main(args);
 public class Program
 {
     
+
     [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
 
@@ -79,6 +71,9 @@ public class Program
         
         HDR img = new HDR();
         
+        Console.WriteLine($"\nFactor: {opts.Factor}" );
+        Console.WriteLine($"\nGamma: {opts.Gamma}" );
+
         using (FileStream in_pfm = File.Open(opts.input, FileMode.Open))
         {
             img.read_pfm_image(in_pfm);
@@ -94,40 +89,9 @@ public class Program
         img.write_ldr_image(out_png, ".png", opts.Gamma);
         Console.WriteLine($"File {opts.output} has been written to disk");
         out_png.Close();
+        
     }
-    
-    [Verb("add", HelpText = "Add file contents to the index.")]
-    class AddOptions {
-        [Option("stdin",
-            Default = false,
-            HelpText = "Read from stdin")]
-        public bool stdin { get; set; }
-    }
-    [Verb("commit", HelpText = "Record changes to the repository.")]
-    class CommitOptions {
-        //commit options here
-    }
-    [Verb("clone", HelpText = "Clone a repository into a new directory.")]
-    class CloneOptions {
-        //clone options here
-    }
-    static void RunAddAndReturnExitCode(AddOptions opts)
-    {
-        if (opts.stdin)
-        {
-            Console.WriteLine("Prova");
-        }
-    }
-    
-    static void RunCommitAndReturnExitCode(CommitOptions opts)
-    {
-        //handle options
-    }
-    
-    static void RunCloneAndReturnExitCode(CloneOptions opts)
-    {
-        //handle options
-    }
+
 
     static void HandleError(IEnumerable<Error> errors)
     {
@@ -135,10 +99,8 @@ public class Program
     
     static void Main(string[] args)
     {
-        CommandLine.Parser.Default.ParseArguments<AddOptions, CommitOptions, CloneOptions>(args)
-            .WithParsed<AddOptions>(RunAddAndReturnExitCode)
-            .WithParsed<CommitOptions>(RunCommitAndReturnExitCode)
-            .WithParsed<CloneOptions>(RunCloneAndReturnExitCode)
+        CommandLine.Parser.Default.ParseArguments<pfm2png_option>(args)
+            .WithParsed<pfm2png_option>(RunOptionPfm)
             .WithNotParsed(HandleError);
     }
 }
