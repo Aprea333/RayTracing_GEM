@@ -89,18 +89,23 @@ public class Program
         {
             for (int j = 0; j < opts.Height; j++)
             {
+                //imageTracer.Image.set_pixel(new Colore(100.0f, 100.0f, 100.0f), i,j);
                 if (world.ray_intersection(imageTracer.fire_ray(i, j)) != null)
                 {
                     imageTracer.Image.set_pixel(new Colore(100.0f, 100.0f, 100.0f), i,j);
+                    Console.WriteLine("Intersezione!");
                 }
                 else
                 {
-                    imageTracer.Image.set_pixel(new Colore(0.0f, 0.0f, 0.0f), i,j);
+                    imageTracer.Image.set_pixel(new Colore(1.0f, 1.0f, 1.0f), i,j);
                 }
+                
             }
         }
-        Stream file_out = File.Open(@"C:\Users\Utente\Desktop\RayTracing_GEM\image.png", FileMode.Open, FileAccess.Write, FileShare.None);
+        File.CreateText(@"C:\Users\Utente\Desktop\RayTracing_GEM\image.pfm").Close();
+        Stream file_out = File.Open(@"C:\Users\Utente\Desktop\RayTracing_GEM\image.pfm", FileMode.Open, FileAccess.Write, FileShare.None);
         imageTracer.Image.write_pfm(file_out, true);
+        file_out.Close();
     }
     
     

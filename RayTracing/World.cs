@@ -2,7 +2,7 @@
 
 public class World
 {
-    public Shape[] sh;
+    public Shape[] sh = new Shape[]{};
 
     public void add(Shape s)
     {
