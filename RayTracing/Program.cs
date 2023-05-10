@@ -115,7 +115,6 @@ public class Program
     
     static void HandleError(IEnumerable<Error> errors)
     {
-        Console.WriteLine("culo");
         var sentenceBuilder = SentenceBuilder.Create();
         foreach (var error in errors)
             Console.WriteLine(sentenceBuilder.FormatError(error));
