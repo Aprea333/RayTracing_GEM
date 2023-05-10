@@ -10,6 +10,16 @@ public class Tran
     public float [] m;
     public float[] minv;
 
+    public Tran()
+    {
+
+        m = new float[16];
+        minv = new float[16];
+
+        m = new float[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+        minv = new float[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+
+    }
     
     /// <summary>
     /// Constructor for m and minv
@@ -292,6 +302,11 @@ public static Vec Translation_Vec(Tran T, Vec v)
             z = t.minv[2] * n.x + t.minv[6] * n.y + t.minv[10] * n.z
         };
         return r;
+    }
+
+    public Tran inverse()
+    {
+        return new Tran(this.minv, this.m);
     }
     
 
