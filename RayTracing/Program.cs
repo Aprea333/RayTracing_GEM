@@ -2,7 +2,9 @@ using System.IO.Compression;
 using System.Runtime.InteropServices;
 using RayTracing;
 using SixLabors.ImageSharp.Formats.Png;
+using CommandLine;
 
+/*
 void main(string[] args)
 {
     Parameters param = new Parameters();
@@ -34,3 +36,53 @@ void main(string[] args)
 }
 
 main(args);
+*/
+
+public class Program
+{
+    
+    [Verb("add", HelpText = "Add file contents to the index.")]
+    class AddOptions {
+        [Option("stdin",
+            Default = false,
+            HelpText = "Read from stdin")]
+        public bool stdin { get; set; }
+    }
+    [Verb("commit", HelpText = "Record changes to the repository.")]
+    class CommitOptions {
+        //commit options here
+    }
+    [Verb("clone", HelpText = "Clone a repository into a new directory.")]
+    class CloneOptions {
+        //clone options here
+    }
+    static void RunAddAndReturnExitCode(AddOptions opts)
+    {
+        if (opts.stdin)
+        {
+            Console.WriteLine("Culo");
+        }
+    }
+    
+    static void RunCommitAndReturnExitCode(CommitOptions opts)
+    {
+        //handle options
+    }
+    
+    static void RunCloneAndReturnExitCode(CloneOptions opts)
+    {
+        //handle options
+    }
+
+    static void HandleError(IEnumerable<Error> errors)
+    {
+    }
+    static void Main(string[] args)
+    {
+        CommandLine.Parser.Default.ParseArguments<AddOptions, CommitOptions, CloneOptions>(args)
+            .WithParsed<AddOptions>(RunAddAndReturnExitCode)
+            .WithParsed<CommitOptions>(RunCommitAndReturnExitCode)
+            .WithParsed<CloneOptions>(RunCloneAndReturnExitCode)
+            .WithNotParsed(HandleError);
+    }
+}
