@@ -1,17 +1,14 @@
-using System.Diagnostics;
-using System.IO.Compression;
-using System.Runtime.InteropServices;
+using System.Net;
 using CommandLine;
 using CommandLine.Text;
-using RayTracing;
-using SixLabors.ImageSharp.Formats.Png;
-using CommandLine;
 
-public class Program
+namespace RayTracing;
+
+public static class Program
 {
 
     [Verb("demo", HelpText = "Demo")]
-    class DemoOption
+    private class DemoOption
     {
         public DemoOption(string camera)
         {
@@ -28,13 +25,13 @@ public class Program
         public float Angle { get; set; }
 
         [Option("camera", Default = "perspective", HelpText = "Type of camera")]
-        public string Camera { get; set; }
+        public string Camera { get; }
     }
 
     static void RunDemo(DemoOption opts)
     {
         HDR image = new HDR(opts.Width, opts.Height);
-        World world = new World();
+       
         Sphere sphere = new Sphere();
 
 
@@ -50,8 +47,8 @@ public class Program
                 new PerspectiveCamera());
         }
 
-        world = new World();
-        Sphere s = new Sphere(Tran.Translation_matr(new Vec(0.5f, 0.5f, 0.5f)));
+        var world = new World();
+        var s = new Sphere(Tran.Translation_matr(new Vec(0.5f, 0.5f, 0.5f)));
         world.add(s);
 
         for (int i = 0; i < opts.Width; i++)
@@ -66,14 +63,14 @@ public class Program
                 }
                 else
                 {
-                    imageTracer.Image.set_pixel(new Colore(1.0f, 1.0f, 1.0f), i, j);
+                    imageTracer.Image.set_pixel(new Colore(0.0f, 0.0f, 0.0f), i, j);
                 }
 
             }
         }
 
-        File.CreateText(@"C:\Users\Utente\Desktop\RayTracing_GEM\image.pfm").Close();
-        Stream file_out = File.Open(@"C:\Users\Utente\Desktop\RayTracing_GEM\image.pfm", FileMode.Open,
+        File.CreateText(@"C:\Users\Utente\Desktop\RayTracing_GEM\Image.pfm").Close();
+        Stream file_out = File.Open(@"C:\Users\Utente\Desktop\RayTracing_GEM\Image.pfm", FileMode.Open,
             FileAccess.Write, FileShare.None);
         imageTracer.Image.write_pfm(file_out, true);
         file_out.Close();
@@ -89,10 +86,10 @@ public class Program
         public float Gamma { get; set; }
 
         [Option("input_file", Required = true, HelpText = "path + input file name + .pfm")]
-        public string input { get; set; }
+        public string input { get; set; } = null!;
 
         [Option("output_file", Default = "image.png", HelpText = "path + output file name + .png")]
-        public string output { get; set; }
+        public string output { get; set; } = null!;
     }
 
     static void RunOptionPfm(pfm2png_option opts)
@@ -145,5 +142,3 @@ public class Program
 
     }
 }
-
-
