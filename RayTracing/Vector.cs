@@ -36,7 +36,7 @@ public struct Vec
     /// Convert Vec to String
     /// </summary>
     /// <returns></returns>
-    public string ToString()
+    public override string ToString()
     {
         return "Vec(x=" + X + ", y=" + Y + ", z=" + Z + ")";
     }

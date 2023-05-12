@@ -75,7 +75,7 @@ public class TransformationTest
     public void scale_test()
 {
    
-        Tran tr1 = tr.scale_matrix(3, 4, 5);
+        Tran tr1 = Tran.scale_matrix(3, 4, 5);
         
         float[] m1 = { 3, 0, 0, 0, 0, 4, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0 };
         float[] m2 = { 1f/3f , 0.0f, 0f, 0.0f, 0.0f, 1.0f / 4.0f, 0f, 0f, 0f, 0f, 1f / 5f, 0f, 0f, 0f, 0f, 0f };
