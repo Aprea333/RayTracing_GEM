@@ -21,7 +21,7 @@ public class PerspectiveCamera : camera
     public Ray fire_ray(float u, float v)
     {
         Point origin = new Point(-distance, 0.0f, 0.0f);
-        Vec direction = new Vec(-distance, (float)((1.0 - 2 * u) * aspect_ratio), 2 * v - 1);
+        Vec direction = new Vec(distance, (float)((1.0 - 2 * u) * aspect_ratio), 2 * v - 1);
         return Ray.Transform(T,new Ray(origin, direction, 1.0f) );
     }
 

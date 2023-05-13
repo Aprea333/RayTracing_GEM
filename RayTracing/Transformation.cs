@@ -163,8 +163,8 @@ public static Vec Translation_Vec(Tran T, Vec v)
     
     public static Tran scale_matrix(float a, float b, float c)
     {
-        return new Tran(new float[] { a, 0, 0, 0, 0, b, 0, 0, 0, 0, c, 0, 0, 0, 0, 0 },
-            new float[] { 1 / a, 0, 0, 0, 0, 1 / b, 0, 0, 0, 0, 1 / c, 0, 0, 0, 0, 0 });
+        return new Tran(new float[] { a, 0, 0, 0, 0, b, 0, 0, 0, 0, c, 0, 0, 0, 0, 1 },
+            new float[] { 1 / a, 0, 0, 0, 0, 1 / b, 0, 0, 0, 0, 1 / c, 0, 0, 0, 0, 1 });
     }
 
     public Vec scale_transformation(Vec a)

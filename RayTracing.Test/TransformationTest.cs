@@ -77,8 +77,8 @@ public class TransformationTest
    
         Tran tr1 = Tran.scale_matrix(3, 4, 5);
         
-        float[] m1 = { 3, 0, 0, 0, 0, 4, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0 };
-        float[] m2 = { 1f/3f , 0.0f, 0f, 0.0f, 0.0f, 1.0f / 4.0f, 0f, 0f, 0f, 0f, 1f / 5f, 0f, 0f, 0f, 0f, 0f };
+        float[] m1 = { 3, 0, 0, 0, 0, 4, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1 };
+        float[] m2 = { 1f/3f , 0.0f, 0f, 0.0f, 0.0f, 1.0f / 4.0f, 0f, 0f, 0f, 0f, 1f / 5f, 0f, 0f, 0f, 0f, 1f };
         
         Normal n = new Normal(3, 4, 7);
         Vec v = new Vec(3, 4, 7);
