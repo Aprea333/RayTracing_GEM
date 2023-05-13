@@ -33,6 +33,7 @@ public static class Program
 
     static void RunDemo(DemoOption opts)
     {
+        
         int w = opts.Width;
         int h = opts.Height;
         HDR image = new HDR(w, h);
@@ -56,16 +57,16 @@ public static class Program
         world.add(new Sphere(Tran.Translation_matr(new Vec(0.0f,0.0f,-0.5f))*sphereScale));
         
         
-        Tran cam_tr = Tran.Translation_matr(new Vec(-1f, 0f, 0f));
-        camera cam;
-        if (opts.Camera != "perspective")
+        Tran cam_tr = Tran.Rotation_z(opts.Angle)*Tran.Translation_matr(new Vec(-1f, 0f, 0f));
+        camera cam= new PerspectiveCamera(Aspect_Ratio: opts.Width / opts.Height, tran: cam_tr);
+        /*if (opts.Camera != "perspective")
         {
             cam = new Orthogonal_Camera(aspect_ratio: opts.Width / opts.Height, tran: cam_tr);
         }
         else
         {
             cam = new PerspectiveCamera(Aspect_Ratio: opts.Width / opts.Height, tran: cam_tr);
-        }
+        }*/
 
         ImageTracer imageTracer = new ImageTracer(image, cam);
         
@@ -88,13 +89,14 @@ public static class Program
             }
         }
 
-        //Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        File.CreateText(@"C:\Users\miche\RayTracing_GEM\image.pfm").Close();
-        Stream file_out = File.Open(@"C:\Users\miche\RayTracing_GEM\image.pfm", FileMode.Open, FileAccess.Write, FileShare.None);
+        string root_directory = Environment.CurrentDirectory;
+        string path = Path.Combine(root_directory, "image.pfm");
+        File.CreateText(path).Close();
+        Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
         imageTracer.Image.write_pfm(file_out, true);
         file_out.Close();
     }
-
+ 
     [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
     {
@@ -113,8 +115,6 @@ public static class Program
 
     static void RunOptionPfm(pfm2png_option opts)
     {
-        
-        Console.WriteLine($"\nfactor: {opts.Factor}");
         HDR img = new HDR();
 
         using (FileStream in_pfm = File.Open(opts.input, FileMode.Open))
@@ -122,7 +122,7 @@ public static class Program
             img.read_pfm_image(in_pfm);
         }
 
-        Console.WriteLine($"File {opts.input} has been read from disk");
+        //Console.WriteLine($"File {opts.input} has been read from disk");
 
         img.NormalizeImage(opts.Factor);
         img.clamp_image();
@@ -130,7 +130,7 @@ public static class Program
         File.CreateText(opts.output).Close();
         Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
         img.write_ldr_image(out_png, ".png", opts.Gamma);
-        Console.WriteLine($"File {opts.output} has been written to disk");
+        //Console.WriteLine($"File {opts.output} has been written to disk");
         out_png.Close();
 
     }
@@ -149,7 +149,6 @@ public static class Program
             .WithParsed<DemoOption>(RunDemo)
 
             .WithNotParsed(HandleError);
-        
     }
 }
 
