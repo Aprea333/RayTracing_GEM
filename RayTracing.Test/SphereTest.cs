@@ -24,7 +24,7 @@ public class SphereTest
     [Test]
     public void sphere_transformation()
     {
-        Tran t = Tran.Translation_matr(new Vec(10f,0f,0f));
+        Transformation t = Transformation.translation(new Vec(10f,0f,0f));
         Sphere sph = new Sphere(t);
         Ray r = new Ray(new Point(10f, 0f, 2f), new Vec(0f, 0f, -1f));
         var inter1 = sph.ray_intersection(r);

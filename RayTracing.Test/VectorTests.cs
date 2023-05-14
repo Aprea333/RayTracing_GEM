@@ -36,7 +36,7 @@ public class VectorTests
     [Test]
     public void negTest()
     {
-        Assert.True(Vec.are_close(v.neg(), new Vec(-v.X, -v.Y, -v.Z)));
+        Assert.True(Vec.are_close(v.neg(), new Vec(-v.x, -v.y, -v.z)));
     }
     
     [Test]

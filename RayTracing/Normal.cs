@@ -24,7 +24,7 @@ public struct Normal
     /// Function that returns the string containing the coordinates of the normal
     /// </summary>
     /// <returns></returns>
-    public string NorToString()
+    public string normal_to_string()
     {
         return $"Normal (x = {x}, y = {y}, z = {z})";
     }
@@ -49,7 +49,7 @@ public struct Normal
     /// Operator that computes the opposite of a normal
     /// </summary>
     /// <returns></returns>
-    public Normal neg_normal()
+    public Normal opposite_normal()
     {
         return new Normal(-x, -y, -z);
     }
@@ -84,7 +84,7 @@ public struct Normal
     /// <returns></returns>
     public static float operator *(Vec v, Normal n)
     {
-        return v.X * n.x + v.Y * n.y + v.Z * n.z;
+        return v.x * n.x + v.y * n.y + v.z * n.z;
     }
     
     /// <summary>
@@ -95,7 +95,7 @@ public struct Normal
     /// <returns>a float</returns>
     public static float operator *(Normal n, Vec v)
     {
-        return v.X * n.x + v.Y * n.y + v.Z * n.z;
+        return v.x * n.x + v.y * n.y + v.z * n.z;
     }
     
     /// <summary>
@@ -106,9 +106,9 @@ public struct Normal
     /// <returns>a vector</returns>
     public static Vec operator ^(Vec v, Normal n)
     {
-        float x = v.Y * n.z - v.Z * n.y;
-        float y = v.Z * n.x - v.X * n.z;
-        float z = v.X * n.y - v.Y * n.x;
+        float x = v.y * n.z - v.z * n.y;
+        float y = v.z * n.x - v.x * n.z;
+        float z = v.x * n.y - v.y * n.x;
 
         return new Vec(x,y,z);
     }
@@ -136,7 +136,6 @@ public struct Normal
         float x = v.y * n.z - v.z * n.y;
         float y = v.z * n.x - v.x * n.z;
         float z = v.x * n.y - v.y * n.x;
-
         return new Normal(x, y, z);
     }
     

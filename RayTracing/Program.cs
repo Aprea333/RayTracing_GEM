@@ -36,29 +36,29 @@ public static class Program
         
         int w = opts.Width;
         int h = opts.Height;
-        HDR image = new HDR(w, h);
+        HdrImage image = new HdrImage(w, h);
         World world = new World();
         
         //Add 8 spheres to the world
-        Tran sphereScale = Tran.scale_matrix(0.1f, 0.1f, 0.1f);
+        Transformation sphereScale = Transformation.scaling(0.1f, 0.1f, 0.1f);
         for (float x = -0.5f; x <= 0.5f; x+=1f)
         {
             for (float y = -0.5f; y <= 0.5f; y += 1f)
             {
                 for (float z = -0.5f; z <= 0.5f; z += 1f)
                 {
-                    world.add(new Sphere(Tran.Translation_matr(new Vec(x, y, z))*sphereScale));
+                    world.add(new Sphere(Transformation.translation(new Vec(x, y, z))*sphereScale));
                 }
             }
         }
         
         //Add two spheres
-        world.add(new Sphere(Tran.Translation_matr(new Vec(0.0f,0.5f,0.0f))*sphereScale));
-        world.add(new Sphere(Tran.Translation_matr(new Vec(0.0f,0.0f,-0.5f))*sphereScale));
+        world.add(new Sphere(Transformation.translation(new Vec(0.0f,0.5f,0.0f))*sphereScale));
+        world.add(new Sphere(Transformation.translation(new Vec(0.0f,0.0f,-0.5f))*sphereScale));
         
         
-        Tran cam_tr = Tran.Rotation_z(opts.Angle)*Tran.Translation_matr(new Vec(-1f, 0f, 0f));
-        camera cam= new PerspectiveCamera(Aspect_Ratio: opts.Width / opts.Height, tran: cam_tr);
+        Transformation cam_tr = Transformation.rotation_z(opts.Angle)*Transformation.translation(new Vec(-1f, 0f, 0f));
+        Camera cam= new PerspectiveCamera(aspect_ratio: opts.Width / opts.Height, tran: cam_tr);
         /*if (opts.Camera != "perspective")
         {
             cam = new Orthogonal_Camera(aspect_ratio: opts.Width / opts.Height, tran: cam_tr);
@@ -80,11 +80,11 @@ public static class Program
                 //Console.WriteLine($"\nIter: {iter} Screen coord: ({i},{j}), Ray origin: {ray.Origin.ToString()}, Ray dir: {ray.Dir.ToString()}, Ray at 2: {ray.At(2f).ToString()}, Hit: {hit.HasValue}, hit_isnull: {hit == null}");
                 if (hit != null)
                 {
-                    imageTracer.Image.set_pixel(new Colore(255.0f, 255.0f, 255.0f), i, j);
+                    imageTracer.Image.set_pixel(new Colour(255.0f, 255.0f, 255.0f), i, j);
                 }
                 else
                 {
-                    imageTracer.Image.set_pixel(new Colore(0.0f, 0.0f, 0.0f), i, j);
+                    imageTracer.Image.set_pixel(new Colour(0.0f, 0.0f, 0.0f), i, j);
                 }
             }
         }
@@ -115,7 +115,7 @@ public static class Program
 
     static void RunOptionPfm(pfm2png_option opts)
     {
-        HDR img = new HDR();
+        HdrImage img = new HdrImage();
 
         using (FileStream in_pfm = File.Open(opts.input, FileMode.Open))
         {
@@ -124,7 +124,7 @@ public static class Program
 
         //Console.WriteLine($"File {opts.input} has been read from disk");
 
-        img.NormalizeImage(opts.Factor);
+        img.normalize_image(opts.Factor);
         img.clamp_image();
 
         File.CreateText(opts.output).Close();

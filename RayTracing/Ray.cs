@@ -5,19 +5,19 @@ namespace RayTracing;
 
 public struct Ray
 {
-    public Point Origin;
-    public Vec Dir;
-    public float Tmin;
-    public float Tmax;
-    public int Depth;
+    public Point origin;
+    public Vec direction;
+    public float t_min;
+    public float t_max;
+    public int depth;
 
     public Ray (Point origin, Vec dir, float tm= 1e-5f,float tM=Single.PositiveInfinity, int depth=0 )
     {
-        Origin = origin;
-        Dir = dir;
-        Tmin = tm;
-        Tmax = tM;
-        Depth = depth;
+        this.origin = origin;
+        direction = dir;
+        t_min = tm;
+        t_max = tM;
+        this.depth = depth;
         
     }
 
@@ -29,18 +29,18 @@ public struct Ray
     /// <returns></returns>
       public static bool are_close(Ray r1, Ray r2)
       {
-          return Vec.are_close(r1.Dir, r2.Dir) && Point.are_close(r1.Origin, r2.Origin);
+          return Vec.are_close(r1.direction, r2.direction) && Point.are_close(r1.origin, r2.origin);
 
       }
 
-    public Point At (float t)
+    public Point at (float t)
     {
-        return Origin + (Dir * t);
+        return origin + (direction * t);
     }
 
-    public static Ray Transform(Tran T, Ray r1)
+    public static Ray transform(Transformation T, Ray r1)
     {
-        return new Ray(T * r1.Origin, T * r1.Dir, r1.Tmin, r1.Tmax, r1.Depth);
+        return new Ray(T * r1.origin, T * r1.direction, r1.t_min, r1.t_max, r1.depth);
         
     }
 }

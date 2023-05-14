@@ -1,19 +1,19 @@
 namespace RayTracing;
 
-public class Colore
+public class Colour
 {
     public float r_c;
     public float g_c;
     public float b_c;
 
-    public Colore()
+    public Colour()
     {
         r_c = 0;
         g_c = 0;
         b_c = 0;
     }
 
-    public Colore(float r, float g, float b)
+    public Colour(float r, float g, float b)
     {
         r_c = r;
         g_c = g;
@@ -26,9 +26,9 @@ public class Colore
 /// <param name="a"></param>
 /// <param name="b"></param>
 /// <returns></returns>
-    public static Colore operator +(Colore a, Colore b)
+    public static Colour operator +(Colour a, Colour b)
     {
-        Colore c = new Colore();
+        Colour c = new Colour();
         c.r_c = a.r_c + b.r_c;
         c.g_c = a.g_c + b.g_c;
         c.b_c = a.b_c + b.b_c;
@@ -40,18 +40,18 @@ public class Colore
 /// <param name="cc"></param>
 /// <param name="alpha"></param>
 /// <returns></returns>
-    public static Colore operator *(Colore cc, float alpha)
+    public static Colour operator *(Colour cc, float alpha)
     {
-        Colore result = new Colore();
+        Colour result = new Colour();
         result.r_c = cc.r_c * alpha;
         result.g_c = cc.g_c * alpha;
         result.b_c= cc.b_c * alpha;
         return result;
     }
 
-    public static Colore operator *(float alpha, Colore cc)
+    public static Colour operator *(float alpha, Colour cc)
     {
-        Colore result = new Colore();
+        Colour result = new Colour();
         result.r_c = cc.r_c * alpha;
         result.g_c = cc.g_c * alpha;
         result.b_c= cc.b_c * alpha;
@@ -60,7 +60,7 @@ public class Colore
 /// <summary>
 /// Function that print the value of the three value of color: Red, green and blue
 /// </summary>
-    public void Stampa()
+    public void print()
     {
         Console.WriteLine($"{r_c}, {g_c}, {b_c}");
     }
@@ -70,9 +70,9 @@ public class Colore
 /// <param name="a"></param>
 /// <param name="b"></param>
 /// <returns></returns>
-    public static Colore operator *(Colore a, Colore b)
+    public static Colour operator *(Colour a, Colour b)
     {
-        Colore prod = new Colore();
+        Colour prod = new Colour();
         prod.r_c = a.r_c * b.r_c;
         prod.g_c = a.g_c * b.g_c;
         prod.b_c = a.b_c * b.b_c;
@@ -85,7 +85,7 @@ public class Colore
 /// <param name="colore1"></param>
 /// <param name="colore2"></param>
 /// <returns></returns>
-    public static bool AreClose(Colore colore1, Colore colore2)
+    public static bool are_close(Colour colore1, Colour colore2)
     {
              double epsilon = 1e-5;
              float diffRed = colore1.r_c - colore2.r_c;
@@ -99,7 +99,7 @@ public class Colore
     /// Function that returns the luminosity of a pixel
     /// </summary>
     /// <returns></returns>
-    public float Luminosity()
+    public float luminosity()
     {
         return (Math.Max(Math.Max(r_c, g_c), b_c) +
                 Math.Min(Math.Min(r_c, g_c), b_c)) / 2;

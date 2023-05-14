@@ -22,8 +22,8 @@ public class NormalTest
     [Test]
     public void neg_test()
     {
-        Assert.True(Normal.are_close(new Normal(-0.4f, -1.3f, -0.7f), a.neg_normal()));
-        Assert.False(Normal.are_close(new Normal(-0.3f, -1.2f, -0.5f), a.neg_normal()));
+        Assert.True(Normal.are_close(new Normal(-0.4f, -1.3f, -0.7f), a.opposite_normal()));
+        Assert.False(Normal.are_close(new Normal(-0.3f, -1.2f, -0.5f), a.opposite_normal()));
     }
 
     [Test]
