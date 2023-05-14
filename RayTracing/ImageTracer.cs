@@ -15,7 +15,7 @@ public class ImageTracer
     }
     public Ray fire_ray(int col, int row, float u_pixel = 0.5f, float v_pixel = 0.5f)
     {
-        float u = 1 - (col+u_pixel)/(Image.width);
+        float u = (col+u_pixel)/(Image.width);
         float v = 1 - (row+v_pixel)/(Image.height);
         return Camera.fire_ray(u, v);
     }

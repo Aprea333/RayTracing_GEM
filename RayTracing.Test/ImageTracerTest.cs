@@ -2,6 +2,8 @@
 
 namespace RayTracing.Test;
 
+
+
 public class ImageTracerTest
 {
     public delegate Colour F(Ray r);
@@ -15,6 +17,7 @@ public class ImageTracerTest
     {
         //Fire a ray against top-left corner of the screen
         var topLeftRay = tracer.fire_ray(0, 0, 0.0f, 0.0f);
+        Point p = topLeftRay.at(1.0f);
         Assert.True(Point.are_close(topLeftRay.at(1.0f),new Point(0.0f,2.0f,1.0f)), "Test ray top-left corner");
         //Fire a ray against bottom-right corner of the screen
         var bottomRightRay = tracer.fire_ray(3, 1, 1.0f, 1.0f);
