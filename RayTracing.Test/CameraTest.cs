@@ -18,17 +18,17 @@ public class CameraTest
         Assert.True(Point.are_close(ray1.Origin, ray4.Origin), "Test origin ray1-4");
 
         //Verify that the ray hitting the corners have the right coordinates
-        Assert.True(Point.are_close(ray1.At(1.0f), new Point(-2.0f, 2.0f, -1.0f)), "Test point ray1");
-        Assert.True(Point.are_close(ray2.At(1.0f), new Point(-2.0f, -2.0f, -1.0f)), "Test point ray2");
-        Assert.True(Point.are_close(ray3.At(1.0f), new Point(-2.0f, 2.0f, 1.0f)), "Test point ray3");
-        Assert.True(Point.are_close(ray4.At(1.0f), new Point(-2.0f, -2.0f, 1.0f)), "Test point ray4");
+        Assert.True(Point.are_close(ray1.At(1.0f), new Point(0f, 2.0f, -1.0f)), "Test point ray1");
+        Assert.True(Point.are_close(ray2.At(1.0f), new Point(0f, -2.0f, -1.0f)), "Test point ray2");
+        Assert.True(Point.are_close(ray3.At(1.0f), new Point(0f, 2.0f, 1.0f)), "Test point ray3");
+        Assert.True(Point.are_close(ray4.At(1.0f), new Point(0f, -2.0f, 1.0f)), "Test point ray4");
 
         //Verify the transformation
         Tran T = Tran.Translation_matr(new Vec(0.0f, -2.0f, 0.0f));
         camera cam2 = new PerspectiveCamera(tran:T);
-        Ray ray = cam2.fire_ray(1.0f, 1.0f);
+        Ray ray = cam2.fire_ray(0.5f, 0.5f);
         var v = ray.At(1.0f);
-        Assert.True(Point.are_close(ray.At(1.0f), new Point(-2.0f, -3.0f, 1.0f)), "Test transformation");
+        Assert.True(Point.are_close(ray.At(1.0f), new Point(0f, -2.0f, 0f)), "Test transformation");
         
     }
     
