@@ -5,7 +5,7 @@ using CommandLine.Text;
 
 namespace RayTracing;
 
-public static class Program
+public static partial class Program
 {
 
     [Verb("demo", HelpText = "Demo")]
