@@ -9,16 +9,16 @@ namespace RayTracing;
 
 public struct Vec
 {
-    public float X;
-    public float Y;
-    public float Z;
+    public float x;
+    public float y;
+    public float z;
 
 
     public Vec(float x, float y, float z)
     {
-        X = x;
-        Y = y;
-        Z = z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
     
     /// <summary>
@@ -29,16 +29,16 @@ public struct Vec
     /// <returns></returns>
     public static bool are_close(Vec a, Vec b)
     {
-        return (a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y) + (a.Z - b.Z) * (a.Z - b.Z) < 0.00001;
+        return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z) < 0.00001;
     }
     
     /// <summary>
     /// Convert Vec to String
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
+    public string to_string()
     {
-        return "Vec(x=" + X + ", y=" + Y + ", z=" + Z + ")";
+        return "Vec(x=" + x + ", y=" + y + ", z=" + z + ")";
     }
     
     /// <summary>
@@ -50,9 +50,9 @@ public struct Vec
     public static Vec operator +(Vec a, Vec b)
     {
         Vec c;
-        c.X = a.X + b.X;
-        c.Y = a.Y + b.Y;
-        c.Z = a.Z + b.Z;
+        c.x = a.x + b.x;
+        c.y = a.y + b.y;
+        c.z = a.z + b.z;
         return c;
     }
     
@@ -65,9 +65,9 @@ public struct Vec
     public static Vec operator -(Vec a, Vec b)
     {
         Vec c;
-        c.X = a.X - b.X;
-        c.Y = a.Y - b.Y;
-        c.Z = a.Z - b.Z;
+        c.x = a.x - b.x;
+        c.y = a.y - b.y;
+        c.z = a.z - b.z;
         return c;
     }
     
@@ -80,9 +80,9 @@ public struct Vec
     public static Vec operator *(Vec a, float b)
     {
         Vec c;
-        c.X = a.X * b;
-        c.Y = a.Y * b;
-        c.Z = a.Z * b;
+        c.x = a.x * b;
+        c.y = a.y * b;
+        c.z = a.z * b;
         return c;
     }
     
@@ -95,9 +95,9 @@ public struct Vec
     public static Vec operator *(float b, Vec a)
     {
         Vec c;
-        c.X = a.X * b;
-        c.Y = a.Y * b;
-        c.Z = a.Z * b;
+        c.x = a.x * b;
+        c.y = a.y * b;
+        c.z = a.z * b;
         return c;
     }
 
@@ -108,9 +108,9 @@ public struct Vec
     public Vec neg()
     {
         Vec n;
-        n.X = -X;
-        n.Y = -Y;
-        n.Z = -Z;
+        n.x = -x;
+        n.y = -y;
+        n.z = -z;
         return n;
     }
 
@@ -122,7 +122,7 @@ public struct Vec
     /// <returns></returns>
     public static float operator *(Vec a, Vec b)
     {
-        return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        return a.x * b.x + a.y * b.y + a.z * b.z;
     }
     
     /// <summary>
@@ -134,29 +134,29 @@ public struct Vec
     public static Vec operator ^(Vec a, Vec b)
     {
         Vec c;
-        c.X = a.Y * b.Z - a.Z * b.Y;
-        c.Y = a.Z * b.X - a.X * b.Z;
-        c.Z = a.X * b.Y - a.Y * b.X;
+        c.x = a.y * b.z - a.z * b.y;
+        c.y = a.z * b.x - a.x * b.z;
+        c.z = a.x * b.y - a.y * b.x;
         return c;
     }
 
     
     public float norm ()
     {
-        return (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+        return (float)Math.Sqrt(x * x + y * y + z * z);
     }
     
     public float squared_norm ()
     {
-        return X * X + Y * Y + Z * Z;
+        return x * x + y * y + z * z;
     }
 
     public void normalize()
     {
         float l = norm();
-        X /= l;
-        Y /= l;
-        Z /= l;
+        x /= l;
+        y /= l;
+        z /= l;
     }
 
     /// <summary>
@@ -166,9 +166,9 @@ public struct Vec
     public Normal ToNormal()
     {
         Normal n;
-        n.x = X;
-        n.y = Y;
-        n.z = Z;
+        n.x = x;
+        n.y = y;
+        n.z = z;
         return n;
     }
 }

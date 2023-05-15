@@ -24,42 +24,42 @@ public class InvalidPfmFileFormatException : Exception
 }
 
 
-public class HDR
+public class HdrImage
 {
     public int width;
     public int height;
-    public List<Colore> hdr_image = new List<Colore>();
+    public List<Colour> hdr_image = new List<Colour>();
 
-    public HDR()
+    public HdrImage()
     {
         width = 0;
         height = 0;
     }
 
-    public HDR(int w, int h)
+    public HdrImage(int w, int h)
     {
         width = w;
         height = h;
         hdr_image.Capacity = width * height;
         for (int i = 0; i < w * h; i++)
         {
-            Colore c = new Colore();
+            Colour c = new Colour();
             hdr_image.Insert(i, c);
         }
     }
 
-    public bool Valid_Coordinates(int x, int y)
+    public bool valid_coordinates(int x, int y)
         => x >= 0 && x < width && y < height && y >= 0;
 
-    public void set_pixel(Colore c, int x, int y)
+    public void set_pixel(Colour c, int x, int y)
     {
-        Debug.Assert(Valid_Coordinates(x, y), "Invalid coordinates");
+        Debug.Assert(valid_coordinates(x, y), "Invalid coordinates");
         hdr_image[y * width + x] = c;
     }
 
-    public Colore get_pixel(int x, int y)
+    public Colour get_pixel(int x, int y)
     {
-        Debug.Assert(Valid_Coordinates(x, y), "Invalid coordinates");
+        Debug.Assert(valid_coordinates(x, y), "Invalid coordinates");
         return hdr_image[y * width + x];
     }
 
@@ -98,7 +98,7 @@ public class HDR
         return (end < 0);
     }
 
-    public static float _read_float(Stream mystream, bool le)
+    public static float read_float(Stream mystream, bool le)
     {
         byte[] bytes = new byte[4];
         try
@@ -126,7 +126,7 @@ public class HDR
         return BitConverter.ToSingle(bytes);
     }
 
-    public static (int, int) Parse_Img_Size(string line)
+    public static (int, int) parse_img_size(string line)
     {
         var elements = line.Split(" ");
         if (elements.Length != 2)
@@ -164,12 +164,12 @@ public class HDR
             throw new InvalidPfmFileFormatException("Invalid magic in PFM file");
         }
 
-        (width, height) = Parse_Img_Size(read_line(myStream));
+        (width, height) = parse_img_size(read_line(myStream));
         bool endianness = parse_endianness_isLittle(read_line(myStream));
         hdr_image.Capacity = width * height;
         for (int i = 0; i < width * height; i++) // pezzo di codice importante, da mettere insieme
         {
-            Colore c = new Colore();
+            Colour c = new Colour();
             hdr_image.Insert(i, c);
         }
 
@@ -178,10 +178,10 @@ public class HDR
         {
             for (int x = 0; x < width; x++)
             {
-                float r = _read_float(myStream, endianness);
-                float g = _read_float(myStream, endianness);
-                float b = _read_float(myStream, endianness);
-                set_pixel(new Colore(r, g, b), x, y);
+                float r = read_float(myStream, endianness);
+                float g = read_float(myStream, endianness);
+                float b = read_float(myStream, endianness);
+                set_pixel(new Colour(r, g, b), x, y);
             }
         }
     }
@@ -204,7 +204,7 @@ public class HDR
         {
             for (int x = 0; x < width; x++)
             {
-                Colore col = get_pixel(x, y);
+                Colour col = get_pixel(x, y);
                 write_float(mystream, col.r_c);
                 write_float(mystream, col.g_c);
                 write_float(mystream, col.b_c);
@@ -216,9 +216,9 @@ public class HDR
     public float average_luminosity(float delta = 1e-5f)
     {
         float cumsum = 0;
-        foreach (Colore pix in hdr_image)
+        foreach (Colour pix in hdr_image)
         {
-            cumsum += (float)Math.Log10(delta + pix.Luminosity());
+            cumsum += (float)Math.Log10(delta + pix.luminosity());
         }
 
         return (float)Math.Pow(10, cumsum / hdr_image.Capacity);
@@ -230,7 +230,7 @@ public class HDR
     /// </summary>
     /// <param name="factor"></param>
     /// <param name="luminosity"></param>
-    public void NormalizeImage(float factor, float? luminosity = null)
+    public void normalize_image(float factor, float? luminosity = null)
     {
         var lum = luminosity ?? average_luminosity();
         foreach (var t in hdr_image)
@@ -241,7 +241,7 @@ public class HDR
         }
     }
 
-    private float _clamp(float x)
+    private float clamp(float x)
     {
         return x / (1 + x);
     }
@@ -250,9 +250,9 @@ public class HDR
     {
         foreach (var pix in hdr_image)
         {
-            pix.r_c = _clamp(pix.r_c);
-            pix.g_c = _clamp(pix.g_c);
-            pix.b_c = _clamp(pix.b_c);
+            pix.r_c = clamp(pix.r_c);
+            pix.g_c = clamp(pix.g_c);
+            pix.b_c = clamp(pix.b_c);
         }
     }
 

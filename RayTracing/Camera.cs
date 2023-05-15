@@ -1,28 +1,28 @@
 ﻿namespace RayTracing;
 
-public interface camera
+public interface Camera
 {
     Ray fire_ray(float u, float v);
 }
 
-public class PerspectiveCamera : camera
+public class PerspectiveCamera : Camera
 {
     private float distance { get; }
 
     public float aspect_ratio {get;}
-    private Tran T;
+    private Transformation T;
     
-    public PerspectiveCamera(float Distance = 1.0f, float Aspect_Ratio =1.0f, Tran? tran = null)
+    public PerspectiveCamera(float distance = 1.0f, float aspect_ratio =1.0f, Transformation? tran = null)
     {
-        distance = Distance;
-        aspect_ratio = Aspect_Ratio;
-        T = tran ?? new Tran();
+        this.distance = distance;
+        this.aspect_ratio = aspect_ratio;
+        T = tran ?? new Transformation();
     }
     public Ray fire_ray(float u, float v)
     {
         Point origin = new Point(-distance, 0.0f, 0.0f);
         Vec direction = new Vec(distance, (float)((1.0 - 2 * u) * aspect_ratio), 2 * v - 1);
-        return Ray.Transform(T,new Ray(origin, direction, 1.0f) );
+        return Ray.transform(T,new Ray(origin, direction, 1.0f) );
     }
 
     
@@ -33,15 +33,15 @@ public class PerspectiveCamera : camera
 /// <summary>
 /// Class for the othogonal projection
 /// </summary>
-public class Orthogonal_Camera : camera
+public class OrthogonalCamera : Camera
 {
     public float aspect_ratio;
-    public Tran transformation;
+    public Transformation transformation;
     
-    public Orthogonal_Camera( Tran? tran = null, float aspect_ratio = 1.0f)
+    public OrthogonalCamera( Transformation? transformation = null, float aspect_ratio = 1.0f)
     {
         this.aspect_ratio = aspect_ratio;
-        transformation = tran ?? new Tran();
+        this.transformation = transformation ?? new Transformation();
     }
    
     /// <summary>
@@ -54,6 +54,6 @@ public class Orthogonal_Camera : camera
     {
         Point origin = new Point(-1f, (1.0f - 2.0f * u) * aspect_ratio, 2 * v - 1);
         Vec direction = new Vec(1.0f, 0f, 0f);
-        return Ray.Transform(transformation, new Ray (origin, direction, 1.0f));
+        return Ray.transform(transformation, new Ray(origin, direction, 1.0f));
     }
 }

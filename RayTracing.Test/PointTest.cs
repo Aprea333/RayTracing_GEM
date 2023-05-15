@@ -56,8 +56,8 @@ public void Diff_VecPoint()
 
 public void Convert()
 {
-    Assert.True(Vec.are_close(_p1.Convert(), new Vec(1.0f,2.0f,3.0f)));
-    Assert.True(Vec.are_close(_p1.Convert(), new Vec(1.0f,2.0f,3.0f)));
+    Assert.True(Vec.are_close(_p1.convert_to_vec(), new Vec(1.0f,2.0f,3.0f)));
+    Assert.True(Vec.are_close(_p1.convert_to_vec(), new Vec(1.0f,2.0f,3.0f)));
 }
 
 }

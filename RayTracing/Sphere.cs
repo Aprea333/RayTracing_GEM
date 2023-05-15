@@ -5,16 +5,16 @@ namespace RayTracing;
 
 public class Sphere:Shape
 {
-    public Sphere(Tran? tr = null) : base(tr)
+    public Sphere(Transformation? tr = null) : base(tr)
     {
     }
 
     public override HitRecord? ray_intersection(Ray r)
     {
-        Ray inv_ray = Ray.Transform(tr.inverse(), r);
-        Vec O = inv_ray.Origin.Convert();
-        float b = O * inv_ray.Dir;
-        float a = inv_ray.Dir.squared_norm();
+        Ray inv_ray = Ray.transform(transformation.inverse(), r);
+        Vec O = inv_ray.origin.convert_to_vec();
+        float b = O * inv_ray.direction;
+        float a = inv_ray.direction.squared_norm();
         float c = O.squared_norm()-1;
         float delta = b * b - a * c;
         if (delta <= 0)
@@ -25,31 +25,31 @@ public class Sphere:Shape
         float tmin = (-b-delta_sqrt)/a;
         float tmax = (-b+delta_sqrt)/a;
         float hit_t;
-        if (tmin > inv_ray.Tmin && tmin < inv_ray.Tmax)
+        if (tmin > inv_ray.t_min && tmin < inv_ray.t_max)
         {
             hit_t = tmin;
-        }else if (tmax > inv_ray.Tmin && tmax < inv_ray.Tmax)
+        }else if (tmax > inv_ray.t_min && tmax < inv_ray.t_max)
         {
             hit_t= tmax;
         }
         else return null;
 
-        Point hit_point = inv_ray.At(hit_t);
-        return new HitRecord(tr * hit_point, tr * sphere_normal(hit_point, r.Dir),
+        Point hit_point = inv_ray.at(hit_t);
+        return new HitRecord(transformation * hit_point, transformation * sphere_normal(hit_point, r.direction),
             sphere_point_to_uv(hit_point),hit_t, r);
     }
 
     public Normal sphere_normal(Point p, Vec dir)
     {
-        Normal result = new Normal(p.X, p.Y, p.Z);
-        if (p.Convert() * dir > 0) result = result.neg_normal();
+        Normal result = new Normal(p.x, p.y, p.z);
+        if (p.convert_to_vec() * dir > 0) result = result.opposite_normal();
         return result;
     }
 
     public Vec2D sphere_point_to_uv(Point p)
     {
-        float u = (float)(Single.Atan2(p.Y, p.X)/(2*Math.PI));
-        float v = (float)(Single.Acos(p.Z)/Math.PI);
+        float u = (float)(Single.Atan2(p.y, p.x)/(2*Math.PI));
+        float v = (float)(Single.Acos(p.z)/Math.PI);
         return new Vec2D(u, v);
     }
 }
