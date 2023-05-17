@@ -2,31 +2,31 @@ namespace RayTracing;
 
 public struct Point
 {
-    public  float X;
-    public float Y;
-    public float Z;
+    public  float x;
+    public float y;
+    public float z;
 
     public Point()
     {
-        X = 0;
-        Y = 0;
-        Z = 0;
+        x = 0;
+        y = 0;
+        z = 0;
     }
     
-    public  Point(float X,float Y, float Z )
+    public  Point(float x,float y, float z )
     {
-        this.X = X;
-        this.Y = Y;
-        this.Z = Z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
     /// <summary>
     /// Converting to string
     /// </summary>
     /// <returns></returns>
 
-    public string ToString()
+    public string to_string()
     {
-        return $"Point(X= {X}, Y = {Y}, Zn= {Z} ";
+        return $"Point(X= {x}, Y = {y}, Zn= {z} ";
     }
     
     /// <summary>
@@ -35,40 +35,40 @@ public struct Point
     public static bool are_close(Point a, Point b)
     {
         double epsilon = 1e-5;
-        float diffX = a.X - b.X;
-        float diffY = a.Y - b.Y;
-        float diffz = a.Z - b.Z;
+        float diffX = a.x - b.x;
+        float diffY = a.y - b.y;
+        float diffz = a.z - b.z;
         return Math.Sqrt(Math.Pow(diffX, 2) +Math.Pow(diffY,2) + Math.Pow(diffz,2))<epsilon;
     }
 
     
     public static Point operator +(Point a, Vec v)
     {
-        float sumX = a.X + v.X;
-        float sumY = a.Y + v.Y;
-        float sumZ = a.Z + v.Z;
+        float sumX = a.x + v.x;
+        float sumY = a.y + v.y;
+        float sumZ = a.z + v.z;
         return new Point(sumX, sumY, sumZ);
     }
 
     public static Vec operator -(Point a, Point b)
     {
-        float diffX = a.X - b.X;
-        float diffY = a.Y - b.Y;
-        float diffZ = a.Z - b.Z;
+        float diffX = a.x - b.x;
+        float diffY = a.y - b.y;
+        float diffZ = a.z - b.z;
         return new Vec(diffX, diffY, diffZ);
     }
     
     public static Point operator -(Point a, Vec v)
     {
-        float diffX = a.X - v.X;
-        float diffY = a.Y - v.Y;
-        float diffZ = a.Z - v.Z;
+        float diffX = a.x - v.x;
+        float diffY = a.y - v.y;
+        float diffZ = a.z - v.z;
         return new Point(diffX, diffY, diffZ);
     }
 
-    public Vec Convert()
+    public Vec convert_to_vec()
     {
-        return new Vec(X,Y,Z);
+        return new Vec(x,y,z);
     }
     
 }

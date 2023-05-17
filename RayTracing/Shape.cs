@@ -2,16 +2,16 @@
 
 public abstract class Shape
 {
-    public Tran tr;
-    public Shape(Tran? Tr)
+    public Transformation transformation;
+    public Shape(Transformation? tran)
     {
-        if (Tr != null)
+        if (tran != null)
         {
-            tr= Tr;
+            transformation= tran;
         }
         else
         {
-            tr = new Tran();
+            transformation = new Transformation();
         }
         
     }
