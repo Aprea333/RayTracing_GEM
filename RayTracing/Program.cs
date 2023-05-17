@@ -27,6 +27,9 @@ public static partial class Program
 
         [Option("camera", Default = "perspective", HelpText = "Type of camera")]
         public string Camera { get; set; }
+        
+        [Option("output_file", Default = "image.png", HelpText = "path + output file name + .png")]
+        public string output { get; set; } = null!;
     }
 
     
@@ -58,15 +61,11 @@ public static partial class Program
         
         
         Transformation cam_tr = Transformation.rotation_z(opts.Angle)*Transformation.translation(new Vec(-1f, 0f, 0f));
-        Camera cam= new PerspectiveCamera(aspect_ratio: opts.Width / opts.Height, tran: cam_tr);
-        /*if (opts.Camera != "perspective")
+        Camera cam = new PerspectiveCamera(aspect_ratio: opts.Width / opts.Height, tran: cam_tr);
+        if (opts.Camera != "perspective")
         {
-            cam = new Orthogonal_Camera(aspect_ratio: opts.Width / opts.Height, tran: cam_tr);
+            cam = new OrthogonalCamera(aspect_ratio: opts.Width / opts.Height, transformation: cam_tr);
         }
-        else
-        {
-            cam = new PerspectiveCamera(Aspect_Ratio: opts.Width / opts.Height, tran: cam_tr);
-        }*/
 
         ImageTracer imageTracer = new ImageTracer(image, cam);
         
@@ -74,10 +73,9 @@ public static partial class Program
         {
             for (int j = 0; j < h; j++)
             {
-                //imageTracer.Image.set_pixel(new Colore(100.0f, 100.0f, 100.0f), i,j);
+                
                 Ray ray = imageTracer.fire_ray(i, j);
                 HitRecord? hit = world.ray_intersection(ray);
-                //Console.WriteLine($"\nIter: {iter} Screen coord: ({i},{j}), Ray origin: {ray.Origin.ToString()}, Ray dir: {ray.Dir.ToString()}, Ray at 2: {ray.At(2f).ToString()}, Hit: {hit.HasValue}, hit_isnull: {hit == null}");
                 if (hit != null)
                 {
                     imageTracer.Image.set_pixel(new Colour(255.0f, 255.0f, 255.0f), i, j);
@@ -95,6 +93,20 @@ public static partial class Program
         Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
         imageTracer.Image.write_pfm(file_out, true);
         file_out.Close();
+        
+        HdrImage img = new HdrImage();
+
+        using (FileStream in_pfm = File.Open("image.pfm", FileMode.Open))
+        {
+            img.read_pfm_image(in_pfm);
+        }
+
+        img.clamp_image();
+
+        File.CreateText(opts.output).Close();
+        Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
+        img.write_ldr_image(out_png, ".png", 1f);
+        out_png.Close();
     }
  
     [Verb("pfm2png", HelpText = "Pfm image")]
@@ -122,15 +134,12 @@ public static partial class Program
             img.read_pfm_image(in_pfm);
         }
 
-        //Console.WriteLine($"File {opts.input} has been read from disk");
-
         img.normalize_image(opts.Factor);
         img.clamp_image();
 
         File.CreateText(opts.output).Close();
         Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
         img.write_ldr_image(out_png, ".png", opts.Gamma);
-        //Console.WriteLine($"File {opts.output} has been written to disk");
         out_png.Close();
 
     }
