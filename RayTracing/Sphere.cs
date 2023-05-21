@@ -5,7 +5,7 @@ namespace RayTracing;
 
 public class Sphere:Shape
 {
-    public Sphere(Transformation? tr = null) : base(tr)
+    public Sphere(Transformation? tr = null, Material? material = null) : base(tr, material)
     {
     }
 
@@ -36,7 +36,7 @@ public class Sphere:Shape
 
         Point hit_point = inv_ray.at(hit_t);
         return new HitRecord(transformation * hit_point, transformation * sphere_normal(hit_point, r.direction),
-            sphere_point_to_uv(hit_point),hit_t, r);
+            sphere_point_to_uv(hit_point),hit_t, r, material);
     }
 
     public Normal sphere_normal(Point p, Vec dir)
