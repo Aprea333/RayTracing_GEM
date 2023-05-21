@@ -5,6 +5,8 @@ public class Colour
     public float r_c;
     public float g_c;
     public float b_c;
+    public static Colour black = new Colour();
+    public static Colour white = new Colour(255f, 255f, 255f);
 
     public Colour()
     {
@@ -104,6 +106,8 @@ public class Colour
         return (Math.Max(Math.Max(r_c, g_c), b_c) +
                 Math.Min(Math.Min(r_c, g_c), b_c)) / 2;
     }
+
+    
 
 }
     

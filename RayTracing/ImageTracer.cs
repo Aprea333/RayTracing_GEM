@@ -42,6 +42,4 @@ public abstract class function
         Colour c = new Colour(0.1f,0.2f,0.3f);
         return c;
     }
-    
-    
 }

@@ -6,21 +6,20 @@ public abstract class Brdf
     
     public Brdf(Pigment? pig=null)
     {
-      Pig = pig;
+      Pig = pig ?? new UniformPigment(Colour.white);
     }
 
     public abstract Colour Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv);
 
 }
 
-public class DiiffuseBrdf : Brdf
+public class DiffuseBrdf : Brdf
 {
-    public DiiffuseBrdf(Pigment? pig=null):base(pig) {}
+    public DiffuseBrdf(Pigment? pig=null):base(pig) {}
 
     public override Colour Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv)
     {
-        Colour C = new Colour();
-        return  C = Pigment.get_colour(uv) * 1f / Math.PI;
+        return Pig.get_colour(uv) * (float)(1.0f / Math.PI);
     }
 }
 

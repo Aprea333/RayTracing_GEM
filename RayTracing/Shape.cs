@@ -2,18 +2,12 @@
 
 public abstract class Shape
 {
-    public Transformation transformation;
-    public Shape(Transformation? tran)
+    public Transformation transformation { get; set; }
+    public Material material { get; }
+    public Shape(Transformation? tran, Material material)
     {
-        if (tran != null)
-        {
-            transformation= tran;
-        }
-        else
-        {
-            transformation = new Transformation();
-        }
-        
+        transformation = tran ?? new Transformation();
+        this.material = material ?? new Material();
     }
 
     public abstract HitRecord? ray_intersection(Ray r);
