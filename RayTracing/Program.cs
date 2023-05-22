@@ -27,9 +27,8 @@ public static partial class Program
 
         [Option("camera", Default = "perspective", HelpText = "Type of camera")]
         public string Camera { get; set; }
-        
-        [Option("output_file", Default = "image.png", HelpText = "path + output file name + .png")]
-        public string output { get; set; } = null!;
+
+
     }
 
     
@@ -42,6 +41,20 @@ public static partial class Program
         HdrImage image = new HdrImage(w, h);
         World world = new World();
         
+        Colour c = new Colour(255f, 128f, 0f); //arancione
+        Colour c1 = new Colour(255f, 0f, 0f); //rosso
+        Colour c2 = new Colour(184f, 31f, 88f); //magenta
+
+        Material m1 = new Material(new DiffuseBrdf(new UniformPigment(c)));
+        Material m2 = new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2)));
+
+        HdrImage sphere_texture = new HdrImage(2, 2);
+        sphere_texture.set_pixel(new Colour(0f,255f,0f), 0,0); //verde
+        sphere_texture.set_pixel(new Colour(255f,255f,30f), 0,1); //giallo
+        sphere_texture.set_pixel(new Colour(145f,0f,255f), 1,0); //viola
+        sphere_texture.set_pixel(new Colour(47f,227f,255f), 1,1); //azzurro
+
+        Material m3 = new Material(new DiffuseBrdf(new ImagePigment(sphere_texture)));
         //Add 8 spheres to the world
         Transformation sphereScale = Transformation.scaling(0.1f, 0.1f, 0.1f);
         for (float x = -0.5f; x <= 0.5f; x+=1f)
@@ -50,14 +63,14 @@ public static partial class Program
             {
                 for (float z = -0.5f; z <= 0.5f; z += 1f)
                 {
-                    world.add(new Sphere(Transformation.translation(new Vec(x, y, z))*sphereScale));
+                    world.add(new Sphere(Transformation.translation(new Vec(x, y, z))*sphereScale, m1));
                 }
             }
         }
         
         //Add two spheres
-        world.add(new Sphere(Transformation.translation(new Vec(0.0f,0.5f,0.0f))*sphereScale));
-        world.add(new Sphere(Transformation.translation(new Vec(0.0f,0.0f,-0.5f))*sphereScale));
+        world.add(new Sphere(Transformation.translation(new Vec(0.0f,0.5f,0.0f))*sphereScale,m2));
+        world.add(new Sphere(Transformation.translation(new Vec(0.0f,0.0f,-0.5f))*sphereScale,m3));
         
         
         Transformation cam_tr = Transformation.rotation_z(opts.Angle)*Transformation.translation(new Vec(-1f, 0f, 0f));
@@ -69,7 +82,7 @@ public static partial class Program
 
         ImageTracer imageTracer = new ImageTracer(image, cam);
         
-        for (int i = 0; i < w; i++)
+        /*for (int i = 0; i < w; i++)
         {
             for (int j = 0; j < h; j++)
             {
@@ -85,7 +98,11 @@ public static partial class Program
                     imageTracer.Image.set_pixel(new Colour(0.0f, 0.0f, 0.0f), i, j);
                 }
             }
-        }
+        }*/
+
+        Renderer rend1 = new OnOffRenderer(world);
+        Renderer rend2 = new FlatRenderer(world);
+        imageTracer.fire_all_rays(rend2);
 
         string root_directory = Environment.CurrentDirectory;
         string path = Path.Combine(root_directory, "image.pfm");
@@ -93,20 +110,7 @@ public static partial class Program
         Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
         imageTracer.Image.write_pfm(file_out, true);
         file_out.Close();
-        
-        HdrImage img = new HdrImage();
-
-        using (FileStream in_pfm = File.Open("image.pfm", FileMode.Open))
-        {
-            img.read_pfm_image(in_pfm);
-        }
-
-        img.clamp_image();
-
-        File.CreateText(opts.output).Close();
-        Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
-        img.write_ldr_image(out_png, ".png", 1f);
-        out_png.Close();
+       
     }
  
     [Verb("pfm2png", HelpText = "Pfm image")]
@@ -150,7 +154,7 @@ public static partial class Program
         foreach (var error in errors)
             Console.WriteLine(sentenceBuilder.FormatError(error));
     }
-
+    
     static void Main(string[] args)
     {
         CommandLine.Parser.Default.ParseArguments<pfm2png_option, DemoOption>(args)
@@ -160,6 +164,5 @@ public static partial class Program
             .WithNotParsed(HandleError);
     }
 }
-
 
 //pfm2png  --input_file image.pfm

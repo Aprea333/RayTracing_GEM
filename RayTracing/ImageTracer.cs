@@ -33,6 +33,20 @@ public class ImageTracer
         }
     }
     
+    
+    public void fire_all_rays(Renderer func)
+    {
+        for (int i = 0; i < Image.height; i++)
+        {
+            for (int j = 0; j < Image.width; j++)
+            {
+                Ray r = this.fire_ray(j, i);
+                Colour c = func.tracing(r);
+                Image.set_pixel(c,j,i);
+            }
+        }
+    }
+    
 }
 
 public abstract class function

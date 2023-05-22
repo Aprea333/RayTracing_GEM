@@ -43,7 +43,13 @@ public class CheckeredPigment : Pigment
         {
             return color1;
         }
-        return color2;
+
+        if ((v + u) % 2 != 0)
+        {
+            return color2;
+        }
+
+        return new Colour();
     }
 }
 
