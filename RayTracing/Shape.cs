@@ -14,4 +14,19 @@ public abstract class Shape
     public abstract List<HitRecord>? ray_intersection_list(Ray r);
 
     public abstract bool is_internal(Point p);
+
+    public static CsgUnion operator +(Shape s1, Shape s2)
+    {
+        return new CsgUnion(s1, s2);
+    }
+
+    public static CgsDifference operator -(Shape s1, Shape s2)
+    {
+        return new CgsDifference(s1, s2);
+    }
+
+    public static CsgIntersection operator *(Shape s1, Shape s2)
+    {
+        return new CsgIntersection(s1, s2);
+    }
 }

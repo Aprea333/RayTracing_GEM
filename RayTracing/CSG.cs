@@ -1,5 +1,10 @@
 ﻿namespace RayTracing;
 
+
+//==========================================================================================================
+// UNION === UNION === UNION === UNION === UNION === UNION === UNION === UNION === UNION === UNION === UNION
+// =========================================================================================================
+
 /// <summary>
 /// Constructive Solid Geometry (CGS)
 /// Union of two shapes
@@ -22,9 +27,7 @@ public class CsgUnion:Shape
     /// <returns>The first element on the list of intersections. If no intersection is found "null" is returned.</returns>
     public override HitRecord? ray_intersection(Ray r)
     {
-        var inv_ray = Ray.transform(transformation, r);
-        var inter1 = s1.ray_intersection(inv_ray);
-        var inter2 = s2.ray_intersection(inv_ray);
+        
         return ray_intersection_list(r)?[0];
     }
 
@@ -48,10 +51,14 @@ public class CsgUnion:Shape
     public override bool is_internal(Point p)
     {
         p = transformation.inverse() * p;
-        return s1.is_internal(p) && s2.is_internal(p);
+        return s1.is_internal(p) || s2.is_internal(p);
     }
 }
 
+
+//=====================================================================================================
+// DIFFERENCE === DIFFERENCE === DIFFERENCE === DIFFERENCE === DIFFERENCE === DIFFERENCE === DIFFERENCE
+// ====================================================================================================
 /// <summary>
 /// Constructive Solid Geometry (CGS)
 /// Difference between two shapes
@@ -74,11 +81,22 @@ public class CgsDifference : Shape
         this.s1 = s1;
         this.s2 = s2;
     }
+    
+    /// <summary>
+    /// Check if a ray intersect the difference shape
+    /// </summary>
+    /// <param name="r">The ray</param>
+    /// <returns>The first element on the list of intersections. If no intersection is found "null" is returned.</returns>
     public override HitRecord? ray_intersection(Ray r)
     {
         return ray_intersection_list(r)?[0];
     }
 
+    /// <summary>
+    /// List of intersections sorted in ascending order by distance from the origin
+    /// </summary>
+    /// <param name="r"> The ray</param>
+    /// <returns>The list of intersections. If no intersection is found, <"null"< is returned.</returns>
     public override List<HitRecord>? ray_intersection_list(Ray r)
     {
         var inv_ray = Ray.transform(transformation, r);
@@ -113,6 +131,14 @@ public class CgsDifference : Shape
     }
 }
 
+//==================================================================================================
+// INTERSECTION === INTERSECTION === INTERSECTION === INTERSECTION === INTERSECTION === INTERSECTION
+// =================================================================================================
+/// <summary>
+/// Constructive Solid Geometry (CGS)
+/// Intersection between two shapes
+/// </summary>
+
 public class CsgIntersection : Shape
 {
     
@@ -132,11 +158,21 @@ public class CsgIntersection : Shape
         this.s2 = s2;
     }
 
+    /// <summary>
+    /// Check if a ray intersect the intersection shape
+    /// </summary>
+    /// <param name="r">The ray</param>
+    /// <returns>The first element on the list of intersections. If no intersection is found "null" is returned.</returns>
     public override HitRecord? ray_intersection(Ray r)
     {
         return ray_intersection_list(r)?[0];
     }
 
+    /// <summary>
+    /// List of intersections sorted in ascending order by distance from the origin
+    /// </summary>
+    /// <param name="r"> The ray</param>
+    /// <returns>The list of intersections. If no intersection is found, <"null"< is returned.</returns>
     public override List<HitRecord>? ray_intersection_list(Ray r)
     {
         var inv_ray = Ray.transform(transformation, r);
