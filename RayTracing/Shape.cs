@@ -11,4 +11,7 @@ public abstract class Shape
     }
 
     public abstract HitRecord? ray_intersection(Ray r);
+    public abstract List<HitRecord>? ray_intersection_list(Ray r);
+
+    public abstract bool is_internal(Point p);
 }

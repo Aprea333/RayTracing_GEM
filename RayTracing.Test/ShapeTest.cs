@@ -42,3 +42,34 @@ public class SphereTest
 
     }
 }
+
+public class PlaneTest
+{
+    [Test]
+    public void plane_test()
+    {
+        Plane plane = new Plane();
+
+        Ray r = new Ray(new Point(0f, 0f, 1f), new Vec(0, 0, -1));
+        var intersection1 = plane.ray_intersection(r);
+        Assert.True(intersection1!=null, "Check intersection != 0");
+        Assert.True(HitRecord.are_close(new HitRecord(new Point(0f,0f,0f), new Normal(0,0,1),new Vec2D(0,0),1f,r, new Material()), (HitRecord)intersection1));
+        Assert.True(Vec2D.are_close(new Vec2D(0f,0f), intersection1.Value.surface_point), "Test UV coordinates");
+    }
+
+    [Test]
+    public void plane_transformation()
+    {
+        Plane p = new Plane(Transformation.rotation_y(90f));
+        Ray r = new Ray(new Point(1f, 0f, 0f), new Vec(-1f, 0f, 0f));
+        var intersection = p.ray_intersection(r);
+        
+        Assert.True(HitRecord.are_close(new HitRecord(new Point(0f,0f,0f), new Normal(1,0,0),new Vec2D(0,0),1f,r, new Material()), (HitRecord)intersection), "Test transformation 1");
+
+        Ray r2 = new Ray(new Point(0f, 0f, 1f), new Vec(0f, 0f, 1f));
+        var intersection2 = p.ray_intersection(r2);
+        Assert.False(intersection2!= null, "Test transformation 2");
+    }
+
+    
+}
