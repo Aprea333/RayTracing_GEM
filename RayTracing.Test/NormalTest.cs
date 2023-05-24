@@ -78,6 +78,29 @@ public class NormalTest
         Assert.False(Math.Abs(c.norm() - f) > epsilon);
     }
 
+    [Test]
+    public void onb_creation()
+    {
+        PCG pcg = new PCG();
+        for (int i = 0; i < 100; i++)
+        {
+            Normal n = new Normal(pcg.random_float(), pcg.random_float(), pcg.random_float());
+            n.normalization();
+            (Vec e1, Vec e2, Vec e3) =  Normal.create_onb_from_z(n);
+           
+            
+            //Verify the normalization
+            Assert.True(Math.Abs(e1.squared_norm()-1f)< epsilon, "Test normalized e1");
+            Assert.True(Math.Abs(e2.squared_norm()-1f)< epsilon, "Test normalized e2");
+            //Assert.True(Math.Abs(e3.squared_norm()-1f)< epsilon, "Test normalized e3");
+            
+            //Test orthogonal
+            Assert.True(Math.Abs(e1*e2)<epsilon, "Test e1 orthogonal to e2");
+            Assert.True(Math.Abs(e1*e3)<epsilon, "Test e1 orthogonal to e3");
+            Assert.True(Math.Abs(e3*e2)<epsilon, "Test e2 orthogonal to e3");
+
+        }
+    }
    
     
 }
