@@ -166,4 +166,9 @@ public struct Normal
         float scal = 1/norm();
         return scal * this;
     }
+    
+    public Vec To_vec()
+    {
+       return new(x, y, z);
+    }
 }

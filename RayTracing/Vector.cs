@@ -151,13 +151,16 @@ public struct Vec
         return x * x + y * y + z * z;
     }
 
-    public void normalize()
+    public Vec normalize()
     {
         float l = norm();
         x /= l;
         y /= l;
         z /= l;
+        return new Vec(x, y, z);
     }
+    
+    
 
     /// <summary>
     /// Convert Vec to Normal
