@@ -16,10 +16,10 @@ public static partial class Program
             
         }
 
-        [Option("width", Default = 1024, HelpText = "Width of the image to render")]
+        [Option("width", Default = 2560, HelpText = "Width of the image to render")]
         public int Width { get; set; }
 
-        [Option("height", Default = 640, HelpText = "Height of the image to render")]
+        [Option("height", Default = 1600, HelpText = "Height of the image to render")]
         public int Height { get; set; }
 
         [Option("angle_deg", Default = 0.0f, HelpText = "Angle of view")]
@@ -91,10 +91,10 @@ public static partial class Program
 
             //Add two spheres
            world.add(new Sphere(Transformation.translation(new Vec(0.0f, 0.5f, 0.0f)) * sphereScale, m2));
-           world.add(new Sphere(Transformation.translation(new Vec(0.0f, 0.0f, -0.5f)) * sphereScale, m1));
-           world.add(new Sphere(Transformation.translation(new Vec(0.0f, -0.5f, 0.0f)) * sphereScale, m3));
+           world.add(new Sphere(Transformation.translation(new Vec(0.0f, 0.0f, -0.5f)) * sphereScale, m5));
+           world.add(new Sphere(Transformation.translation(new Vec(0.0f, -0.5f, 0.0f)) * sphereScale, m2));
            world.add(new Sphere(Transformation.translation(new Vec(0.0f, 0.0f, +0.5f)) * sphereScale, m5));
-
+            world.add(new Plane(Transformation.translation(new Vec(0f,0f,-0.7f)),m3));
             Transformation cam_tr = Transformation.rotation_z(opts.Angle) *
                                     Transformation.translation(new Vec(-1f, 0f, 0f));
             Camera cam = new PerspectiveCamera(aspect_ratio: opts.Width / opts.Height, tran: cam_tr);
