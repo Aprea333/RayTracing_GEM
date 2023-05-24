@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Reflection;
 using CommandLine;
@@ -34,22 +35,24 @@ public static partial class Program
 
     }
 
-
-
+    //====================================================================================================================
+    // DEMO 10 SPHERES === DEMO 10 SPHERES === DEMO 10 SPHERES === DEMO 10 SPHERES === DEMO 10 SPHERES === DEMO 10 SPHERES
+    // //=================================================================================================================
     static void RunDemo(DemoOption opts)
     {
-
         int w = opts.Width;
         int h = opts.Height;
         HdrImage image = new HdrImage(w, h);
         World world = new World();
 
-        Colour c = new Colour(255f, 128f, 0f);
+        Colour c = new Colour(255f, 128f, 0f);//giallo
         Colour c5 = new Colour(0f, 255f, 1f);
 
         Colour c1 = new Colour(255f, 0f, 0f); //rosso
         // Colour c2 = new Colour(184f, 31f, 88f); //magenta
         Colour c3 = new Colour(0f, 0f, 255f);
+        Colour lil1 = new Colour(0, 2, 206);
+        Colour lil2 = new Colour(172, 2, 206);
 
         Material m1 = new Material(new DiffuseBrdf(new UniformPigment(c5)));
 
@@ -57,7 +60,7 @@ public static partial class Program
 
         Material m3 = new Material(new DiffuseBrdf(new CheckeredPigment(c, c5)));
         
-        Material m4 = new Material(new DiffuseBrdf(new CheckeredPigment(c3, Colour.black)));
+        Material m4 = new Material(new DiffuseBrdf(new CheckeredPigment(lil1, lil2, 8)));
         
         Material m5 = new Material(new DiffuseBrdf(new UniformPigment(c1)));
 
@@ -87,9 +90,9 @@ public static partial class Program
                     world.add(new Sphere(Transformation.translation(new Vec(x, y, z)) * sphereScale, m4));
                 }
             }
-           
+        }
 
-            //Add two spheres
+        //Add four spheres
            world.add(new Sphere(Transformation.translation(new Vec(0.0f, 0.5f, 0.0f)) * sphereScale, m2));
            world.add(new Sphere(Transformation.translation(new Vec(0.0f, 0.0f, -0.5f)) * sphereScale, m5));
            world.add(new Sphere(Transformation.translation(new Vec(0.0f, -0.5f, 0.0f)) * sphereScale, m2));
@@ -97,13 +100,12 @@ public static partial class Program
             world.add(new Plane(Transformation.translation(new Vec(0f,0f,-0.7f)),m3));
             Transformation cam_tr = Transformation.rotation_z(opts.Angle) *
                                     Transformation.translation(new Vec(-1f, 0f, 0f));
-            Camera cam = new PerspectiveCamera(aspect_ratio: opts.Width / opts.Height, tran: cam_tr);
+            Camera cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width/opts.Height, tran: cam_tr);
             if (opts.Camera != "perspective")
             {
-                cam = new OrthogonalCamera(aspect_ratio: opts.Width / opts.Height, transformation: cam_tr);
+                cam = new OrthogonalCamera(aspect_ratio: (float)opts.Width / opts.Height, transformation: cam_tr);
             }
-
-
+            
             ImageTracer imageTracer = new ImageTracer(image, cam);
 
             for (int i = 0; i < w; i++)
@@ -124,7 +126,6 @@ public static partial class Program
                 }
             }
 
-            Renderer rend1 = new OnOffRenderer(world);
             Renderer rend2 = new FlatRenderer(world);
             imageTracer.fire_all_rays(rend2);
 
@@ -148,6 +149,137 @@ public static partial class Program
             Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
             img.write_ldr_image(out_png, ".png", 1f);
             out_png.Close();
+        
+        
+    }
+
+    //=======================================================================
+    // DEMO COLORED SPHERES === DEMO COLORED SPHERES === DEMO COLORED SPHERES
+    //=======================================================================
+    static void RunDemo2(DemoOption opts)
+    {
+        int w = opts.Width;
+        int h = opts.Height;
+        HdrImage image = new HdrImage(w, h);
+        World world = new World();
+
+        Colour yellow = new Colour(255f, 128f, 0f);
+        Colour green = new Colour(0f, 255f, 1f);
+        Colour red = new Colour(255f, 0f, 0f);
+        Colour blue = new Colour(0, 0, 255);
+
+        Material uni_green = new Material(new DiffuseBrdf(new UniformPigment(green)));
+        Material yel_red = new Material(new DiffuseBrdf(new CheckeredPigment(yellow, red, 8)));
+        Material blu_black = new Material(new DiffuseBrdf(new CheckeredPigment(blue, Colour.black)));
+
+
+        Transformation sphereScale = Transformation.scaling(0.1f, 0.1f, 0.1f);
+        for (float x = -0.5f; x <= 0.5f; x += 1f)
+        {
+            for (float y = -0.5f; y <= 0.5f; y += 1f)
+            {
+                for (float z = -0.5f; z <= 0.5f; z += 1f)
+                {
+                    world.add(new Sphere(Transformation.translation(new Vec(x, y, z)) * sphereScale, blu_black));
+                }
+            }
+
+
+            //Add three spheres
+            world.add(new Sphere(Transformation.translation(new Vec(0f, 0.5f, 0f)) * sphereScale, yel_red));
+            world.add(new Sphere(Transformation.translation(new Vec(0f, 0f, -0.5f)) * sphereScale, uni_green));
+            Transformation cam_tr = Transformation.rotation_z(opts.Angle) *
+                                    Transformation.translation(new Vec(-1f, 0f, 0f));
+            Camera cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width / opts.Height, tran: cam_tr);
+            if (opts.Camera != "perspective")
+            {
+                cam = new OrthogonalCamera(aspect_ratio: (float)opts.Width / opts.Height, transformation: cam_tr);
+            }
+
+            ImageTracer imageTracer = new ImageTracer(image, cam);
+
+            Renderer rend = new FlatRenderer(world);
+            imageTracer.fire_all_rays(rend);
+
+            string root_directory = Environment.CurrentDirectory;
+            string path = Path.Combine(root_directory, "image.pfm");
+            File.CreateText(path).Close();
+            Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
+            imageTracer.Image.write_pfm(file_out, true);
+            file_out.Close();
+
+            HdrImage img = new HdrImage();
+            using (FileStream in_pfm = File.Open("image.pfm", FileMode.Open))
+            {
+                img.read_pfm_image(in_pfm);
+
+            }
+
+            img.clamp_image();
+            File.CreateText(opts.output).Close();
+            Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
+            img.write_ldr_image(out_png, ".png", 1f);
+            out_png.Close();
+
+        }
+
+        //=======================================================================
+        // DEMO EARTH === DEMO EARTH === DEMO EARTH === DEMO EARTH === DEMO EARTH
+        //=======================================================================
+        static void RunDemo3(DemoOption opts)
+        {
+            int w = opts.Width;
+            int h = opts.Height;
+            HdrImage image = new HdrImage(w, h);
+            World world = new World();
+            string root_directory = Environment.CurrentDirectory;
+            string input_pfm = Path.Combine(root_directory, "world.pfm");
+            //string input_pfm = "world.pfm";
+            using (FileStream inputStream = File.OpenRead(input_pfm))
+            {
+                image.read_pfm_image(inputStream);
+                Console.WriteLine($"Txture {input_pfm} has been correctly read from disk");
+            }
+
+            Colour c1 = new Colour(255f, 128f, 0f);
+            Colour c2 = new Colour(0f, 255f, 1f);
+
+            Material m = new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 6)));
+            Material earth = new Material(new DiffuseBrdf(new ImagePigment(image)));
+            Transformation sphereScale = Transformation.scaling(0.5f, 0.5f, 0.5f);
+            world.add(new Sphere(Transformation.translation(new Vec(0f, 0f, 0f)) * sphereScale, earth));
+            Transformation cam_tr = Transformation.rotation_z(opts.Angle) *
+                                    Transformation.translation(new Vec(-1f, 0f, 0f));
+            Camera cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width / opts.Height, tran: cam_tr);
+
+
+            ImageTracer imageTracer = new ImageTracer(image, cam);
+
+
+            Renderer rend = new FlatRenderer(world);
+            imageTracer.fire_all_rays(rend);
+
+
+
+            string path = Path.Combine(root_directory, "image.pfm");
+            File.CreateText(path).Close();
+            Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
+            imageTracer.Image.write_pfm(file_out, true);
+            file_out.Close();
+
+            HdrImage img = new HdrImage();
+            using (FileStream in_pfm = File.Open("image.pfm", FileMode.Open))
+            {
+                img.read_pfm_image(in_pfm);
+
+            }
+
+            img.clamp_image();
+            File.CreateText(opts.output).Close();
+            Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
+            img.write_ldr_image(out_png, ".png", 1f);
+            out_png.Close();
+
         }
     }
 
@@ -197,7 +329,7 @@ public static partial class Program
     {
         CommandLine.Parser.Default.ParseArguments<pfm2png_option, DemoOption>(args)
             .WithParsed<pfm2png_option>(RunOptionPfm)
-            .WithParsed<DemoOption>(RunDemo)
+            .WithParsed<DemoOption>(RunDemo2)
 
             .WithNotParsed(HandleError);
     }
