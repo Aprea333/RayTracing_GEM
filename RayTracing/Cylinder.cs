@@ -24,6 +24,9 @@ public class Cylinder:Shape
         float hit_t;
         if (tmin > inv_ray.t_min && tmin < inv_ray.t_max) hit_t = tmin;
         else if (tmax > inv_ray.t_min && tmax < inv_ray.t_max) hit_t= tmax;
+        
+        
+        
         else return null;
         return null;
     }

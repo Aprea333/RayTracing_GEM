@@ -222,38 +222,45 @@ public static partial class Program
             out_png.Close();
 
         }
+    }
 
-        //=======================================================================
+    //=======================================================================
         // DEMO EARTH === DEMO EARTH === DEMO EARTH === DEMO EARTH === DEMO EARTH
         //=======================================================================
         static void RunDemo3(DemoOption opts)
         {
             int w = opts.Width;
             int h = opts.Height;
-            HdrImage image = new HdrImage(w, h);
+            HdrImage image = new HdrImage();
             World world = new World();
             string root_directory = Environment.CurrentDirectory;
-            string input_pfm = Path.Combine(root_directory, "world.pfm");
+            //string root_directory = @"C:\Users\miche\RayTracing_GEM\RayTracing\ImagePfm";
+            string input_pfm = Path.Combine(root_directory, @"\ImagePfm\world.pfm");
             //string input_pfm = "world.pfm";
+            Console.WriteLine("\ntest1");
+
             using (FileStream inputStream = File.OpenRead(input_pfm))
             {
+                Console.WriteLine("\ntest2");
                 image.read_pfm_image(inputStream);
-                Console.WriteLine($"Txture {input_pfm} has been correctly read from disk");
+                Console.WriteLine("\ntest3");
+                Console.WriteLine($"Texture image has been correctly read from disk");
             }
 
+           
             Colour c1 = new Colour(255f, 128f, 0f);
             Colour c2 = new Colour(0f, 255f, 1f);
 
             Material m = new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 6)));
             Material earth = new Material(new DiffuseBrdf(new ImagePigment(image)));
-            Transformation sphereScale = Transformation.scaling(0.5f, 0.5f, 0.5f);
+            Transformation sphereScale = Transformation.scaling(0.7f, 0.7f, 0.7f);
             world.add(new Sphere(Transformation.translation(new Vec(0f, 0f, 0f)) * sphereScale, earth));
             Transformation cam_tr = Transformation.rotation_z(opts.Angle) *
                                     Transformation.translation(new Vec(-1f, 0f, 0f));
             Camera cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width / opts.Height, tran: cam_tr);
 
-
-            ImageTracer imageTracer = new ImageTracer(image, cam);
+            HdrImage img = new HdrImage(w, h);
+            ImageTracer imageTracer = new ImageTracer(img, cam);
 
 
             Renderer rend = new FlatRenderer(world);
@@ -261,14 +268,13 @@ public static partial class Program
 
 
 
-            string path = Path.Combine(root_directory, "image.pfm");
+            string path = Path.Combine(root_directory, @"\ImagePfm\image.pfm");
             File.CreateText(path).Close();
             Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
             imageTracer.Image.write_pfm(file_out, true);
             file_out.Close();
 
-            HdrImage img = new HdrImage();
-            using (FileStream in_pfm = File.Open("image.pfm", FileMode.Open))
+            using (FileStream in_pfm = File.Open(root_directory + @"\ImagePfm\image.pfm" , FileMode.Open))
             {
                 img.read_pfm_image(in_pfm);
 
@@ -281,7 +287,7 @@ public static partial class Program
             out_png.Close();
 
         }
-    }
+    
 
     [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
@@ -329,7 +335,7 @@ public static partial class Program
     {
         CommandLine.Parser.Default.ParseArguments<pfm2png_option, DemoOption>(args)
             .WithParsed<pfm2png_option>(RunOptionPfm)
-            .WithParsed<DemoOption>(RunDemo2)
+            .WithParsed<DemoOption>(RunDemo3)
 
             .WithNotParsed(HandleError);
     }

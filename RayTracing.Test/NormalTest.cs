@@ -78,6 +78,15 @@ public class NormalTest
         Assert.False(Math.Abs(c.norm() - f) > epsilon);
     }
 
-   
+    [Test]
+
+    public void To_Vec()
+    {
+        Vec v = new Vec(0.5f, 2.1f, 1.7f);
+        Vec v1 = new Vec(0.7f, 1.5f, 7.0f);
+        Normal c = new Normal(0.5f, 2.1f, 1.7f);
+        Assert.True(Vec.are_close(c.To_vec(),v));
+        Assert.False(Vec.are_close(c.To_vec(),v1));
+    }
     
 }
