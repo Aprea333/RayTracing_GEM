@@ -51,7 +51,7 @@ public class PathTracer
         {
             for (int ray_index = 0; ray_index < NRays; ray_index++)
             {
-                Ray new_ray = hit_material.brdf.ScatterRay(RandGen, hit_record.Value.ray.direction,
+                Ray new_ray = hit_material.brdf.Scatter_Ray(RandGen, hit_record.Value.ray.direction,
                     hit_record.Value.world_point,
                     hit_record.Value.normal,
                     ray.depth + 1);
