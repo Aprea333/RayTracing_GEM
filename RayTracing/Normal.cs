@@ -164,9 +164,10 @@ public struct Normal
     public Normal normalization()
     {
         float scal = 1/norm();
-        return scal * this;
+        return new Normal(this.x*scal, this.y*scal, this.z*scal);
     }
     
+
     /// <summary>
     /// Creates a orthonormal basis (onb) from a normal representing the z axis.
     /// ATTENTION: The normal must be normalized when this method is invoked
@@ -183,9 +184,18 @@ public struct Normal
 
         Vec e1 = new Vec((float)(1.0 + sign * normal.x * normal.x * a), sign * b, -sign * normal.x);
         Vec e2 = new Vec(b, sign + normal.y * normal.y * a, -normal.y);
-        Vec e3 = new Vec(normal.x, normal.y, normal.z);
+        Vec e3 = normal.To_vec();
         var onb = (e1, e2, e3);
         return onb;
     }
+    
+    public Vec To_vec()
+    {
+        return new(x, y, z);
+    }
+    
 }
+
+
+
 
