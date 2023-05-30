@@ -346,9 +346,9 @@ public static partial class Program
             cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width / opts.Height, tran: cam_tr);
         }
             
-        ImageTracer imageTracer = new ImageTracer(image, cam);
+        ImageTracer imageTracer = new ImageTracer(image, cam, sample_per_side: 3);
 
-        Renderer rend = new PathTracer(world, Colour.black, NRays: 4, MaxDepth: 3);
+        Renderer rend = new PathTracer(world, Colour.black, NRays: 15, MaxDepth: 5);
         imageTracer.fire_all_rays(rend);
 
         string root_directory = Environment.CurrentDirectory;
