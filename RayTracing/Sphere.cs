@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace RayTracing;
@@ -9,6 +10,7 @@ public class Sphere:Shape
     {
     }
 
+    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: RayTracing.Transformation; size: 2846MB")]
     public override HitRecord? ray_intersection(Ray r)
     {
         Ray inv_ray = Ray.transform(transformation.inverse(), r);

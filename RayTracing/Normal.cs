@@ -174,17 +174,18 @@ public struct Normal
     /// </summary>
     /// <param name="normal">The normal</param>
     /// <returns>tuple containing the three vectors (e1,e2,e3) of the basis</returns>
-    public static (Vec, Vec, Vec) create_onb_from_z(Normal normal)
+    public static (Vec, Vec, Vec) create_onb_from_z(Normal n)
     {
+        Normal normal = n.normalization();
         float sign;
         if (normal.z > 0) sign = 1f;
         else sign = -1f;
-        float a = (float)(-1.0 / (sign + normal.z));
+        float a = (float)(-1.0f / (sign + normal.z));
         float b = normal.x * normal.y * a;
 
         Vec e1 = new Vec((float)(1.0 + sign * normal.x * normal.x * a), sign * b, -sign * normal.x);
         Vec e2 = new Vec(b, sign + normal.y * normal.y * a, -normal.y);
-        Vec e3 = normal.To_vec();
+        Vec e3 = new Vec(normal.x, normal.y, normal.z);
         var onb = (e1, e2, e3);
         return onb;
     }

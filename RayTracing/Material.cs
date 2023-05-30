@@ -2,8 +2,8 @@
 
 public class Material
 {
-    public Brdf brdf = new DiffuseBrdf();
-    public Pigment emitted_radiance = new UniformPigment(Colour.black);
+    public Brdf brdf;
+    public Pigment emitted_radiance;
     
     public Material(Brdf? brdf = null, Pigment? emitted_radiance = null)
     {

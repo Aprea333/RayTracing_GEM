@@ -17,10 +17,10 @@ public static partial class Program
             
         }
 
-        [Option("width", Default = 2560, HelpText = "Width of the image to render")]
+        [Option("width", Default = 640, HelpText = "Width of the image to render")]
         public int Width { get; set; }
 
-        [Option("height", Default = 1600, HelpText = "Height of the image to render")]
+        [Option("height", Default = 480, HelpText = "Height of the image to render")]
         public int Height { get; set; }
 
         [Option("angle_deg", Default = 0.0f, HelpText = "Angle of view")]
@@ -97,9 +97,11 @@ public static partial class Program
            world.add(new Sphere(Transformation.translation(new Vec(0.0f, 0.0f, -0.5f)) * sphereScale, m5));
            world.add(new Sphere(Transformation.translation(new Vec(0.0f, -0.5f, 0.0f)) * sphereScale, m2));
            world.add(new Sphere(Transformation.translation(new Vec(0.0f, 0.0f, +0.5f)) * sphereScale, m5));
-            world.add(new Plane(Transformation.translation(new Vec(0f,0f,-0.7f)),m3));
+           world.add(new Sphere(Transformation.translation(new Vec(0.5f, 0.0f, 0f)) * sphereScale, m5));
+
+           world.add(new Plane(Transformation.translation(new Vec(0f,0f,-0.7f)),m3));
             Transformation cam_tr = Transformation.rotation_z(opts.Angle) *
-                                    Transformation.translation(new Vec(-1f, 0f, 0f));
+                                    Transformation.translation(new Vec(0.55f, 0f, 0f));
             Camera cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width/opts.Height, tran: cam_tr);
             if (opts.Camera != "perspective")
             {
@@ -225,8 +227,8 @@ public static partial class Program
     }
 
     //=======================================================================
-        // DEMO EARTH === DEMO EARTH === DEMO EARTH === DEMO EARTH === DEMO EARTH
-        //=======================================================================
+    // DEMO EARTH === DEMO EARTH === DEMO EARTH === DEMO EARTH === DEMO EARTH
+    //=======================================================================
         static void RunDemo3(DemoOption opts)
         {
             int w = opts.Width;
@@ -235,26 +237,29 @@ public static partial class Program
             World world = new World();
             string root_directory = Environment.CurrentDirectory;
             //string root_directory = @"C:\Users\miche\RayTracing_GEM\RayTracing\ImagePfm";
-            string input_pfm = Path.Combine(root_directory, @"\ImagePfm\world.pfm");
-            //string input_pfm = "world.pfm";
-            Console.WriteLine("\ntest1");
+            //string input_pfm = Path.Combine(@"C:\Users\miche\RayTracing_GEM\","world.pfm");
+            string input_pfm = "world.pfm";
+            //Console.WriteLine("\ntest1");
 
             using (FileStream inputStream = File.OpenRead(input_pfm))
             {
-                Console.WriteLine("\ntest2");
+                //Console.WriteLine("\ntest2");
                 image.read_pfm_image(inputStream);
-                Console.WriteLine("\ntest3");
+                //Console.WriteLine("\ntest3");
                 Console.WriteLine($"Texture image has been correctly read from disk");
             }
 
-           
+            
             Colour c1 = new Colour(255f, 128f, 0f);
             Colour c2 = new Colour(0f, 255f, 1f);
 
             Material m = new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 6)));
             Material earth = new Material(new DiffuseBrdf(new ImagePigment(image)));
+
             Transformation sphereScale = Transformation.scaling(0.7f, 0.7f, 0.7f);
             world.add(new Sphere(Transformation.translation(new Vec(0f, 0f, 0f)) * sphereScale, earth));
+            //world.add(new Plane(Transformation.translation(new Vec(0f, -0.7f, -07f)), milky));
+
             Transformation cam_tr = Transformation.rotation_z(opts.Angle) *
                                     Transformation.translation(new Vec(-1f, 0f, 0f));
             Camera cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width / opts.Height, tran: cam_tr);
@@ -267,27 +272,107 @@ public static partial class Program
             imageTracer.fire_all_rays(rend);
 
 
+            //Console.WriteLine("\ntest4");
 
-            string path = Path.Combine(root_directory, @"\ImagePfm\image.pfm");
+            string path = "./image.pfm";
             File.CreateText(path).Close();
             Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
             imageTracer.Image.write_pfm(file_out, true);
             file_out.Close();
 
-            using (FileStream in_pfm = File.Open(root_directory + @"\ImagePfm\image.pfm" , FileMode.Open))
+            //Console.WriteLine("\ntest5");
+
+            using (FileStream in_pfm = File.Open(path, FileMode.Open))
             {
+                
+                //Console.WriteLine("\ntest6");
                 img.read_pfm_image(in_pfm);
+                //Console.WriteLine("\ntest7");
 
             }
+            
+            //Console.WriteLine("\ntest8");
 
             img.clamp_image();
             File.CreateText(opts.output).Close();
             Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
             img.write_ldr_image(out_png, ".png", 1f);
             out_png.Close();
+            
 
         }
+        
     
+    //===============================================================================
+    // DEMO 2 PLANES 2 SPHERES === DEMO 2 PLANES 2 SPHERES === DEMO 2 PLANES 2 SPHERES
+    //===============================================================================
+    
+     static void RunDemo4(DemoOption opts)
+    {
+        int w = opts.Width;
+        int h = opts.Height;
+        HdrImage image = new HdrImage(w, h);
+        World world = new World();
+
+        Colour beige = new Colour(1, 0.9f, 0.5f);
+        Colour green = new Colour(0.3f, 0.5f, 0.1f);
+        Colour blue = new Colour(0.1f, 0.2f, 0.5f);
+        Colour navy = new Colour(0.3f, 0.4f, 0.8f);
+        Colour red = new Colour(0.6f, 0.2f, 0.3f);
+
+        //Materials
+        Material sky = new Material(new DiffuseBrdf(new UniformPigment(Colour.black)),
+            new UniformPigment(beige));
+
+        Material ground = new Material(new DiffuseBrdf(new CheckeredPigment(green, blue)));
+        Material sphere_material = new Material(new DiffuseBrdf(new UniformPigment(navy)));
+        Material mirror_material = new Material(new SpecularBrdf(new UniformPigment(red)));
+        
+        //Add shapes
+        world.add(new Sphere(Transformation.scaling(210f,210f,210f)*Transformation.translation(new Vec(0,0,0.4f)), sky));
+        world.add(new Plane(material:ground));
+        world.add(new Sphere(Transformation.translation(new Vec(0,0,1)), sphere_material));
+        world.add(new Sphere(Transformation.translation(new Vec(1f,2.5f,0)), mirror_material));
+        
+        
+        Transformation cam_tr = Transformation.rotation_z(opts.Angle) * Transformation.translation(new Vec(-1f, 0f, 1f));
+        Camera cam;
+        if (opts.Camera != "perspective")
+        {
+            cam = new OrthogonalCamera(aspect_ratio: (float)opts.Width / opts.Height, transformation: cam_tr);
+        }
+        else
+        {
+            cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width / opts.Height, tran: cam_tr);
+        }
+            
+        ImageTracer imageTracer = new ImageTracer(image, cam);
+
+        Renderer rend = new PathTracer(world, Colour.black, NRays: 4, MaxDepth: 3);
+        imageTracer.fire_all_rays(rend);
+
+        string root_directory = Environment.CurrentDirectory;
+        Console.WriteLine($"Root Dir: {root_directory}");
+        string path = Path.Combine(root_directory, "image.pfm");
+        File.CreateText(path).Close();
+        Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
+        imageTracer.Image.write_pfm(file_out, true);
+        file_out.Close();
+
+        HdrImage img = new HdrImage();
+
+        using (FileStream in_pfm = File.Open("image.pfm", FileMode.Open))
+        {
+            img.read_pfm_image(in_pfm);
+        }
+
+        img.clamp_image();
+
+        File.CreateText(opts.output).Close();
+        Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
+        img.write_ldr_image(out_png, ".png", 1f);
+        out_png.Close();
+    }
 
     [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
@@ -307,6 +392,7 @@ public static partial class Program
 
     static void RunOptionPfm(pfm2png_option opts)
     {
+        
         HdrImage img = new HdrImage();
 
         using (FileStream in_pfm = File.Open(opts.input, FileMode.Open))
@@ -335,7 +421,7 @@ public static partial class Program
     {
         CommandLine.Parser.Default.ParseArguments<pfm2png_option, DemoOption>(args)
             .WithParsed<pfm2png_option>(RunOptionPfm)
-            .WithParsed<DemoOption>(RunDemo3)
+            .WithParsed<DemoOption>(RunDemo4)
 
             .WithNotParsed(HandleError);
     }

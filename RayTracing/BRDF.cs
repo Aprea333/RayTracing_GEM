@@ -46,11 +46,18 @@ public class DiffuseBrdf : Brdf
 
 public class SpecularBrdf : Brdf
 {
-    public SpecularBrdf(Pigment? pig=null) : base(pig){}
+    public float ThresholdAngleRad;
+
+    public SpecularBrdf(Pigment? pig = null, float? angle_rad = null) : base(pig)
+    {
+        ThresholdAngleRad = (float)(angle_rad ?? Math.PI / 180.0f);
+    }
 
     public override Colour Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv)
     {
-        return Pig.get_colour(uv) * (float)(1.0f / Math.PI);
+        var theta_in = (float)Math.Acos(normal.normalization() * inDir.normalize());
+        var theta_out = (float)Math.Acos(normal.normalization() * outDir.normalize());
+        return Math.Abs(theta_in - theta_out) < ThresholdAngleRad ? Pig.get_colour(uv) : Colour.black;
     }
 
     public override Ray Scatter_Ray(PCG pcg, Vec incoming_dir, Point interaction_point, Normal normal, int depth)

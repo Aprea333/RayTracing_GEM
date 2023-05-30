@@ -30,11 +30,7 @@ public class Colour
 /// <returns></returns>
     public static Colour operator +(Colour a, Colour b)
     {
-        Colour c = new Colour();
-        c.r_c = a.r_c + b.r_c;
-        c.g_c = a.g_c + b.g_c;
-        c.b_c = a.b_c + b.b_c;
-        return c;
+        return new Colour(a.r_c + b.r_c,a.g_c + b.g_c,a.b_c + b.b_c);
     }
 /// <summary>
 /// Function that returns the product between a scalar and a color
@@ -44,20 +40,12 @@ public class Colour
 /// <returns></returns>
     public static Colour operator *(Colour cc, float alpha)
     {
-        Colour result = new Colour();
-        result.r_c = cc.r_c * alpha;
-        result.g_c = cc.g_c * alpha;
-        result.b_c= cc.b_c * alpha;
-        return result;
+        return new Colour(cc.r_c * alpha, cc.g_c * alpha,cc.b_c * alpha);
     }
 
     public static Colour operator *(float alpha, Colour cc)
     {
-        Colour result = new Colour();
-        result.r_c = cc.r_c * alpha;
-        result.g_c = cc.g_c * alpha;
-        result.b_c= cc.b_c * alpha;
-        return result;
+        return new Colour(cc.r_c * alpha, cc.g_c * alpha, cc.b_c * alpha);
     }
 /// <summary>
 /// Function that print the value of the three value of color: Red, green and blue
@@ -74,12 +62,7 @@ public class Colour
 /// <returns></returns>
     public static Colour operator *(Colour a, Colour b)
     {
-        Colour prod = new Colour();
-        prod.r_c = a.r_c * b.r_c;
-        prod.g_c = a.g_c * b.g_c;
-        prod.b_c = a.b_c * b.b_c;
-
-        return prod;
+        return new Colour(a.r_c * b.r_c,a.g_c * b.g_c,a.b_c * b.b_c);
     }
 /// <summary>
 /// Function that assures me that two colors are equal within an arbitrary confidence interval

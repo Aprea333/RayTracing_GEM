@@ -36,8 +36,8 @@ public class CheckeredPigment : Pigment
 
     public override Colour get_colour(Vec2D uv)
     {
-        int u = (int)(uv.u * num_of_steps);
-        int v = (int)(uv.v * num_of_steps);
+        int u = (int)Math.Floor(uv.u * num_of_steps);
+        int v = (int)Math.Floor(uv.v * num_of_steps);
         //If u and v are both even or both odd, u+v is even
         return (v + u) % 2 == 0 ? color1 : color2;
     }

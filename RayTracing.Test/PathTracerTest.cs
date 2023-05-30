@@ -19,9 +19,9 @@ public class PathTracerTest
             
             wrl.add(new Sphere(material: enclosure_material));
 
-            PathTracer path_tracer = new PathTracer(RandGen: pcg, NRays: 1, Wld: wrl, MaxDepth: 100, MinDepth: 101, BackgroundColor: new Colour());
+            PathTracer path_tracer = new PathTracer(RandGen: pcg, NRays: 1, Wld: wrl, MaxDepth: 100,russianRoulette: 101, BackgroundColor: new Colour());
             Ray ray = new Ray(new Point(0, 0, 0), new Vec(1, 0, 0));
-            Colour color = path_tracer.PathTracing(ray);
+            Colour color = path_tracer.tracing(ray);
 
             float expected = emitted_radiance / (1.0f - reflectance);
             Assert.True(Math.Abs(expected - color.r_c) < 0.0001);
