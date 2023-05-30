@@ -20,7 +20,7 @@ public struct HitRecord
         ray = r;
         mt = material;
     }
-
+    
     public static bool are_close(HitRecord a, HitRecord b)
     {
         float eps = 1e-5f;

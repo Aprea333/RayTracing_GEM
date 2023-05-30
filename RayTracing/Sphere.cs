@@ -89,6 +89,6 @@ public class Sphere:Shape
     {
         float u = (float)(Single.Atan2(p.y, p.x)/(2*Math.PI));
         float v = (float)(Single.Acos(p.z)/Math.PI);
-        return new Vec2D(u, v);
+        return new Vec2D(u >= 0f ? u : u + 1f, v);
     }
 }
