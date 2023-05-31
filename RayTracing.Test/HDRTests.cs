@@ -41,9 +41,9 @@ public class HDRTests
         }
 
         Assert.True(tuttizeri());
-        testHdr.hdr_image[1].b_c = 1;
+       // testHdr.hdr_image[1].b_c = 1;
         Assert.False(tuttizeri());
-        testHdr.hdr_image[1].b_c = 0; //rimettiamolo a posto
+        //testHdr.hdr_image[1].b_c = 0; //rimettiamolo a posto
     }
 
     [Test]

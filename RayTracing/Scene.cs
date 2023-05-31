@@ -109,11 +109,15 @@ public class KeywordToken : Token
         this.Location = Location;
         this.keyword = keyword;
     }
-    
-    public string Write()
+
+    public override string ToString()
     {
         return keyword.ToString();
     }
+    /*public string Write()
+    {
+        return keyword.ToString();
+    }*/
 }
 
 public class LiteralNumberToken : Token
@@ -196,7 +200,8 @@ public class InputStream
   public SourceLocation saved_location;
   public int tabulations;
   public Token? saved_token = null;
-  
+  //public EnumKeyword EnumKeyword { get; }
+
   string SYMBOLS = "()<>[],*";
   
   public InputStream(Stream stream, string file_name = "", int tabulations = 8)
@@ -249,7 +254,7 @@ public class InputStream
 
   public void unread_char(string ch)
   {
-    Assert.True(ch == "");
+      Assert.True(saved_char == "");
     saved_char = ch;
     location = saved_location;
   }
@@ -324,7 +329,6 @@ public class InputStream
 
       return new LiteralNumberToken(val, token_location);
   }
-
   public Token parse_keyword_or_identifier_token(string first_char, SourceLocation token_location)
   {
       var token = first_char;
@@ -342,14 +346,17 @@ public class InputStream
 
       try
       {
-          return KeywordToken(token_location, EnumKeyword);
+          //return new KeywordToken(token_location, EnumKeyword);
+          return new KeywordToken(token_location, KeywordToken.Dict[token]);
       }
       catch(KeyNotFoundException)
       {
           return new IdentifierToken(token_location, token);
       }
   }
-  
+
+
+
   public Token read_token(){
       if (saved_token != null)
       {
