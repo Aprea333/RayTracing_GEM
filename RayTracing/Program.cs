@@ -346,9 +346,9 @@ public static partial class Program
             cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width / opts.Height, tran: cam_tr);
         }
             
-        ImageTracer imageTracer = new ImageTracer(image, cam, sample_per_side: 3);
+        ImageTracer imageTracer = new ImageTracer(image, cam, sample_per_side: 4);
 
-        Renderer rend = new PathTracer(world, Colour.black, NRays: 15, MaxDepth: 5);
+        Renderer rend = new PathTracer(world, Colour.black, NRays:4 , MaxDepth: 3);
         imageTracer.fire_all_rays(rend);
 
         string root_directory = Environment.CurrentDirectory;
@@ -370,7 +370,7 @@ public static partial class Program
 
         File.CreateText(opts.output).Close();
         Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
-        img.write_ldr_image(out_png, ".png", 1f);
+        img.write_ldr_image(out_png, ".png", 1.5f);
         out_png.Close();
     }
 

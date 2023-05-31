@@ -1,4 +1,5 @@
-﻿using System.Net.WebSockets;
+﻿using System.Buffers;
+using System.Net.WebSockets;
 
 using System.Diagnostics;
 using Microsoft.VisualBasic.CompilerServices;
@@ -14,6 +15,11 @@ public class GrammarError: Exception
 {
     public string message;
     public SourceLocation location;
+
+    public GrammarError(string message, SourceLocation location) : base(message)
+    {
+        this.location = location;
+    }
 }
 public struct SourceLocation
 {
@@ -190,7 +196,84 @@ public class InputStream
     }
     unread_char(ch);
   }
-  
+
+  public StringToken parse_string_token(SourceLocation token_location)
+  {
+      var token = "";
+      while (true)
+      {
+          string ch = read_char();
+          if (ch == "\"")
+          {
+              break;
+          }
+
+          if (ch == "")
+          {
+              throw new GrammarError("Unterminated string",token_location);
+          }
+
+          token += ch;
+      }
+
+      return new StringToken(token_location, token);
+  }
+
+  public LiteralNumberToken parse_float_token(string first_char, SourceLocation token_location)
+  {
+      var token = first_char;
+      float val;
+      while (true)
+      {
+          string ch = read_char();
+          bool all = Char.IsDigit(Convert.ToChar(ch)) | ch == "." | ch == "e" | ch == "E";
+          if (all != true)
+          {
+              unread_char(ch);
+              break;
+          }
+
+          token += ch;
+      }
+
+      try
+      {
+          var value = float.Parse(token);
+          val = value;
+      }
+      catch
+      {
+          throw new GrammarError($"'{token}' i and invalid floating-point number", token_location);
+      }
+
+      return new LiteralNumberToken(val, token_location);
+  }
+
+  public Token parse_keyword_or_identifier_token(string first_char, SourceLocation token_location)
+  {
+      var token = first_char;
+      while (true)
+      {
+          string ch = read_char();
+          if ((Char.IsLetterOrDigit(Convert.ToChar(ch)) | ch == "_")!= true)
+          {
+              unread_char(ch);
+              break;
+          }
+
+          token += ch;
+      }
+
+      try
+      {
+          return KeywordToken(token_location, KEYWORDS[token]);
+      }
+      catch(KeyNotFoundException)
+      {
+          return new IdentifierToken(token_location, token);
+      }
+  }
+
   
   
   

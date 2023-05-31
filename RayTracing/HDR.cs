@@ -243,11 +243,14 @@ public class HdrImage
     public void normalize_image(float factor, float? luminosity = null)
     {
         var lum = luminosity ?? average_luminosity();
-        foreach (var t in hdr_image)
+        float c = factor / lum;
+        for (int i = 0; i < height; i++)
         {
-            t.r_c = t.r_c * (factor / lum);
-            t.g_c = t.g_c * (factor / lum);
-            t.b_c = t.b_c * (factor / lum);
+            for (int j = 0; j < width; j++)
+            {
+                var t = get_pixel(j, i);
+                set_pixel(new Colour(t.r_c*c, t.g_c*c, t.b_c*c), j, i);
+            }
         }
     }
 
@@ -258,11 +261,13 @@ public class HdrImage
 
     public void clamp_image()
     {
-        foreach (var pix in hdr_image)
+        for (int i = 0; i < height; i++)
         {
-            pix.r_c = clamp(pix.r_c);
-            pix.g_c = clamp(pix.g_c);
-            pix.b_c = clamp(pix.b_c);
+            for (int j = 0; j < width; j++)
+            {
+                var pix = get_pixel(j, i);
+                set_pixel(new Colour(clamp(pix.r_c), clamp(pix.g_c), clamp(pix.b_c)), j, i);
+            }
         }
     }
 
