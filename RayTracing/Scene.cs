@@ -65,3 +65,34 @@ public class StopToken : Token
         Location = location;
     }
 }
+
+public class IdentifierToken : Token
+{
+    public string Identifier;
+
+    public IdentifierToken(SourceLocation location, string s)
+    {
+        Location = location;
+        Identifier = s;
+    }
+
+    public string Write()
+    {
+        return Identifier;
+    }
+}
+
+public class StringToken : Token
+{
+    public string Str;
+    public StringToken(SourceLocation location, string str)
+    {
+        Location = location;
+        Str = str;
+    }
+
+    public string Write()
+    {
+        return Str;
+    }
+}
