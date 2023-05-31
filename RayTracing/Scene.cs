@@ -1,5 +1,10 @@
-﻿using System.Buffers;
+using System.Buffers;
 using System.Net.WebSockets;
+
+using System.Net.Sockets;
+
+using System.Net.WebSockets;
+
 
 using System.Diagnostics;
 using Microsoft.VisualBasic.CompilerServices;
@@ -16,8 +21,10 @@ public class GrammarError: Exception
     public string message;
     public SourceLocation location;
 
-    public GrammarError(string message, SourceLocation location) : base(message)
+
+    public GrammarError(string message, SourceLocation location)
     {
+        this.message = message;
         this.location = location;
     }
 }
@@ -41,6 +48,72 @@ public struct SourceLocation
 public abstract class Token
 {
     public SourceLocation Location;
+    
+}
+
+
+public enum EnumKeyword 
+{
+    New,
+    Box,
+    Brdf,
+    Camera,
+    Colour,
+    Material,
+    Diffuse,
+    Uniform,
+    Checkered,
+    Image,
+    Translation,
+    Pigment,
+    World,
+    Orthogonal,
+    Perspective,
+    RotationX,
+    RotationY,
+    RotationZ,
+    Float,
+    Scaling
+}
+
+public class KeywordToken : Token
+{
+    public EnumKeyword keyword;
+
+    public static IDictionary<string, EnumKeyword> Dict = new Dictionary<string, EnumKeyword>
+    {
+        { "new", EnumKeyword.New },
+        { "Box", EnumKeyword.Box },
+        { "Brdf", EnumKeyword.Brdf },
+        { "Camera", EnumKeyword.Camera },
+        { "Colour", EnumKeyword.Colour },
+        { "Material", EnumKeyword.Material },
+        { "Diffuse", EnumKeyword.Diffuse },
+        { "Uniform", EnumKeyword.Uniform },
+        { "Checkered", EnumKeyword.Checkered },
+        { "Image", EnumKeyword.Image },
+        { "Translation", EnumKeyword.Translation },
+        { "Pigment", EnumKeyword.Pigment },
+        { "World", EnumKeyword.World },
+        { "Orthogonal", EnumKeyword.Orthogonal },
+        { "Perspective", EnumKeyword.Perspective },
+        { "rotation_x", EnumKeyword.RotationX },
+        { "rotation_y", EnumKeyword.RotationY },
+        { "rotation_z", EnumKeyword.RotationZ },
+        { "float", EnumKeyword.Float },
+        { "scale", EnumKeyword.Scaling }
+    };
+
+    public KeywordToken(SourceLocation Location,EnumKeyword keyword)
+    {
+        this.Location = Location;
+        this.keyword = keyword;
+    }
+    
+    public string Write()
+    {
+        return keyword.ToString();
+    }
 }
 
 public class LiteralNumberToken : Token
@@ -122,8 +195,10 @@ public class InputStream
   public SourceLocation location;
   public SourceLocation saved_location;
   public int tabulations;
-  //saved_token
-
+  public Token? saved_token = null;
+  
+  string SYMBOLS = "()<>[],*";
+  
   public InputStream(Stream stream, string file_name = "", int tabulations = 8)
   {
     this.stream = stream;
@@ -197,6 +272,7 @@ public class InputStream
     unread_char(ch);
   }
 
+
   public StringToken parse_string_token(SourceLocation token_location)
   {
       var token = "";
@@ -266,15 +342,40 @@ public class InputStream
 
       try
       {
-          return KeywordToken(token_location, KEYWORDS[token]);
+          return KeywordToken(token_location, EnumKeyword);
       }
       catch(KeyNotFoundException)
       {
           return new IdentifierToken(token_location, token);
       }
   }
+  
+  public Token read_token(){
+      if (saved_token != null)
+      {
+          var result = saved_token;
+          saved_token = null;
+          return result;
+      }
+      
+      skip_whitespaces_and_comments();
+      string ch = read_char();
 
-  
-  
-  
+      if (ch == "")
+          return new StopToken(location);
+
+      var token_location = location;
+
+      if (SYMBOLS.Contains(ch))
+          return new SymbolToken (ch, token_location);
+      else if (ch == "\"")
+          return parse_string_token(token_location);
+      else if (Decimal.TryParse(ch, out decimal number) || (new string[] { "+", "-", "." }.Contains(ch)))
+          return parse_float_token(ch, token_location);
+      else if (Char.IsLetter(ch[0]) || ch == "_")
+          return parse_keyword_or_identifier_token(ch, token_location);
+      else
+          throw new GrammarError("Invalid character" + ch, location);
+      
+  }
 }
