@@ -78,6 +78,49 @@ public class NormalTest
         Assert.False(Math.Abs(c.norm() - f) > epsilon);
     }
 
-   
+    [Test]
+    public void normalization()
+    {
+        Normal n = c.normalization();
+        Assert.True(Math.Abs(n.norm()-1)<epsilon);
+    }
+
+    [Test]
+
+    public void onb_creation()
+    {
+        PCG pcg = new PCG();
+        for (int i = 0; i < 1000; i++)
+        {
+            Normal normal = new Normal(pcg.random_float(), pcg.random_float(), pcg.random_float());
+            Normal n = normal.normalization();
+            (Vec e1, Vec e2, Vec e3) =  Normal.create_onb_from_z(n);
+           
+            //Verify that e3 is equal to n
+            Assert.True(Vec.are_close(e3, n.To_vec()));
+            
+            //Verify the normalization
+            Assert.True(Math.Abs(e1.squared_norm()-1f)< epsilon, "Test normalized e1");
+            Assert.True(Math.Abs(e2.squared_norm()-1f)< epsilon, "Test normalized e2");
+            Assert.True(Math.Abs(e3.squared_norm()-1f)< epsilon, "Test normalized e3");
+            
+            //Test orthogonal
+            Assert.True(Math.Abs(e1*e2)<epsilon, "Test e1 orthogonal to e2");
+            Assert.True(Math.Abs(e1*e3)<epsilon, "Test e1 orthogonal to e3");
+            Assert.True(Math.Abs(e3*e2)<epsilon, "Test e2 orthogonal to e3");
+
+        }
+    }
+    
+    [Test]
+    public void To_Vec()
+    {
+        Vec v = new Vec(0.5f, 2.1f, 1.7f);
+        Vec v1 = new Vec(0.7f, 1.5f, 7.0f);
+        Normal c = new Normal(0.5f, 2.1f, 1.7f);
+        Assert.True(Vec.are_close(c.To_vec(),v));
+        Assert.False(Vec.are_close(c.To_vec(),v1));
+    }
+
     
 }
