@@ -1,6 +1,7 @@
 ﻿namespace RayTracing;
 
-public class Scene
+public class GrammarError: Exception
 {
-    
+    public string message;
+    public SourceLocation location;
 }
