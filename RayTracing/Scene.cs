@@ -14,6 +14,12 @@ public class GrammarError: Exception
 {
     public string message;
     public SourceLocation location;
+
+    public GrammarError(string message, SourceLocation location)
+    {
+        this.message = message;
+        this.location = location;
+    }
 }
 public struct SourceLocation
 {
@@ -116,8 +122,10 @@ public class InputStream
   public SourceLocation location;
   public SourceLocation saved_location;
   public int tabulations;
-  //saved_token
-
+  public Token? saved_token = null;
+  
+  string SYMBOLS = "()<>[],*";
+  
   public InputStream(Stream stream, string file_name = "", int tabulations = 8)
   {
     this.stream = stream;
@@ -191,7 +199,33 @@ public class InputStream
     unread_char(ch);
   }
   
-  
-  
-  
+  public Token read_token(){
+      if (saved_token != null)
+      {
+          var result = saved_token;
+          saved_token = null;
+          return result;
+      }
+      
+      skip_whitespaces_and_comments();
+      string ch = read_char();
+
+      if (ch == "")
+          return new StopToken(location);
+
+      var token_location = location;
+
+      if (SYMBOLS.Contains(ch))
+          return new SymbolToken (ch, token_location);
+      else if (ch == "\"")
+          return parse_string_token(token_location);
+      else if (Decimal.TryParse(ch, out decimal number) || (new string[] { "+", "-", "." }.Contains(ch)))
+          return parse_float_token(ch, token_location);
+      else if (Char.IsLetter(ch[0]) || ch == "_")
+          return parse_keyword_or_identifier_token(ch, token_location);
+      else
+          throw new GrammarError("Invalid character" + ch, location);
+      
+  }
+
 }
