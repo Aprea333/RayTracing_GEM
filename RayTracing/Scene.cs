@@ -19,3 +19,9 @@ public struct SourceLocation
   }
 }
 
+public abstract class Token
+{
+
+    public SourceLocation Location;
+    
+}
