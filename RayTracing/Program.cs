@@ -17,10 +17,10 @@ public static partial class Program
             
         }
 
-        [Option("width", Default = 640, HelpText = "Width of the image to render")]
+        [Option("width", Default = 1440, HelpText = "Width of the image to render")]
         public int Width { get; set; }
 
-        [Option("height", Default = 480, HelpText = "Height of the image to render")]
+        [Option("height", Default = 900, HelpText = "Height of the image to render")]
         public int Height { get; set; }
 
         [Option("angle_deg", Default = 0.0f, HelpText = "Angle of view")]
@@ -296,7 +296,7 @@ public static partial class Program
             img.clamp_image();
             File.CreateText(opts.output).Close();
             Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
-            img.write_ldr_image(out_png, ".png", 1f);
+            img.write_ldr_image(out_png, ".png", 2f);
             out_png.Close();
             
 
@@ -333,8 +333,8 @@ public static partial class Program
         world.add(new Plane(material:ground));
         world.add(new Sphere(Transformation.translation(new Vec(0,0,1)), sphere_material));
         world.add(new Sphere(Transformation.translation(new Vec(1f,2.5f,0)), mirror_material));
-        
-        
+
+
         Transformation cam_tr = Transformation.rotation_z(opts.Angle) * Transformation.translation(new Vec(-1f, 0f, 1f));
         Camera cam;
         if (opts.Camera != "perspective")
@@ -348,7 +348,7 @@ public static partial class Program
             
         ImageTracer imageTracer = new ImageTracer(image, cam, sample_per_side: 4);
 
-        Renderer rend = new PathTracer(world, Colour.black, NRays:4 , MaxDepth: 3);
+        Renderer rend = new PathTracer(world, Colour.black, NRays:5 , MaxDepth: 4);
         imageTracer.fire_all_rays(rend);
 
         string root_directory = Environment.CurrentDirectory;
@@ -370,7 +370,7 @@ public static partial class Program
 
         File.CreateText(opts.output).Close();
         Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
-        img.write_ldr_image(out_png, ".png", 1.5f);
+        img.write_ldr_image(out_png, ".png", 2f);
         out_png.Close();
     }
 
