@@ -276,7 +276,7 @@ public class InputStream
         }
 
         ch = read_char();
-      if (ch ==  "") return;
+       if (ch ==  "") return;
     }
     unread_char(ch);
   }
@@ -310,9 +310,10 @@ public class InputStream
       float val;
       while (true)
       {
-          string ch = read_char();
-          bool all = Char.IsDigit(Convert.ToChar(ch)) |ch =="." | ch == "e" | ch == "E";
-          if (all == true)
+          var ch = read_char();
+          bool all = Char.IsDigit(Convert.ToChar(ch, CultureInfo.InvariantCulture)) | ch == "." | ch == "e" | ch == "E";
+         //bool all = Char.IsDigit(Convert.ToChar(ch)) |ch == "." | ch == "e" | ch == "E";
+          if (all != true)
           {
               unread_char(ch);
               break;
@@ -323,7 +324,8 @@ public class InputStream
 
       try
       {
-          var value = float.Parse(token);
+          var value = float.Parse(token, CultureInfo.InvariantCulture);
+          //var value = float.Parse(token);
           val = value;
       }
       catch
@@ -387,8 +389,8 @@ public class InputStream
       {
           return parse_string_token(token_location);
       }
-
-      if (Decimal.TryParse(ch, out decimal number) || (new string[] { "+", "-", "." }.Contains(ch)))
+     
+      if (Decimal.TryParse(ch, out decimal number) | (new [] { "+", "-", "." }.Contains(ch)))
       
 
       {
