@@ -510,5 +510,22 @@ public class Scene
         }
 
         return tok.ToString();
+        
     }
+
+    public Vec parse_vector(InputStream inputStream, Scene scene)
+    {
+        expect_symbol(inputStream,"[");
+        float x = expect_number(inputStream, scene);
+        expect_symbol(inputStream,",");
+        float y = expect_number(inputStream, scene);
+        expect_symbol(inputStream ,",");
+        float z = expect_number(inputStream, scene);
+        expect_symbol(inputStream,"]");
+
+        return new Vec(x, y, z);
+    }
+    
+    
+    
 }
