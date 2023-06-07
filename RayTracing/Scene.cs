@@ -405,6 +405,12 @@ public class InputStream
       throw new GrammarError("Invalid character" + ch, location);
 
   }
+
+  public void unreadToken(Token tok)
+  {
+      Assert.True(saved_token != null);
+      saved_token = tok;
+  }
   }
 
 
