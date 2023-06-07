@@ -430,4 +430,31 @@ public class Scene
         this.float_variable = float_variable;
         this.overriden_variable = overriden_variable;
     }
+
+    public void expect_symbol(InputStream inputStream, string symbol)
+    {
+        Token tok = inputStream.read_token();
+        
+        if (tok is not SymbolToken)
+        {
+
+            throw new GrammarError($" {tok} is not a Symbol", tok.Location);
+        }
+
+        if (((SymbolToken)tok).Symbol != symbol)
+        {
+            throw new GrammarError($"got {tok} instead of {symbol}", tok.Location);
+        }
+    }
+
+    public string? expect_identifier(InputStream inputStream)
+    {
+        Token tok = inputStream.read_token();
+        if (tok is not IdentifierToken)
+        {
+            throw new GrammarError($"{tok} is not a identifier", tok.Location);
+        }
+
+        return tok.ToString();
+    }
 }
