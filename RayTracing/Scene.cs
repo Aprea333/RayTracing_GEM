@@ -511,12 +511,35 @@ public class Scene
     {
         EnumKeyword [] key = {EnumKeyword.Checkered, EnumKeyword.Checkered, EnumKeyword.Image};
         var keyword = expect_keywords(input_file, key);
-        
+        Pigment result = null;
         expect_symbol(input_file, ")");
         if (keyword == EnumKeyword.Uniform)
         {
-            Color color = parse_color(input_file, scene);
+            Colour color = parse_color(input_file, scene);
+            result = new UniformPigment(color);
+        } else if (keyword == EnumKeyword.Checkered)
+        {
+            Colour color1 = parse_color(input_file, scene);
+            expect_symbol(input_file, ",");
+            Colour color2 = parse_color(input_file, scene);
+            var num_of_steps = (int)expect_number(input_file, scene);
+            result = new CheckeredPigment( color1, color2, num_of_steps);
+        } else if (keyword == EnumKeyword.Image)
+        {
+            var file_name = expect_string(input_file);
+            HdrImage img = new HdrImage();
+            using (FileStream in_pfm = File.Open(file_name, FileMode.Open))
+            {
+                img.read_pfm_image(in_pfm);
+            }
+
+            result = new ImagePigment(img);
         }
+        else
+            throw new Exception("This line should be unreachable");
+
+        expect_symbol(input_file, ")");
+        return result;
     }
     public Vec parse_vector(InputStream inputStream, Scene scene)
     {
@@ -529,5 +552,73 @@ public class Scene
         expect_symbol(inputStream,"]");
 
         return new Vec(x, y, z);
+    }
+    
+    public Colour parse_color(InputStream input_file, Scene scene)
+    {
+        expect_symbol(input_file, "<");
+        float red = expect_number(input_file, scene);
+        expect_symbol(input_file, ",");
+        float green = expect_number(input_file, scene);
+        expect_symbol(input_file, ",");
+        float blue = expect_number(input_file, scene);
+        expect_symbol(input_file, ">");
+        return new Colour(red, green, blue);
+    }
+
+    public Transformation parse_transformation(InputStream input_file, Scene scene)
+    {
+        Transformation result = new Transformation();
+
+        while (true)
+        {
+            EnumKeyword[] list =
+            {
+                EnumKeyword.Translation, 
+                EnumKeyword.Scaling, 
+                EnumKeyword.RotationX, 
+                EnumKeyword.RotationY,
+                EnumKeyword.RotationZ
+            };
+        
+            EnumKeyword keyword = expect_keywords(input_file, list);
+        
+            if (keyword == EnumKeyword.Translation)
+            {
+                expect_symbol(input_file, "(");
+                result *= Transformation.translation(parse_vector(input_file, scene));
+                expect_symbol(input_file, ")");
+            }else if (keyword == EnumKeyword.Scaling)
+            {
+                expect_symbol(input_file, "(");
+                float a = expect_number(input_file, scene);
+                float b = expect_number(input_file, scene);
+                float c = expect_number(input_file, scene);
+                result *= Transformation.scaling(a, b, c);
+                expect_symbol(input_file, ")");
+            }else if (keyword == EnumKeyword.RotationX)
+            {
+                expect_symbol(input_file, "(");
+                result *= Transformation.rotation_x(expect_number(input_file, scene));
+                expect_symbol(input_file, ")");
+            }else if (keyword == EnumKeyword.RotationY)
+            {
+                expect_symbol(input_file, "(");
+                result *= Transformation.rotation_y(expect_number(input_file, scene));
+                expect_symbol(input_file, ")");
+            }else if (keyword == EnumKeyword.RotationZ)
+            {
+                expect_symbol(input_file, "(");
+                result *= Transformation.rotation_z(expect_number(input_file, scene));
+                expect_symbol(input_file, ")");
+            }
+
+            Token token = input_file.read_token();
+            if (token is not SymbolToken || ((SymbolToken)token).Symbol != "*")
+            {
+                input_file.unreadToken(token);
+            }
+        }
+        return result;
     }
 }
