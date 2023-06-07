@@ -430,4 +430,25 @@ public class Scene
         this.float_variable = float_variable;
         this.overriden_variable = overriden_variable;
     }
+
+    public float expectNumber(InputStream inputFile, Scene scene)
+    {
+        Token token = inputFile.read_token();
+        if (token.GetType() == typeof(LiteralNumberToken))
+            return ((LiteralNumberToken)token).Value;
+        else if (token.GetType() == typeof(IdentifierToken))
+        {
+            string variable_name = ((IdentifierToken)token).Identifier;
+            float appo;
+            if (float_variable.TryGetValue(variable_name, out appo))
+            {
+                throw new GrammarError("Unknown variable" + token, token.Location);
+            }
+
+            return scene.float_variable[variable_name];
+
+        }
+
+        throw new GrammarError("got" + token + " instead of a number", token.Location);
+    }
 }
