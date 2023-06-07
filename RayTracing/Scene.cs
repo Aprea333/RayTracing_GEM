@@ -406,3 +406,22 @@ public class InputStream
 
   }
   }
+
+
+public class Scene
+{
+    public World world;
+    public IDictionary<string, Material> dictionary;
+    public Camera? cam;
+    public IDictionary<string, float> float_variable;
+    public List<string> overriden_variable;
+    
+    public Scene( World world, IDictionary<string,Material> dictionary, Camera cam, IDictionary<string, float> float_variable,List<string> overriden_variable)
+    {
+        this.world = world;
+        this.dictionary = dictionary;
+        this.cam = cam;
+        this.float_variable = float_variable;
+        this.overriden_variable = overriden_variable;
+    }
+}
