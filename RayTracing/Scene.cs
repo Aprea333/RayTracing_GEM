@@ -200,8 +200,8 @@ public class InputStream
   public SourceLocation location;
   public SourceLocation saved_location;
   public int tabulations;
-  public Token? saved_token = null;
-  //public EnumKeyword EnumKeyword { get; }
+  public Token? saved_token;
+  public EnumKeyword EnumKeyword { get; }
 
   string SYMBOLS = "()<>[],*";
   
@@ -212,7 +212,7 @@ public class InputStream
     this.saved_char = "";
     saved_location = location;
     this.tabulations = tabulations;
-    //saved_token
+    saved_token = null;
   }
 
   public void update_pos(string ch)
@@ -450,5 +450,61 @@ public class Scene
         }
 
         throw new GrammarError("got" + token + " instead of a number", token.Location);
+
+    }
+
+    public EnumKeyword expect_keywords(InputStream input_file, EnumKeyword keyword)
+    {
+        Token token = input_file.read_token();
+        if (token is not KeywordToken)
+        {
+            throw new GrammarError(message: $"Expected a keyword instead of {token}", token.Location);
+        }
+
+        if (((KeywordToken)token).keyword != keyword)
+        {
+            throw new GrammarError(message: $"Expected one of the keywords {String.Join(',', keyword)}",
+                token.Location);
+        }
+
+        return ((KeywordToken)token).keyword;
+    }
+
+    public string expect_string(InputStream input_file)
+    {
+        Token token = input_file.read_token();
+        if (token is not StringToken)
+        {
+            throw new GrammarError($"got  '{token}' instead of a string", token.Location);
+        }
+
+        return token.ToString();
+    }
+
+    public void expect_symbol(InputStream inputStream, string symbol)
+    {
+        Token tok = inputStream.read_token();
+        
+        if (tok is not SymbolToken)
+        {
+
+            throw new GrammarError($" {tok} is not a Symbol", tok.Location);
+        }
+
+        if (((SymbolToken)tok).Symbol != symbol)
+        {
+            throw new GrammarError($"got {tok} instead of {symbol}", tok.Location);
+        }
+    }
+
+    public string? expect_identifier(InputStream inputStream)
+    {
+        Token tok = inputStream.read_token();
+        if (tok is not IdentifierToken)
+        {
+            throw new GrammarError($"{tok} is not a identifier", tok.Location);
+        }
+
+        return tok.ToString();
     }
 }
