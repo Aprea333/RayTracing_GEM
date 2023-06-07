@@ -84,7 +84,7 @@ public class KeywordToken : Token
     public static IDictionary<string, EnumKeyword> Dict = new Dictionary<string, EnumKeyword>
     {
         { "new", EnumKeyword.New },
-        { "Bbox", EnumKeyword.Box },
+        { "Box", EnumKeyword.Box },
         { "Brdf", EnumKeyword.Brdf },
         { "Camera", EnumKeyword.Camera },
         { "Colour", EnumKeyword.Colour },
@@ -431,7 +431,7 @@ public class Scene
         this.overriden_variable = overriden_variable;
     }
 
-    public float expectNumber(InputStream inputFile, Scene scene)
+    public float expect_number(InputStream inputFile, Scene scene)
     {
         Token token = inputFile.read_token();
         if (token.GetType() == typeof(LiteralNumberToken))
@@ -453,7 +453,7 @@ public class Scene
 
     }
 
-    public EnumKeyword expect_keywords(InputStream input_file, EnumKeyword keyword)
+    public EnumKeyword expect_keywords(InputStream input_file, EnumKeyword[] keyword)
     {
         Token token = input_file.read_token();
         if (token is not KeywordToken)
@@ -461,11 +461,15 @@ public class Scene
             throw new GrammarError(message: $"Expected a keyword instead of {token}", token.Location);
         }
 
-        if (((KeywordToken)token).keyword != keyword)
+        for (int i = 0; i< keyword.Length; i++)
         {
-            throw new GrammarError(message: $"Expected one of the keywords {String.Join(',', keyword)}",
-                token.Location);
+            if (((KeywordToken)token).keyword != keyword[i])
+            {
+                throw new GrammarError(message: $"Expected one of the keywords {String.Join(',', keyword)}",
+                    token.Location);
+            } 
         }
+        
 
         return ((KeywordToken)token).keyword;
     }
