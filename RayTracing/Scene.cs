@@ -85,7 +85,7 @@ public class KeywordToken : Token
     public static IDictionary<string, EnumKeyword> Dict = new Dictionary<string, EnumKeyword>
     {
         { "new", EnumKeyword.New },
-        { "Bbox", EnumKeyword.Box },
+        { "Box", EnumKeyword.Box },
         { "Brdf", EnumKeyword.Brdf },
         { "Camera", EnumKeyword.Camera },
         { "Colour", EnumKeyword.Colour },
@@ -432,7 +432,7 @@ public class Scene
         this.overriden_variable = overriden_variable;
     }
 
-    public float expectNumber(InputStream inputFile, Scene scene)
+    public float expect_number(InputStream inputFile, Scene scene)
     {
         Token token = inputFile.read_token();
         if (token.GetType() == typeof(LiteralNumberToken))
@@ -454,19 +454,17 @@ public class Scene
 
     }
 
-    public EnumKeyword expect_keywords(InputStream input_file, EnumKeyword keyword)
+    public EnumKeyword expect_keywords(InputStream input_file, EnumKeyword[] keyword)
     {
         Token token = input_file.read_token();
         if (token is not KeywordToken)
         {
             throw new GrammarError(message: $"Expected a keyword instead of {token}", token.Location);
         }
-
-        if (((KeywordToken)token).keyword != keyword)
-        {
+        
+        if (!keyword.Contains(((KeywordToken)token).keyword))
             throw new GrammarError(message: $"Expected one of the keywords {String.Join(',', keyword)}",
                 token.Location);
-        }
 
         return ((KeywordToken)token).keyword;
     }
@@ -507,14 +505,29 @@ public class Scene
         }
 
         return tok.ToString();
+        
     }
-
     public Pigment parse_pigment(InputStream input_file, Scene scene)
     {
         EnumKeyword [] key = {EnumKeyword.Checkered, EnumKeyword.Checkered, EnumKeyword.Image};
         var keyword = expect_keywords(input_file, key);
         
         expect_symbol(input_file, ")");
-        if (keyword == EnumKeyword.Box)
+        if (keyword == EnumKeyword.Uniform)
+        {
+            Color color = parse_color(input_file, scene);
+        }
+    }
+    public Vec parse_vector(InputStream inputStream, Scene scene)
+    {
+        expect_symbol(inputStream,"[");
+        float x = expect_number(inputStream, scene);
+        expect_symbol(inputStream,",");
+        float y = expect_number(inputStream, scene);
+        expect_symbol(inputStream ,",");
+        float z = expect_number(inputStream, scene);
+        expect_symbol(inputStream,"]");
+
+        return new Vec(x, y, z);
     }
 }
