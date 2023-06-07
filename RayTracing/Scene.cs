@@ -8,6 +8,7 @@ using System.Net.WebSockets;
 
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.CompilerServices;
 using NUnit.Framework;
 using SixLabors.ImageSharp.Metadata.Profiles.Exif;
@@ -506,5 +507,14 @@ public class Scene
         }
 
         return tok.ToString();
+    }
+
+    public Pigment parse_pigment(InputStream input_file, Scene scene)
+    {
+        EnumKeyword [] key = {EnumKeyword.Checkered, EnumKeyword.Checkered, EnumKeyword.Image};
+        var keyword = expect_keywords(input_file, key);
+        
+        expect_symbol(input_file, ")");
+        if (keyword == EnumKeyword.Box)
     }
 }
