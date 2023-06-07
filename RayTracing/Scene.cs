@@ -7,6 +7,7 @@ using System.Net.WebSockets;
 
 
 using System.Diagnostics;
+using System.Globalization;
 using Microsoft.VisualBasic.CompilerServices;
 using NUnit.Framework;
 using SixLabors.ImageSharp.Metadata.Profiles.Exif;
@@ -83,15 +84,15 @@ public class KeywordToken : Token
     public static IDictionary<string, EnumKeyword> Dict = new Dictionary<string, EnumKeyword>
     {
         { "new", EnumKeyword.New },
-        { "Box", EnumKeyword.Box },
+        { "Bbox", EnumKeyword.Box },
         { "Brdf", EnumKeyword.Brdf },
         { "Camera", EnumKeyword.Camera },
         { "Colour", EnumKeyword.Colour },
-        { "Material", EnumKeyword.Material },
-        { "Diffuse", EnumKeyword.Diffuse },
+        { "material", EnumKeyword.Material },
+        { "diffuse", EnumKeyword.Diffuse },
         { "Uniform", EnumKeyword.Uniform },
         { "Checkered", EnumKeyword.Checkered },
-        { "Image", EnumKeyword.Image },
+        { "image", EnumKeyword.Image },
         { "Translation", EnumKeyword.Translation },
         { "Pigment", EnumKeyword.Pigment },
         { "World", EnumKeyword.World },
@@ -265,14 +266,17 @@ public class InputStream
     string ch = read_char();
     while (ch is "\t" or "\r" or "\n" or " " or "#")
     {
-      //It's a comment! Keep reading until the end of the line
-      while (read_char() is not ("\r" or "\n" or ""))
-      {
-        //do nothing
-      }
+        if (ch == "#")
+        {
+            //It's a comment! Keep reading until the end of the line
+            while (read_char() is not ("\r" or "\n" or ""))
+            {
+                //do nothing
+            }
+        }
 
-      ch = read_char();
-      if (ch == "") return;
+        ch = read_char();
+       if (ch ==  "") return;
     }
     unread_char(ch);
   }
@@ -306,8 +310,9 @@ public class InputStream
       float val;
       while (true)
       {
-          string ch = read_char();
-          bool all = Char.IsDigit(Convert.ToChar(ch)) | ch == "." | ch == "e" | ch == "E";
+          var ch = read_char();
+          bool all = Char.IsDigit(Convert.ToChar(ch, CultureInfo.InvariantCulture)) | ch == "." | ch == "e" | ch == "E";
+         //bool all = Char.IsDigit(Convert.ToChar(ch)) |ch == "." | ch == "e" | ch == "E";
           if (all != true)
           {
               unread_char(ch);
@@ -319,7 +324,8 @@ public class InputStream
 
       try
       {
-          var value = float.Parse(token);
+          var value = float.Parse(token, CultureInfo.InvariantCulture);
+          //var value = float.Parse(token);
           val = value;
       }
       catch
@@ -357,14 +363,15 @@ public class InputStream
 
 
 
-  public Token read_token(){
+  public Token read_token()
+  {
       if (saved_token != null)
       {
           var result = saved_token;
           saved_token = null;
           return result;
       }
-      
+
       skip_whitespaces_and_comments();
       string ch = read_char();
 
@@ -374,15 +381,28 @@ public class InputStream
       var token_location = location;
 
       if (SYMBOLS.Contains(ch))
-          return new SymbolToken (ch, token_location);
-      else if (ch == "\"")
+      {
+          return new SymbolToken(ch, token_location);
+      }
+
+      if (ch == "\"")
+      {
           return parse_string_token(token_location);
-      else if (Decimal.TryParse(ch, out decimal number) || (new string[] { "+", "-", "." }.Contains(ch)))
-          return parse_float_token(ch, token_location);
-      else if (Char.IsLetter(ch[0]) || ch == "_")
-          return parse_keyword_or_identifier_token(ch, token_location);
-      else
-          throw new GrammarError("Invalid character" + ch, location);
+      }
+     
+      if (Decimal.TryParse(ch, out decimal number) | (new [] { "+", "-", "." }.Contains(ch)))
       
+
+      {
+          return parse_float_token(ch, token_location);
+      }
+
+      if (Char.IsLetter(ch[0]) || ch == "_")
+      {
+          return parse_keyword_or_identifier_token(ch, token_location);
+      }
+
+      throw new GrammarError("Invalid character" + ch, location);
+
   }
-}
+  }

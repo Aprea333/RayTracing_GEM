@@ -71,6 +71,10 @@ public class SceneTest
             Assert.True(((IdentifierToken)tok).Identifier==ident);
         }
 
+        public static void AssertIsStoptoken(Token tok)
+        {
+            Assert.IsTrue(tok is StopToken);
+        }
         public static void AssertIsSymbol(Token tok, string symb)
         {
             Assert.IsTrue(tok is SymbolToken);
@@ -117,9 +121,14 @@ diffuse(image(""my file.pfm"")),
             AssertIsSymbol(stream.read_token(),")");
             AssertIsSymbol(stream.read_token(),",");
             AssertIsSymbol(stream.read_token(),"<");
-           // AssertLiteralnumber(stream.read_token(),5.0f);
-            
-            
+            AssertLiteralnumber(stream.read_token(),5.0f);
+            AssertIsSymbol(stream.read_token(),",");
+            AssertLiteralnumber(stream.read_token(),500.0f);
+            AssertIsSymbol(stream.read_token(),",");
+            AssertLiteralnumber(stream.read_token(),300.0f);
+            AssertIsSymbol(stream.read_token(),">");
+            AssertIsSymbol(stream.read_token(),")");
+            AssertIsStoptoken(stream.read_token());
             
 
         }
