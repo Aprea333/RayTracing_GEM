@@ -200,8 +200,8 @@ public class InputStream
   public SourceLocation location;
   public SourceLocation saved_location;
   public int tabulations;
-  public Token? saved_token = null;
-  //public EnumKeyword EnumKeyword { get; }
+  public Token? saved_token;
+  public EnumKeyword EnumKeyword { get; }
 
   string SYMBOLS = "()<>[],*";
   
@@ -212,7 +212,7 @@ public class InputStream
     this.saved_char = "";
     saved_location = location;
     this.tabulations = tabulations;
-    //saved_token
+    saved_token = null;
   }
 
   public void update_pos(string ch)
@@ -429,5 +429,33 @@ public class Scene
         this.cam = cam;
         this.float_variable = float_variable;
         this.overriden_variable = overriden_variable;
+    }
+
+    public EnumKeyword expect_keywords(InputStream input_file, EnumKeyword keyword)
+    {
+        Token token = input_file.read_token();
+        if (token is not KeywordToken)
+        {
+            throw new GrammarError(message: $"Expected a keyword instead of {token}", token.Location);
+        }
+
+        if (((KeywordToken)token).keyword != keyword)
+        {
+            throw new GrammarError(message: $"Expected one of the keywords {String.Join(',', keyword)}",
+                token.Location);
+        }
+
+        return ((KeywordToken)token).keyword;
+    }
+
+    public string expect_string(InputStream input_file)
+    {
+        Token token = input_file.read_token();
+        if (token is not StringToken)
+        {
+            throw new GrammarError($"got  '{token}' instead of a string", token.Location);
+        }
+
+        return token.ToString();
     }
 }
