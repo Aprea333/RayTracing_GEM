@@ -526,6 +526,75 @@ public class Scene
         return new Vec(x, y, z);
     }
     
+    public Colour parse_color(InputStream input_file, Scene scene)
+    {
+        expect_symbol(input_file, "<");
+        float red = expect_number(input_file, scene);
+        expect_symbol(input_file, ",");
+        float green = expect_number(input_file, scene);
+        expect_symbol(input_file, ",");
+        float blue = expect_number(input_file, scene);
+        expect_symbol(input_file, ">");
+        return new Colour(red, green, blue);
+    }
+
+    public Transformation parse_transformation(InputStream input_file, Scene scene)
+    {
+        Transformation result = new Transformation();
+
+        while (true)
+        {
+            EnumKeyword[] list =
+            {
+                EnumKeyword.Translation, 
+                EnumKeyword.Scaling, 
+                EnumKeyword.RotationX, 
+                EnumKeyword.RotationY,
+                EnumKeyword.RotationZ
+            };
+        
+            EnumKeyword keyword = expect_keywords(input_file, list);
+        
+            if (keyword == EnumKeyword.Translation)
+            {
+                expect_symbol(input_file, "(");
+                result *= Transformation.translation(parse_vector(input_file, scene));
+                expect_symbol(input_file, ")");
+            }else if (keyword == EnumKeyword.Scaling)
+            {
+                expect_symbol(input_file, "(");
+                float a = expect_number(input_file, scene);
+                float b = expect_number(input_file, scene);
+                float c = expect_number(input_file, scene);
+                result *= Transformation.scaling(a, b, c);
+                expect_symbol(input_file, ")");
+            }else if (keyword == EnumKeyword.RotationX)
+            {
+                expect_symbol(input_file, "(");
+                result *= Transformation.rotation_x(expect_number(input_file, scene));
+                expect_symbol(input_file, ")");
+            }else if (keyword == EnumKeyword.RotationY)
+            {
+                expect_symbol(input_file, "(");
+                result *= Transformation.rotation_y(expect_number(input_file, scene));
+                expect_symbol(input_file, ")");
+            }else if (keyword == EnumKeyword.RotationZ)
+            {
+                expect_symbol(input_file, "(");
+                result *= Transformation.rotation_z(expect_number(input_file, scene));
+                expect_symbol(input_file, ")");
+            }
+
+            Token token = input_file.read_token();
+            if (token is not SymbolToken || ((SymbolToken)token).Symbol != "*")
+            {
+                input_file.unreadToken(token);
+            }
+        }
+        return result;
+    }
+
+    
     
     
 }
