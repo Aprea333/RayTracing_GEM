@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.CompilerServices;
-using NUnit.Framework;
+//using NUnit.Framework;
 using SixLabors.ImageSharp.Metadata.Profiles.Exif;
 
 namespace RayTracing;
@@ -273,9 +273,13 @@ public class InputStream
 
   public void unread_char(string ch)
   {
-      Assert.True(saved_char == "");
-    saved_char = ch;
-    location = saved_location;
+      if (saved_char == "")
+      {
+          saved_char = ch;
+          location = saved_location;
+      }
+
+      else throw new GrammarError($"{ch} not valid ");
   }
 
 
@@ -426,10 +430,11 @@ public class InputStream
 
   public void unreadToken(Token tok)
   {
-      Assert.True(saved_token != null);
-      saved_token = tok;
+     if (saved_token != null)
+        saved_token = tok;
+     else throw new GrammarError($"{tok} not valid ");
   }
-  }
+}
 
 
 public class Scene
