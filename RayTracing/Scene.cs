@@ -81,7 +81,11 @@ public enum EnumKeyword
     RotationY,
     RotationZ,
     Float,
-    Scaling
+    Scaling,
+    Sphere,
+    CsgUnion, 
+    CsgDifference,
+    CsgIntersection
 }
 
 public class KeywordToken : Token
@@ -110,7 +114,11 @@ public class KeywordToken : Token
         { "rotation_y", EnumKeyword.RotationY },
         { "rotation_z", EnumKeyword.RotationZ },
         { "float", EnumKeyword.Float },
-        { "scale", EnumKeyword.Scaling }
+        { "scale", EnumKeyword.Scaling },
+        {"Sphere", EnumKeyword.Sphere},
+        {"CsgUnion", EnumKeyword.CsgUnion},
+        {"CsgDifference", EnumKeyword.CsgDifference},
+        {"CsgIntersection", EnumKeyword.CsgIntersection}
     };
 
     public KeywordToken(SourceLocation Location,EnumKeyword keyword)
@@ -528,7 +536,6 @@ public class Scene
     }
     
     
-    
     public Colour parse_color(InputStream input_file, Scene scene)
     {
         expect_symbol(input_file, "<");
@@ -661,14 +668,51 @@ public class Scene
         return (name, new Material(brdf, pigment));
     }
 
-   /* public Plane parse_plane(InputStream inputStream, Scene scene)
+    public Plane parse_plane(InputStream input_file, Scene scene)
     {
-        expect_symbol(inputStream,"(");
-        Transformation tran = parse_transformation(inputStream, scene);
-        expect_symbol(inputStream,",");
-        var material_name = expect_identifier(inputStream);
-        expect_symbol(inputStream, ")");
-        return new Plane(tran, );
+        expect_symbol(input_file,"(");
+        Transformation tran = parse_transformation(input_file, scene);
+        expect_symbol(input_file,",");
+        (string name, Material material) = parse_material(input_file, scene);
+        expect_symbol(input_file, ")");
+        return new Plane(tran, material);
     }
-    */
+
+    public Box parse_box(InputStream input_file, Scene scene)
+    {
+        expect_symbol(input_file,"(");
+        Point max = parse_vector(input_file, scene).to_point();
+        expect_symbol(input_file,",");
+        Point min = parse_vector(input_file, scene).to_point();
+        expect_symbol(input_file,",");
+        Transformation tran = parse_transformation(input_file, scene);
+        expect_symbol(input_file,",");
+        (string name, Material material) = parse_material(input_file, scene);
+        expect_symbol(input_file, ")");
+        return new Box(max, min, tran, material);
+    }
+    public Camera parse_camera(InputStream input_file, Scene scene)
+    {
+        Camera result = new PerspectiveCamera();
+        expect_symbol(input_file,"(");
+        EnumKeyword[] list = {EnumKeyword.Perspective, EnumKeyword.Orthogonal};
+        EnumKeyword keyword = expect_keywords(input_file, list);
+        expect_symbol(input_file,",");
+        Transformation transformation = parse_transformation(input_file, scene);
+        expect_symbol(input_file,",");
+        float aspect_ratio = expect_number(input_file, scene);
+        expect_symbol(input_file,",");
+        float distance = expect_number(input_file, scene);
+        expect_symbol(input_file,")");
+
+        if (keyword == EnumKeyword.Perspective)
+        {
+            return new PerspectiveCamera(distance, aspect_ratio, transformation);
+        }else if (keyword == EnumKeyword.Orthogonal) return new OrthogonalCamera(transformation, aspect_ratio);
+
+        throw new GrammarError("Expected Orthogonal or Perspective Camera");
+    }
+
+    
+    
 }

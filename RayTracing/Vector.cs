@@ -174,6 +174,11 @@ public struct Vec
         n.z = z;
         return n;
     }
+
+    public Point to_point()
+    {
+        return new Point(x, y, z);
+    }
 }
 
 public struct Vec2D
