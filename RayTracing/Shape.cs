@@ -20,9 +20,9 @@ public abstract class Shape
         return new CsgUnion(s1, s2);
     }
 
-    public static CgsDifference operator -(Shape s1, Shape s2)
+    public static CsgDifference operator -(Shape s1, Shape s2)
     {
-        return new CgsDifference(s1, s2);
+        return new CsgDifference(s1, s2);
     }
 
     public static CsgIntersection operator *(Shape s1, Shape s2)

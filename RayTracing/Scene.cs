@@ -429,8 +429,9 @@ public class Scene
     public Camera? cam;
     public IDictionary<string, float> float_variable;
     public List<string> overriden_variable;
-    
-    public Scene( World world, IDictionary<string,Material> material, Camera cam, IDictionary<string, float> float_variable,List<string> overriden_variable)
+
+    public Scene(World world, IDictionary<string, Material> material, Camera cam, 
+        IDictionary<string, float> float_variable, List<string> overriden_variable)
     {
         this.world = world;
         this.material = material;
@@ -468,7 +469,6 @@ public class Scene
         {
             throw new GrammarError(message: $"Expected a keyword instead of {token}", token.Location);
         }
-        
         if (!keyword.Contains(((KeywordToken)token).keyword))
             throw new GrammarError(message: $"Expected one of the keywords {String.Join(',', keyword)}",
                 token.Location);
@@ -490,7 +490,6 @@ public class Scene
     public void expect_symbol(InputStream inputStream, string symbol)
     {
         Token tok = inputStream.read_token();
-        
         if (tok is not SymbolToken)
         {
 
@@ -512,7 +511,6 @@ public class Scene
         }
 
         return tok.ToString();
-        
     }
     public Vec parse_vector(InputStream inputStream, Scene scene)
     {
@@ -526,9 +524,6 @@ public class Scene
 
         return new Vec(x, y, z);
     }
-    
-    
-    
     public Colour parse_color(InputStream input_file, Scene scene)
     {
         expect_symbol(input_file, "<");
@@ -593,9 +588,7 @@ public class Scene
                 EnumKeyword.RotationY,
                 EnumKeyword.RotationZ
             };
-        
             EnumKeyword keyword = expect_keywords(input_file, list);
-        
             if (keyword == EnumKeyword.Translation)
             {
                 expect_symbol(input_file, "(");
@@ -670,6 +663,4 @@ public class Scene
         expect_symbol(input_file, ")");
         return new Sphere(transformation, material);
     }
-    
-    
 }
