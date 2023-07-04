@@ -83,6 +83,7 @@ public enum EnumKeyword
     Float,
     Scaling,
     Sphere,
+    Plane,
     CsgUnion, 
     CsgDifference,
     CsgIntersection
@@ -116,6 +117,7 @@ public class KeywordToken : Token
         { "float", EnumKeyword.Float },
         { "scale", EnumKeyword.Scaling },
         {"Sphere", EnumKeyword.Sphere},
+        {"Sphere", EnumKeyword.Plane},
         {"CsgUnion", EnumKeyword.CsgUnion},
         {"CsgDifference", EnumKeyword.CsgDifference},
         {"CsgIntersection", EnumKeyword.CsgIntersection}
@@ -725,6 +727,18 @@ public class Scene
         return new Sphere(transformation, material);
     }
 
+    public CsgUnion parse_union(InputStream input_file, Scene scene)
+    {
+        EnumKeyword[] list =
+        {
+            EnumKeyword.Sphere, EnumKeyword.CsgDifference, EnumKeyword.Box, EnumKeyword.CsgIntersection,
+            EnumKeyword.CsgUnion, EnumKeyword.Plane
+        };
+        Sphere sphere1 = new Sphere();
+        expect_symbol(input_file, "(");
+        var keyword = expect_keywords(input_file, list);
+        return null;
+    }
     
     
 }
