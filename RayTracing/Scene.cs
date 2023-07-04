@@ -668,6 +668,7 @@ public class Scene
         return (name, new Material(brdf, pigment));
     }
 
+
     public Plane parse_plane(InputStream input_file, Scene scene)
     {
         expect_symbol(input_file,"(");
@@ -711,6 +712,17 @@ public class Scene
         }else if (keyword == EnumKeyword.Orthogonal) return new OrthogonalCamera(transformation, aspect_ratio);
 
         throw new GrammarError("Expected Orthogonal or Perspective Camera");
+    }
+
+
+    public Sphere parse_Sphere(InputStream input_file, Scene scene)
+    {
+        expect_symbol(input_file, "(");
+        Transformation transformation = parse_transformation(input_file, scene);
+        expect_symbol(input_file, ",");
+        (string? name ,Material material) = parse_material(input_file, scene);
+        expect_symbol(input_file, ")");
+        return new Sphere(transformation, material);
     }
 
     
