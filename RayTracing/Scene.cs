@@ -9,6 +9,7 @@ using System.Net.WebSockets;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.CompilerServices;
 using NUnit.Framework;
 using SixLabors.ImageSharp.Metadata.Profiles.Exif;
@@ -461,16 +462,10 @@ public class Scene
         {
             throw new GrammarError(message: $"Expected a keyword instead of {token}", token.Location);
         }
-
-        for (int i = 0; i< keyword.Length; i++)
-        {
-            if (((KeywordToken)token).keyword != keyword[i])
-            {
-                throw new GrammarError(message: $"Expected one of the keywords {String.Join(',', keyword)}",
-                    token.Location);
-            } 
-        }
         
+        if (!keyword.Contains(((KeywordToken)token).keyword))
+            throw new GrammarError(message: $"Expected one of the keywords {String.Join(',', keyword)}",
+                token.Location);
 
         return ((KeywordToken)token).keyword;
     }
@@ -513,7 +508,6 @@ public class Scene
         return tok.ToString();
         
     }
-
     public Vec parse_vector(InputStream inputStream, Scene scene)
     {
         expect_symbol(inputStream,"[");
@@ -541,28 +535,44 @@ public class Scene
         return new Colour(red, green, blue);
     }
 
-    public Pigment parse_pigment(InputStream inputStream, Scene scene)
+
+    public Pigment parse_pigment(InputStream input_file, Scene scene)
     {
-        while (true)
+        EnumKeyword[] key = { EnumKeyword.Checkered, EnumKeyword.Checkered, EnumKeyword.Image };
+        var keyword = expect_keywords(input_file, key);
+        Pigment result = null;
+        expect_symbol(input_file, ")");
+        if (keyword == EnumKeyword.Uniform)
         {
-            EnumKeyword[] list =
-            {
-                EnumKeyword.Uniform, 
-                EnumKeyword.Checkered,
-                EnumKeyword.Image
-            };
-            EnumKeyword keyword = expect_keywords(inputStream, list);
-
-            expect_symbol(inputStream, "(");
-            if (keyword == EnumKeyword.Uniform)
-            {
-                expect_symbol(inputStream, "(");
-                Colour col = parse_color(inputStream, scene);
-                
-
-            }
+            Colour color = parse_color(input_file, scene);
+            result = new UniformPigment(color);
         }
+        else if (keyword == EnumKeyword.Checkered)
+        {
+            Colour color1 = parse_color(input_file, scene);
+            expect_symbol(input_file, ",");
+            Colour color2 = parse_color(input_file, scene);
+            var num_of_steps = (int)expect_number(input_file, scene);
+            result = new CheckeredPigment(color1, color2, num_of_steps);
+        }
+        else if (keyword == EnumKeyword.Image)
+        {
+            var file_name = expect_string(input_file);
+            HdrImage img = new HdrImage();
+            using (FileStream in_pfm = File.Open(file_name, FileMode.Open))
+            {
+                img.read_pfm_image(in_pfm);
+            }
+
+            result = new ImagePigment(img);
+        }
+        else
+            throw new Exception("This line should be unreachable");
+
+        expect_symbol(input_file, ")");
+        return result;
     }
+
     public Transformation parse_transformation(InputStream input_file, Scene scene)
     {
         Transformation result = new Transformation();
@@ -619,8 +629,8 @@ public class Scene
         }
     }
 
-    
-    public Plane parse_plane(InputStream inputStream, Scene scene)
+
+   /* public Plane parse_plane(InputStream inputStream, Scene scene)
     {
         expect_symbol(inputStream,"(");
         Transformation tran = parse_transformation(inputStream, scene);
@@ -629,5 +639,5 @@ public class Scene
         expect_symbol(inputStream, ")");
         return new Plane(tran, );
     }
-    
+    */
 }
