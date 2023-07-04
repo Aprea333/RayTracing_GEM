@@ -661,14 +661,15 @@ public class Scene
         return (name, new Material(brdf, pigment));
     }
 
-   /* public Plane parse_plane(InputStream inputStream, Scene scene)
+    public Sphere parse_Sphere(InputStream input_file, Scene scene)
     {
-        expect_symbol(inputStream,"(");
-        Transformation tran = parse_transformation(inputStream, scene);
-        expect_symbol(inputStream,",");
-        var material_name = expect_identifier(inputStream);
-        expect_symbol(inputStream, ")");
-        return new Plane(tran, );
+        expect_symbol(input_file, "(");
+        Transformation transformation = parse_transformation(input_file, scene);
+        expect_symbol(input_file, ",");
+        (string? name ,Material material) = parse_material(input_file, scene);
+        expect_symbol(input_file, ")");
+        return new Sphere(transformation, material);
     }
-    */
+    
+    
 }
