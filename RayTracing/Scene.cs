@@ -717,7 +717,7 @@ public class Scene
     }
 
 
-    public Sphere parse_Sphere(InputStream input_file, Scene scene)
+    public Sphere parse_sphere(InputStream input_file, Scene scene)
     {
         expect_symbol(input_file, "(");
         Transformation transformation = parse_transformation(input_file, scene);
@@ -727,17 +727,80 @@ public class Scene
         return new Sphere(transformation, material);
     }
 
-
-    public CsgUnion parse_union(InputStream input_file, Scene scene)
+    public Shape parse_shape(InputStream input_file, Scene scene)
     {
         EnumKeyword[] list =
         {
-            EnumKeyword.Sphere, EnumKeyword.CsgDifference, EnumKeyword.Box, EnumKeyword.CsgIntersection,
-            EnumKeyword.CsgUnion, EnumKeyword.Plane
+            EnumKeyword.Sphere, EnumKeyword.Plane, EnumKeyword.Box, EnumKeyword.CsgDifference, EnumKeyword.CsgIntersection,
+            EnumKeyword.CsgUnion
         };
-        Sphere sphere1 = new Sphere();
-        expect_symbol(input_file, "(");
         var keyword = expect_keywords(input_file, list);
-        return null;
+        Shape shape = new Sphere();
+        switch (keyword)
+        {
+            case EnumKeyword.Sphere:
+                shape = parse_sphere(input_file, scene);
+                break;
+            case EnumKeyword.Plane:
+                shape = parse_plane(input_file, scene);
+                break;
+            case EnumKeyword.Box:
+                shape = parse_box(input_file, scene);
+                break;
+            case EnumKeyword.CsgDifference:
+                shape = parse_difference(input_file, scene);
+                break;
+            case EnumKeyword.CsgIntersection:
+                shape = parse_intersection(input_file, scene);
+                break;
+            case EnumKeyword.CsgUnion:
+                shape = parse_union(input_file, scene);
+                break;
+            default:
+                throw new GrammarError("expected shape");
+        }
+        return shape;
     }
+    public CsgUnion parse_union(InputStream input_file, Scene scene)
+    {
+        expect_symbol(input_file, "(");
+        Shape shape1 = parse_shape(input_file, scene);
+        expect_symbol(input_file, ",");
+        Shape shape2 = parse_shape(input_file, scene);
+        expect_symbol(input_file, ",");
+        Transformation transformation = parse_transformation(input_file, scene);
+        expect_symbol(input_file, ",");
+        (string? name ,Material material) = parse_material(input_file, scene);
+        expect_symbol(input_file, ")");
+        return new CsgUnion(shape1, shape2,transformation, material);
+    }
+
+    
+    public CsgDifference parse_difference(InputStream input_file, Scene scene)
+    {
+        expect_symbol(input_file, "(");
+        Shape shape1 = parse_shape(input_file, scene);
+        expect_symbol(input_file, ",");
+        Shape shape2 = parse_shape(input_file, scene);
+        expect_symbol(input_file, ",");
+        Transformation transformation = parse_transformation(input_file, scene);
+        expect_symbol(input_file, ",");
+        (string? name ,Material material) = parse_material(input_file, scene);
+        expect_symbol(input_file, ")");
+        return new CsgDifference(shape1, shape2,transformation, material);
+    }
+    public CsgIntersection parse_intersection(InputStream input_file, Scene scene)
+    {
+        expect_symbol(input_file, "(");
+        Shape shape1 = parse_shape(input_file, scene);
+        expect_symbol(input_file, ",");
+        Shape shape2 = parse_shape(input_file, scene);
+        expect_symbol(input_file, ",");
+        Transformation transformation = parse_transformation(input_file, scene);
+        expect_symbol(input_file, ",");
+        (string? name ,Material material) = parse_material(input_file, scene);
+        expect_symbol(input_file, ")");
+        return new CsgIntersection(shape1, shape2,transformation, material);
+    }
+    
 }
