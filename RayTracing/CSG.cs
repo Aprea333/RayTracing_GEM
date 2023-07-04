@@ -64,7 +64,7 @@ public class CsgUnion:Shape
 /// Difference between two shapes
 /// </summary>
 
-public class CgsDifference : Shape
+public class CsgDifference : Shape
 {
     public Shape s1;
     public Shape s2;
@@ -76,7 +76,7 @@ public class CgsDifference : Shape
     /// <param name="s2">The second shape</param>
     /// <param name="tran">The transformation associated to the difference shape. If not specified it is initialized to the identity</param>
     /// <param name="material">The material of the difference shape </param>
-    public CgsDifference(Shape s1, Shape s2, Transformation? tran= null, Material? material=null) : base(tran, material)
+    public CsgDifference(Shape s1, Shape s2, Transformation? tran= null, Material? material=null) : base(tran, material)
     {
         this.s1 = s1;
         this.s2 = s2;
