@@ -7,6 +7,7 @@ using System.Net.WebSockets;
 
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.VisualBasic.CompilerServices;
 using NUnit.Framework;
@@ -417,15 +418,15 @@ public class InputStream
 public class Scene
 {
     public World world;
-    public IDictionary<string, Material> dictionary;
+    public IDictionary<string, Material> material;
     public Camera? cam;
     public IDictionary<string, float> float_variable;
     public List<string> overriden_variable;
     
-    public Scene( World world, IDictionary<string,Material> dictionary, Camera cam, IDictionary<string, float> float_variable,List<string> overriden_variable)
+    public Scene( World world, IDictionary<string,Material> material, Camera cam, IDictionary<string, float> float_variable,List<string> overriden_variable)
     {
         this.world = world;
-        this.dictionary = dictionary;
+        this.material = material;
         this.cam = cam;
         this.float_variable = float_variable;
         this.overriden_variable = overriden_variable;
@@ -526,6 +527,8 @@ public class Scene
         return new Vec(x, y, z);
     }
     
+    
+    
     public Colour parse_color(InputStream input_file, Scene scene)
     {
         expect_symbol(input_file, "<");
@@ -538,6 +541,28 @@ public class Scene
         return new Colour(red, green, blue);
     }
 
+    public Pigment parse_pigment(InputStream inputStream, Scene scene)
+    {
+        while (true)
+        {
+            EnumKeyword[] list =
+            {
+                EnumKeyword.Uniform, 
+                EnumKeyword.Checkered,
+                EnumKeyword.Image
+            };
+            EnumKeyword keyword = expect_keywords(inputStream, list);
+
+            expect_symbol(inputStream, "(");
+            if (keyword == EnumKeyword.Uniform)
+            {
+                expect_symbol(inputStream, "(");
+                Colour col = parse_color(inputStream, scene);
+                
+
+            }
+        }
+    }
     public Transformation parse_transformation(InputStream input_file, Scene scene)
     {
         Transformation result = new Transformation();
@@ -546,9 +571,9 @@ public class Scene
         {
             EnumKeyword[] list =
             {
-                EnumKeyword.Translation, 
-                EnumKeyword.Scaling, 
-                EnumKeyword.RotationX, 
+                EnumKeyword.Translation,
+                EnumKeyword.Scaling,
+                EnumKeyword.RotationX,
                 EnumKeyword.RotationY,
                 EnumKeyword.RotationZ
             };
@@ -590,11 +615,19 @@ public class Scene
             {
                 input_file.unreadToken(token);
             }
+            return result;
         }
-        return result;
     }
 
     
-    
+    public Plane parse_plane(InputStream inputStream, Scene scene)
+    {
+        expect_symbol(inputStream,"(");
+        Transformation tran = parse_transformation(inputStream, scene);
+        expect_symbol(inputStream,",");
+        var material_name = expect_identifier(inputStream);
+        expect_symbol(inputStream, ")");
+        return new Plane(tran, );
+    }
     
 }
