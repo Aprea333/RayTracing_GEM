@@ -30,6 +30,10 @@ public class GrammarError: Exception
         this.message = message;
         this.location = location;
     }
+    public GrammarError(string message)
+    {
+        this.message = message;
+    }
 }
 public struct SourceLocation
 {
@@ -64,6 +68,7 @@ public enum EnumKeyword
     Colour,
     Material,
     Diffuse,
+    Specular,
     Uniform,
     Checkered,
     Image,
@@ -92,6 +97,7 @@ public class KeywordToken : Token
         { "Colour", EnumKeyword.Colour },
         { "material", EnumKeyword.Material },
         { "diffuse", EnumKeyword.Diffuse },
+        { "diffuse", EnumKeyword.Specular },
         { "Uniform", EnumKeyword.Uniform },
         { "Checkered", EnumKeyword.Checkered },
         { "image", EnumKeyword.Image },
@@ -629,6 +635,31 @@ public class Scene
         }
     }
 
+
+    public Brdf parse_brdf(InputStream input_file, Scene scene)
+    {
+        EnumKeyword[] list = {EnumKeyword.Diffuse, EnumKeyword.Specular };
+        EnumKeyword keyword = expect_keywords(input_file, list);
+        expect_symbol(input_file, "(");
+        Pigment pigment = parse_pigment(input_file, scene);
+        expect_symbol(input_file, ")");
+        if (keyword == EnumKeyword.Diffuse) return new DiffuseBrdf(pigment);
+        else if (keyword == EnumKeyword.Specular) return new SpecularBrdf(pigment);
+
+        throw new GrammarError("Expect Diffuse or Specular Pigment");
+    }
+
+
+    public (string?, Material) parse_material(InputStream input_file, Scene scene)
+    {
+        string? name = expect_identifier(input_file);
+        expect_symbol(input_file, "(");
+        Brdf brdf = parse_brdf(input_file, scene);
+        expect_symbol(input_file, ",");
+        Pigment pigment = parse_pigment(input_file, scene);
+        expect_symbol(input_file, ")");
+        return (name, new Material(brdf, pigment));
+    }
 
    /* public Plane parse_plane(InputStream inputStream, Scene scene)
     {
