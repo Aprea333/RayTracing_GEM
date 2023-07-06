@@ -102,7 +102,7 @@ public class KeywordToken : Token
         { "Colour", EnumKeyword.Colour },
         { "material", EnumKeyword.Material },
         { "diffuse", EnumKeyword.Diffuse },
-        { "diffuse", EnumKeyword.Specular },
+        { "specular", EnumKeyword.Specular },
         { "Uniform", EnumKeyword.Uniform },
         { "Checkered", EnumKeyword.Checkered },
         { "image", EnumKeyword.Image },
@@ -117,7 +117,7 @@ public class KeywordToken : Token
         { "float", EnumKeyword.Float },
         { "scale", EnumKeyword.Scaling },
         {"Sphere", EnumKeyword.Sphere},
-        {"Sphere", EnumKeyword.Plane},
+        {"Plane", EnumKeyword.Plane},
         {"CsgUnion", EnumKeyword.CsgUnion},
         {"CsgDifference", EnumKeyword.CsgDifference},
         {"CsgIntersection", EnumKeyword.CsgIntersection}
@@ -226,8 +226,8 @@ public class InputStream
   public InputStream(Stream stream, string file_name = "", int tabulations = 8)
   {
     this.stream = stream;
-    this.location = new SourceLocation(file_name, lineNum: 1, colNum: 1);
-    this.saved_char = "";
+    location = new SourceLocation(file_name, lineNum: 1, colNum: 1);
+    saved_char = "";
     saved_location = location;
     this.tabulations = tabulations;
     saved_token = null;
@@ -419,7 +419,7 @@ public class InputStream
           return parse_float_token(ch, token_location);
       }
 
-      if (Char.IsLetter(ch[0]) || ch == "_")
+      if (Char.IsLetter(ch[0]) | ch == "_")
       {
           return parse_keyword_or_identifier_token(ch, token_location);
       }
