@@ -439,23 +439,35 @@ public class InputStream
 
 public class Scene
 {
-    public World world;
-    public IDictionary<string, Material> material;
-    public Camera? cam;
-    public IDictionary<string, float> float_variable;
-    public List<string> overriden_variable;
+    public World Wd;
+    public IDictionary<string, Material> Materials;
+    public Camera? Camera;
+    public IDictionary<string, float> FloatVariables;
+    public HashSet<string> OverriddenVariables;
 
-    public Scene(World world, IDictionary<string, Material> material, Camera cam, 
-        IDictionary<string, float> float_variable, List<string> overriden_variable)
+    //public List<string> overriden_variable;
+
+    //public Scene(World world, IDictionary<string, Material> material, Camera cam, 
+    //IDictionary<string, float> float_variable, List<string> overriden_variable)
+    /* {
+         this.world = world;
+         this.material = material;
+         this.cam = cam;
+         this.float_variable = float_variable;
+         this.overriden_variable = overriden_variable;
+     }*/
+
+    public Scene(World? wd = null, Camera? camera = null, IDictionary<string, Material>? materials = null,
+        IDictionary<string, float>? floatVariables = null, HashSet<string>? overriddenVariables = null)
     {
-        this.world = world;
-        this.material = material;
-        this.cam = cam;
-        this.float_variable = float_variable;
-        this.overriden_variable = overriden_variable;
+        Wd = wd ?? new World();
+        Camera = camera;
+        Materials = materials ?? new Dictionary<string, Material>();
+        FloatVariables = floatVariables ?? new Dictionary<string, float>();
+        OverriddenVariables = overriddenVariables ?? new HashSet<string>();
     }
 
-    public float expect_number(InputStream inputFile, Scene scene)
+    public static float expect_number(InputStream inputFile, Scene scene)
     {
         Token token = inputFile.read_token();
         if (token.GetType() == typeof(LiteralNumberToken))
@@ -464,12 +476,12 @@ public class Scene
         {
             string variable_name = ((IdentifierToken)token).Identifier;
             float appo;
-            if (float_variable.TryGetValue(variable_name, out appo))
+            if (scene.FloatVariables.TryGetValue(variable_name, out appo))
             {
                 throw new GrammarError("Unknown variable" + token, token.Location);
             }
 
-            return scene.float_variable[variable_name];
+            return scene.FloatVariables[variable_name];
 
         }
 
@@ -477,13 +489,14 @@ public class Scene
 
     }
 
-    public EnumKeyword expect_keywords(InputStream input_file, EnumKeyword[] keyword)
+    public static EnumKeyword expect_keywords(InputStream input_file, EnumKeyword[] keyword)
     {
         Token token = input_file.read_token();
         if (token is not KeywordToken)
         {
             throw new GrammarError(message: $"Expected a keyword instead of {token}", token.Location);
         }
+
         if (!keyword.Contains(((KeywordToken)token).keyword))
             throw new GrammarError(message: $"Expected one of the keywords {String.Join(',', keyword)}",
                 token.Location);
@@ -491,7 +504,7 @@ public class Scene
         return ((KeywordToken)token).keyword;
     }
 
-    public string expect_string(InputStream input_file)
+    public static string expect_string(InputStream input_file)
     {
         Token token = input_file.read_token();
         if (token is not StringToken)
@@ -502,22 +515,17 @@ public class Scene
         return token.ToString();
     }
 
-    public void expect_symbol(InputStream inputStream, string symbol)
+    public static void expect_symbol(InputStream inputStream, string symbol)
     {
         Token tok = inputStream.read_token();
-        if (tok is not SymbolToken)
+        if (tok is not SymbolToken || ((SymbolToken)tok).Symbol != symbol)
         {
 
             throw new GrammarError($" {tok} is not a Symbol", tok.Location);
         }
-
-        if (((SymbolToken)tok).Symbol != symbol)
-        {
-            throw new GrammarError($"got {tok} instead of {symbol}", tok.Location);
-        }
     }
 
-    public string? expect_identifier(InputStream inputStream)
+    public static string? expect_identifier(InputStream inputStream)
     {
         Token tok = inputStream.read_token();
         if (tok is not IdentifierToken)
@@ -527,20 +535,21 @@ public class Scene
 
         return tok.ToString();
     }
-    public Vec parse_vector(InputStream inputStream, Scene scene)
+
+    public static Vec parse_vector(InputStream inputStream, Scene scene)
     {
-        expect_symbol(inputStream,"[");
+        expect_symbol(inputStream, "[");
         float x = expect_number(inputStream, scene);
-        expect_symbol(inputStream,",");
+        expect_symbol(inputStream, ",");
         float y = expect_number(inputStream, scene);
-        expect_symbol(inputStream ,",");
+        expect_symbol(inputStream, ",");
         float z = expect_number(inputStream, scene);
-        expect_symbol(inputStream,"]");
+        expect_symbol(inputStream, "]");
 
         return new Vec(x, y, z);
     }
 
-    public Colour parse_color(InputStream input_file, Scene scene)
+    public static Colour parse_color(InputStream input_file, Scene scene)
     {
         expect_symbol(input_file, "<");
         float red = expect_number(input_file, scene);
@@ -553,7 +562,7 @@ public class Scene
     }
 
 
-    public Pigment parse_pigment(InputStream input_file, Scene scene)
+    public static Pigment parse_pigment(InputStream input_file, Scene scene)
     {
         EnumKeyword[] key = { EnumKeyword.Checkered, EnumKeyword.Checkered, EnumKeyword.Image };
         var keyword = expect_keywords(input_file, key);
@@ -590,7 +599,7 @@ public class Scene
         return result;
     }
 
-    public Transformation parse_transformation(InputStream input_file, Scene scene)
+    public static Transformation parse_transformation(InputStream input_file, Scene scene)
     {
         Transformation result = new Transformation();
 
@@ -610,7 +619,8 @@ public class Scene
                 expect_symbol(input_file, "(");
                 result *= Transformation.translation(parse_vector(input_file, scene));
                 expect_symbol(input_file, ")");
-            }else if (keyword == EnumKeyword.Scaling)
+            }
+            else if (keyword == EnumKeyword.Scaling)
             {
                 expect_symbol(input_file, "(");
                 float a = expect_number(input_file, scene);
@@ -618,17 +628,20 @@ public class Scene
                 float c = expect_number(input_file, scene);
                 result *= Transformation.scaling(a, b, c);
                 expect_symbol(input_file, ")");
-            }else if (keyword == EnumKeyword.RotationX)
+            }
+            else if (keyword == EnumKeyword.RotationX)
             {
                 expect_symbol(input_file, "(");
                 result *= Transformation.rotation_x(expect_number(input_file, scene));
                 expect_symbol(input_file, ")");
-            }else if (keyword == EnumKeyword.RotationY)
+            }
+            else if (keyword == EnumKeyword.RotationY)
             {
                 expect_symbol(input_file, "(");
                 result *= Transformation.rotation_y(expect_number(input_file, scene));
                 expect_symbol(input_file, ")");
-            }else if (keyword == EnumKeyword.RotationZ)
+            }
+            else if (keyword == EnumKeyword.RotationZ)
             {
                 expect_symbol(input_file, "(");
                 result *= Transformation.rotation_z(expect_number(input_file, scene));
@@ -640,14 +653,15 @@ public class Scene
             {
                 input_file.unreadToken(token);
             }
+
             return result;
         }
     }
 
 
-    public Brdf parse_brdf(InputStream input_file, Scene scene)
+    public static Brdf parse_brdf(InputStream input_file, Scene scene)
     {
-        EnumKeyword[] list = {EnumKeyword.Diffuse, EnumKeyword.Specular };
+        EnumKeyword[] list = { EnumKeyword.Diffuse, EnumKeyword.Specular };
         EnumKeyword keyword = expect_keywords(input_file, list);
         expect_symbol(input_file, "(");
         Pigment pigment = parse_pigment(input_file, scene);
@@ -659,7 +673,7 @@ public class Scene
     }
 
 
-    public (string?, Material) parse_material(InputStream input_file, Scene scene)
+    public static (string?, Material) parse_material(InputStream input_file, Scene scene)
     {
         string? name = expect_identifier(input_file);
         expect_symbol(input_file, "(");
@@ -671,67 +685,70 @@ public class Scene
     }
 
 
-    public Plane parse_plane(InputStream input_file, Scene scene)
+    public static Plane parse_plane(InputStream input_file, Scene scene)
     {
-        expect_symbol(input_file,"(");
+        expect_symbol(input_file, "(");
         Transformation tran = parse_transformation(input_file, scene);
-        expect_symbol(input_file,",");
+        expect_symbol(input_file, ",");
         (string name, Material material) = parse_material(input_file, scene);
         expect_symbol(input_file, ")");
         return new Plane(tran, material);
     }
 
-    public Box parse_box(InputStream input_file, Scene scene)
+    public static Box parse_box(InputStream input_file, Scene scene)
     {
-        expect_symbol(input_file,"(");
+        expect_symbol(input_file, "(");
         Point max = parse_vector(input_file, scene).to_point();
-        expect_symbol(input_file,",");
+        expect_symbol(input_file, ",");
         Point min = parse_vector(input_file, scene).to_point();
-        expect_symbol(input_file,",");
+        expect_symbol(input_file, ",");
         Transformation tran = parse_transformation(input_file, scene);
-        expect_symbol(input_file,",");
+        expect_symbol(input_file, ",");
         (string name, Material material) = parse_material(input_file, scene);
         expect_symbol(input_file, ")");
         return new Box(max, min, tran, material);
     }
-    public Camera parse_camera(InputStream input_file, Scene scene)
+
+    public static Camera parse_camera(InputStream input_file, Scene scene)
     {
         Camera result = new PerspectiveCamera();
-        expect_symbol(input_file,"(");
-        EnumKeyword[] list = {EnumKeyword.Perspective, EnumKeyword.Orthogonal};
+        expect_symbol(input_file, "(");
+        EnumKeyword[] list = { EnumKeyword.Perspective, EnumKeyword.Orthogonal };
         EnumKeyword keyword = expect_keywords(input_file, list);
-        expect_symbol(input_file,",");
+        expect_symbol(input_file, ",");
         Transformation transformation = parse_transformation(input_file, scene);
-        expect_symbol(input_file,",");
+        expect_symbol(input_file, ",");
         float aspect_ratio = expect_number(input_file, scene);
-        expect_symbol(input_file,",");
+        expect_symbol(input_file, ",");
         float distance = expect_number(input_file, scene);
-        expect_symbol(input_file,")");
+        expect_symbol(input_file, ")");
 
         if (keyword == EnumKeyword.Perspective)
         {
             return new PerspectiveCamera(distance, aspect_ratio, transformation);
-        }else if (keyword == EnumKeyword.Orthogonal) return new OrthogonalCamera(transformation, aspect_ratio);
+        }
+        else if (keyword == EnumKeyword.Orthogonal) return new OrthogonalCamera(transformation, aspect_ratio);
 
         throw new GrammarError("Expected Orthogonal or Perspective Camera");
     }
 
 
-    public Sphere parse_sphere(InputStream input_file, Scene scene)
+    public static Sphere parse_sphere(InputStream input_file, Scene scene)
     {
         expect_symbol(input_file, "(");
         Transformation transformation = parse_transformation(input_file, scene);
         expect_symbol(input_file, ",");
-        (string? name ,Material material) = parse_material(input_file, scene);
+        (string? name, Material material) = parse_material(input_file, scene);
         expect_symbol(input_file, ")");
         return new Sphere(transformation, material);
     }
 
-    public Shape parse_shape(InputStream input_file, Scene scene)
+    public static Shape parse_shape(InputStream input_file, Scene scene)
     {
         EnumKeyword[] list =
         {
-            EnumKeyword.Sphere, EnumKeyword.Plane, EnumKeyword.Box, EnumKeyword.CsgDifference, EnumKeyword.CsgIntersection,
+            EnumKeyword.Sphere, EnumKeyword.Plane, EnumKeyword.Box, EnumKeyword.CsgDifference,
+            EnumKeyword.CsgIntersection,
             EnumKeyword.CsgUnion
         };
         var keyword = expect_keywords(input_file, list);
@@ -759,9 +776,11 @@ public class Scene
             default:
                 throw new GrammarError("expected shape");
         }
+
         return shape;
     }
-    public CsgUnion parse_union(InputStream input_file, Scene scene)
+
+    public static CsgUnion parse_union(InputStream input_file, Scene scene)
     {
         expect_symbol(input_file, "(");
         Shape shape1 = parse_shape(input_file, scene);
@@ -770,13 +789,13 @@ public class Scene
         expect_symbol(input_file, ",");
         Transformation transformation = parse_transformation(input_file, scene);
         expect_symbol(input_file, ",");
-        (string? name ,Material material) = parse_material(input_file, scene);
+        (string? name, Material material) = parse_material(input_file, scene);
         expect_symbol(input_file, ")");
-        return new CsgUnion(shape1, shape2,transformation, material);
+        return new CsgUnion(shape1, shape2, transformation, material);
     }
 
-    
-    public CsgDifference parse_difference(InputStream input_file, Scene scene)
+
+    public static CsgDifference parse_difference(InputStream input_file, Scene scene)
     {
         expect_symbol(input_file, "(");
         Shape shape1 = parse_shape(input_file, scene);
@@ -785,11 +804,12 @@ public class Scene
         expect_symbol(input_file, ",");
         Transformation transformation = parse_transformation(input_file, scene);
         expect_symbol(input_file, ",");
-        (string? name ,Material material) = parse_material(input_file, scene);
+        (string? name, Material material) = parse_material(input_file, scene);
         expect_symbol(input_file, ")");
-        return new CsgDifference(shape1, shape2,transformation, material);
+        return new CsgDifference(shape1, shape2, transformation, material);
     }
-    public CsgIntersection parse_intersection(InputStream input_file, Scene scene)
+
+    public static CsgIntersection parse_intersection(InputStream input_file, Scene scene)
     {
         expect_symbol(input_file, "(");
         Shape shape1 = parse_shape(input_file, scene);
@@ -798,9 +818,74 @@ public class Scene
         expect_symbol(input_file, ",");
         Transformation transformation = parse_transformation(input_file, scene);
         expect_symbol(input_file, ",");
-        (string? name ,Material material) = parse_material(input_file, scene);
+        (string? name, Material material) = parse_material(input_file, scene);
         expect_symbol(input_file, ")");
-        return new CsgIntersection(shape1, shape2,transformation, material);
+        return new CsgIntersection(shape1, shape2, transformation, material);
     }
     
+    public static Scene parse_scene(InputStream inputFile, IDictionary<string, float>? variables = null)
+    {
+        var scene = new Scene
+        {
+            FloatVariables = variables ?? new Dictionary<string, float>()
+        };
+        if (variables != null) scene.OverriddenVariables = new HashSet<string>(variables.Keys);
+
+        while (true)
+        {
+            var what = inputFile.read_token();
+            if (what is StopToken) break;
+            if (what is not KeywordToken token) throw new GrammarError($"expected a keyword instead of {what}", inputFile.location);
+
+            switch (token.keyword)
+            {
+                case EnumKeyword.Float:
+                {
+                    var variableName = expect_identifier(inputFile);
+                
+                    // Save this for the error message
+                    var variableLocation = inputFile.location;
+                    expect_symbol(inputFile, "(");
+                    var variableValue = expect_number(inputFile, scene);
+                    expect_symbol(inputFile, ")");
+
+                    if (variableName != null && scene.FloatVariables.ContainsKey(variableName) && !scene.OverriddenVariables.Contains(variableName)) throw new GrammarError($"variable «{variableName}» cannot be redefined", variableLocation);
+                    if (variableName != null && !scene.OverriddenVariables.Contains(variableName))
+                        // Only define the variable if it was not defined by the user outside the scene file (e.g., from the command line)
+                        scene.FloatVariables[variableName] = variableValue;
+                    break;
+                }
+                case EnumKeyword.Sphere:
+                    scene.Wd.add(parse_sphere(inputFile, scene));
+                    break;
+                case EnumKeyword.Plane:
+                    scene.Wd.add(parse_plane(inputFile, scene));
+                    break;
+                case EnumKeyword.Box:
+                    scene.Wd.add(parse_box(inputFile, scene));
+                    break;
+                case EnumKeyword.CsgUnion:
+                    scene.Wd.add(parse_union(inputFile, scene));
+                    break;
+                case EnumKeyword.CsgDifference:
+                    scene.Wd.add(parse_difference(inputFile, scene));
+                    break;
+                case EnumKeyword.CsgIntersection:
+                    scene.Wd.add(parse_intersection(inputFile, scene));
+                    break;
+                case EnumKeyword.Camera when scene.Camera != null:
+                    throw new GrammarError("You cannot define more than one camera", what.Location);
+                case EnumKeyword.Camera:
+                    scene.Camera = parse_camera(inputFile, scene);
+                    break;
+                case EnumKeyword.Material:
+                    var (name, material) = parse_material(inputFile, scene);
+                    if (name != null) scene.Materials[name] = material;
+                    break;
+            }
+        }
+        
+        return scene;
+    }
+
 }

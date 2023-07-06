@@ -136,4 +136,44 @@ diffuse(image(""my file.pfm"")),
 
         }
 
+        [Test]
+        public void TestParser()
+        {
+            string test = @" 
+                float clock(150)
+                camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)
+
+                material sky_material(
+                 diffuse(uniform(<0, 0, 0>)),
+                 uniform(<0.7, 0.5, 1>)
+                ) 
+                
+                # here is a comment
+                
+                        material ground_material(
+                            diffuse(checkered(<0.3, 0.5, 0.1>,
+                                                <0.1, 0.2, 0.5>, 4)),
+                            uniform(<0, 0, 0>)
+                        )
+    
+                material sphere_material(
+                            specular(uniform(<0.5, 0.5, 0.5>)),
+                            uniform(<0, 0, 0>)
+                                        )
+    
+                plane (sky_material, translation([0, 0, 100]) * rotation_y(clock))
+                plane (ground_material, identity)
+                # hi
+                sphere(sphere_material, translation([0, 0, 1]))
+    
+                ";
+
+           byte[] byteArray = Encoding.ASCII.GetBytes(test);
+           MemoryStream stream = new MemoryStream(byteArray);
+           InputStream inputStream = new InputStream(stream);
+          // Scene scene = Scene.parse_scene(inputStream, new Dictionary<string, float>());
+
+        }
+            
+            
     }
