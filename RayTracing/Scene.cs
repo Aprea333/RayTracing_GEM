@@ -11,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.CompilerServices;
+//using NUnit.Framework;
 using SixLabors.ImageSharp.Metadata.Profiles.Exif;
 
 namespace RayTracing;
@@ -101,7 +102,7 @@ public class KeywordToken : Token
         { "Colour", EnumKeyword.Colour },
         { "material", EnumKeyword.Material },
         { "diffuse", EnumKeyword.Diffuse },
-        { "specular", EnumKeyword.Specular },
+        { "diffuse", EnumKeyword.Specular },
         { "Uniform", EnumKeyword.Uniform },
         { "Checkered", EnumKeyword.Checkered },
         { "image", EnumKeyword.Image },
@@ -132,6 +133,10 @@ public class KeywordToken : Token
     {
         return keyword.ToString();
     }
+    /*public string Write()
+    {
+        return keyword.ToString();
+    }*/
 }
 
 public class LiteralNumberToken : Token
@@ -221,8 +226,8 @@ public class InputStream
   public InputStream(Stream stream, string file_name = "", int tabulations = 8)
   {
     this.stream = stream;
-    location = new SourceLocation(file_name, lineNum: 1, colNum: 1);
-    saved_char = "";
+    this.location = new SourceLocation(file_name, lineNum: 1, colNum: 1);
+    this.saved_char = "";
     saved_location = location;
     this.tabulations = tabulations;
     saved_token = null;
@@ -233,25 +238,23 @@ public class InputStream
     if (ch == "")
     {
       return;
-    }
-    if (ch == "\n")
+    }else if (ch == "\n")
     {
-      location.line_num+=1;
+      location.line_num++;
       location.col_num = 1;
-    }
-    if (ch == "\t")
+    }else if (ch == "\t")
     {
       location.col_num += tabulations;
     }
     else
     {
-      location.col_num+=1;
+      location.col_num++;
     }
   }
 
   public string read_char()
   {
-    var ch ="" ;
+    string ch = "";
     if (saved_char != "")
     {
       ch = saved_char;
@@ -354,13 +357,13 @@ public class InputStream
 
       return new LiteralNumberToken(val, token_location);
   }
-  private Token parse_keyword_or_identifier_token(string first_char, SourceLocation token_location)
+  public Token parse_keyword_or_identifier_token(string first_char, SourceLocation token_location)
   {
       var token = first_char;
       while (true)
       {
-          var ch = read_char();
-          if ((Char.IsLetterOrDigit(Convert.ToChar(ch)) || ch == "_")!= true)
+          string ch = read_char();
+          if ((Char.IsLetterOrDigit(Convert.ToChar(ch)) | ch == "_")!= true)
           {
               unread_char(ch);
               break;
@@ -409,7 +412,7 @@ public class InputStream
           return parse_string_token(token_location);
       }
      
-      if (Decimal.TryParse(ch, out decimal number) || (new [] { "+", "-", "." }.Contains(ch)))
+      if (Decimal.TryParse(ch, out decimal number) | (new [] { "+", "-", "." }.Contains(ch)))
       
 
       {
