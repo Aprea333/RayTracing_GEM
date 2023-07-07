@@ -48,6 +48,18 @@ public class HdrImage
         }
     }
 
+    public HdrImage(Stream input_stream)
+    {
+        hdr_image = new List<Colour>();
+        read_pfm_image(input_stream);
+    }
+
+    public HdrImage(string file_name)
+    {
+        hdr_image = new List<Colour>();
+        using Stream fileStream = File.OpenRead(file_name);
+        read_pfm_image(fileStream);
+    }
     public bool valid_coordinates(int x, int y)
         => x >= 0 && x < width && y < height && y >= 0;
 

@@ -1,7 +1,7 @@
 using System.Text;
 using System.IO;
 using NuGet.Frameworks;
-
+using static RayTracing.Scene;
 
 namespace RayTracing.Test;
 
@@ -129,6 +129,11 @@ diffuse(image(""my file.pfm"")),
             AssertToken.AssertLiteralnumber(stream.read_token(),500.0f);
             AssertToken.AssertIsSymbol(stream.read_token(),",");
             AssertToken.AssertLiteralnumber(stream.read_token(),300.0f);
+            Token tok = stream.read_token();
+            AssertToken.AssertIsSymbol(tok,">");
+            Console.WriteLine("Pre unread");
+            stream.unreadToken(tok);
+            Console.WriteLine("Post unread");
             AssertToken.AssertIsSymbol(stream.read_token(),">");
             AssertToken.AssertIsSymbol(stream.read_token(),")");
             AssertToken.AssertIsStoptoken(stream.read_token());
@@ -139,41 +144,48 @@ diffuse(image(""my file.pfm"")),
         [Test]
         public void TestParser()
         {
-            string test = @" 
+            var test = @"
                 float clock(150)
-                camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)
-
+                camera(perspective, rotation_z(30)* translation([-4, 0, 1]) , 1.0, 2.0)
                 material sky_material(
                  diffuse(uniform(<0, 0, 0>)),
-                 uniform(<0.7, 0.5, 1>)
+                 uniform(<0.7, 0.5, 1.0>)
                 ) 
                 
                 # here is a comment
                 
-                        material ground_material(
-                            diffuse(checkered(<0.3, 0.5, 0.1>,
-                                                <0.1, 0.2, 0.5>, 4)),
-                            uniform(<0, 0, 0>)
-                        )
+                material ground_material(
+                 diffuse(checkered(<0.3, 0.5, 0.1>, 
+                                    <0.1, 0.2, 0.5>, 4)),
+                 uniform(<0, 0, 0>)
+                )
     
                 material sphere_material(
-                            specular(uniform(<0.5, 0.5, 0.5>)),
-                            uniform(<0, 0, 0>)
-                                        )
-    
-                plane (sky_material, translation([0, 0, 100]) * rotation_y(clock))
-                plane (ground_material, identity)
+                 specular(uniform(<0.5, 0.5, 0.5>)),
+                 uniform(<0, 0, 0>)
+                )
+   
+                #plane (sky_material, translation([0.0, 0, 100.000]) * rotationY(clock))
+                #plane (ground_material, identity)
                 # hi
-                sphere(sphere_material, translation([0, 0, 1]))
+                sphere(sphere_material, translation([0.0000, 0, 1.00]))
     
-                ";
+                "u8.ToArray();
+            
+            Stream stream = new MemoryStream(test);
+            var inputStream = new InputStream(stream);
+            var scene = Scene.parse_scene(inputFile:inputStream);
+            Assert.True(scene.FloatVariables.Count == 1, "Test FloatVariables length");
+            Assert.True(scene.FloatVariables.ContainsKey("clock"), "Test FloatVariables contains");
+            Assert.True(Functions.are_close(scene.FloatVariables["clock"],150.0f), "Test FloatVariables value");
 
-           byte[] byteArray = Encoding.ASCII.GetBytes(test);
-           MemoryStream stream = new MemoryStream(byteArray);
-           InputStream inputStream = new InputStream(stream);
-          // Scene scene = Scene.parse_scene(inputStream, new Dictionary<string, float>());
+            Assert.True(scene.Materials.Count == 3, "Test Materials length");
+            Assert.True(scene.Materials.ContainsKey("sphere_material"), "Test Materials contains 1");
+            Assert.True(scene.Materials.ContainsKey("sky_material"), "Test Materials contains 2");
+            Assert.True(scene.Materials.ContainsKey("ground_material"), "Test Materials contains 3");
 
+            
         }
             
-            
+            //new Dictionary<string, float>()
     }
