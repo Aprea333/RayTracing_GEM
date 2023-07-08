@@ -7,10 +7,10 @@ public interface Camera
 
 public class PerspectiveCamera : Camera
 {
-    private float distance { get; }
+    public float distance { get; }
 
     public float aspect_ratio {get;}
-    private Transformation T;
+    public Transformation T { get; }
     
     public PerspectiveCamera(float distance = 1.0f, float aspect_ratio =1.0f, Transformation? tran = null)
     {

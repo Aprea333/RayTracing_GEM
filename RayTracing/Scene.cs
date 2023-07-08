@@ -8,6 +8,7 @@ using System.Net.WebSockets;
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using NUnit.Framework.Constraints;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.CompilerServices;
@@ -86,6 +87,7 @@ public enum EnumKeyword
     RotationX,
     RotationY,
     RotationZ,
+    Identity,
     Float,
     Scaling,
     Sphere,
@@ -120,6 +122,7 @@ public class KeywordToken : Token
         { "rotation_x", EnumKeyword.RotationX },
         { "rotation_y", EnumKeyword.RotationY },
         { "rotation_z", EnumKeyword.RotationZ },
+        { "identity", EnumKeyword.Identity },
         { "float", EnumKeyword.Float },
         { "scale", EnumKeyword.Scaling },
         {"sphere", EnumKeyword.Sphere},
@@ -428,17 +431,6 @@ public class Scene
     public IDictionary<string, float> FloatVariables;
     public HashSet<string> OverriddenVariables;
 
-    //public List<string> overriden_variable;
-
-    //public Scene(World world, IDictionary<string, Material> material, Camera cam, 
-    //IDictionary<string, float> float_variable, List<string> overriden_variable)
-    /* {
-         this.world = world;
-         this.material = material;
-         this.cam = cam;
-         this.float_variable = float_variable;
-         this.overriden_variable = overriden_variable;
-     }*/
 
     public Scene(World? wd = null, Camera? camera = null, IDictionary<string, Material>? materials = null,
         IDictionary<string, float>? floatVariables = null, HashSet<string>? overriddenVariables = null)
@@ -588,7 +580,8 @@ public class Scene
                 EnumKeyword.Scaling,
                 EnumKeyword.RotationX,
                 EnumKeyword.RotationY,
-                EnumKeyword.RotationZ
+                EnumKeyword.RotationZ,
+                EnumKeyword.Identity
             };
             EnumKeyword keyword = expect_keywords(input_file, list);
             switch (keyword)
@@ -620,6 +613,9 @@ public class Scene
                     expect_symbol(input_file, "(");
                     result *= Transformation.rotation_z(expect_number(input_file, scene));
                     expect_symbol(input_file, ")");
+                    break;
+                case EnumKeyword.Identity:
+                    result *= new Transformation();
                     break;
 
             }
