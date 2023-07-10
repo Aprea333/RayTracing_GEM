@@ -128,7 +128,7 @@ public class KeywordToken : Token
         {"plane", EnumKeyword.Plane},
         {"csgunion", EnumKeyword.CsgUnion},
         {"csgdifference", EnumKeyword.CsgDifference},
-        {"cgintersection", EnumKeyword.CsgIntersection}
+        {"csgintersection", EnumKeyword.CsgIntersection}
     };
 
     public KeywordToken(SourceLocation Location,EnumKeyword keyword):base(Location)
@@ -532,8 +532,7 @@ public class Scene
         expect_symbol(input_file, ">");
         return new Colour(red, green, blue);
     }
-
-
+    
     public static Pigment parse_pigment(InputStream input_file, Scene scene)
     {
         EnumKeyword[] key = { EnumKeyword.Checkered, EnumKeyword.Uniform, EnumKeyword.Image };
@@ -699,7 +698,7 @@ public class Scene
         if (!scene.Materials.ContainsKey(material_name))
             throw new GrammarError("Unknown material", input_file.location);
         expect_symbol(input_file, ")");
-        return new Box(max, min, tran, scene.Materials[material_name]);
+        return new Box(max, min, tran,scene.Materials[material_name] ); //scene.Materials[material_name]
     }
 
     public static Camera parse_camera(InputStream input_file, Scene scene)
@@ -771,10 +770,10 @@ public class Scene
         Shape shape2 = parse_shape(input_file, scene);
         expect_symbol(input_file, ",");
         Transformation transformation = parse_transformation(input_file, scene);
-        expect_symbol(input_file, ",");
-        (string? name, Material material) = parse_material(input_file, scene);
+        //expect_symbol(input_file, ",");
+        //(string? name, Material material) = parse_material(input_file, scene);
         expect_symbol(input_file, ")");
-        return new CsgUnion(shape1, shape2, transformation, material);
+        return new CsgUnion(shape1, shape2, transformation);
     }
 
 
@@ -786,10 +785,10 @@ public class Scene
         Shape shape2 = parse_shape(input_file, scene);
         expect_symbol(input_file, ",");
         Transformation transformation = parse_transformation(input_file, scene);
-        expect_symbol(input_file, ",");
-        (string? name, Material material) = parse_material(input_file, scene);
+        //expect_symbol(input_file, ",");
+        //(string? name, Material material) = parse_material(input_file, scene);
         expect_symbol(input_file, ")");
-        return new CsgDifference(shape1, shape2, transformation, material);
+        return new CsgDifference(shape1, shape2, transformation);
     }
 
     public static CsgIntersection parse_intersection(InputStream input_file, Scene scene)
@@ -800,10 +799,10 @@ public class Scene
         Shape shape2 = parse_shape(input_file, scene);
         expect_symbol(input_file, ",");
         Transformation transformation = parse_transformation(input_file, scene);
-        expect_symbol(input_file, ",");
-        (string? name, Material material) = parse_material(input_file, scene);
+        //expect_symbol(input_file, ",");
+        //(string? name, Material material) = parse_material(input_file, scene);
         expect_symbol(input_file, ")");
-        return new CsgIntersection(shape1, shape2, transformation, material);
+        return new CsgIntersection(shape1, shape2, transformation);
     }
     
     public static Scene parse_scene(InputStream inputFile, IDictionary<string, float>? variables = null)

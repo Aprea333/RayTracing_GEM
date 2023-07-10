@@ -173,7 +173,7 @@ diffuse(image(""my file.pfm"")),
             
             Stream stream = new MemoryStream(test);
             var inputStream = new InputStream(stream);
-            var scene = Scene.parse_scene(inputFile:inputStream);
+            var scene = parse_scene(inputFile:inputStream);
             //Check float variables
             Assert.True(scene.FloatVariables.Count == 1, "Test FloatVariables length");
             Assert.True(scene.FloatVariables.ContainsKey("clock"), "Test FloatVariables contains");
@@ -242,4 +242,39 @@ diffuse(image(""my file.pfm"")),
             
         }
 
+        [Test]
+        public void TestParseCGS()
+        {
+            var test = @" 
+                camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)
+                material sky_material(
+                diffuse(uniform(<0, 0, 0>)),
+                uniform(<0.7, 0.5, 1.0>)) 
+
+                csgunion(sphere(sky_material, translation([0, 0, 1])), plane(sky_material, translation([0, 0, 100])), translation([-4, 0, 1]))
+                csgdifference(box([2,2,2] , [1,1,1] , identity, sky_material), plane(sky_material, translation([1, 0, 100])), identity)
+                csgintersection(box([2,2,2] , [1,1,1] , identity, sky_material), plane(sky_material, translation([1, 0, 100])), identity)
+                "u8.ToArray();
+            
+            Stream stream = new MemoryStream(test);
+            var inputStream = new InputStream(stream);
+            var scene = parse_scene(inputFile:inputStream);
+            Assert.True(scene.Wd.shapes.Count == 3, "Test World length");
+            
+            Assert.That(scene.Wd.shapes[0], Is.TypeOf(typeof(CsgUnion)));
+            Assert.That(((CsgUnion) scene.Wd.shapes[0]).s1,Is.TypeOf(typeof(Sphere)));
+            Assert.That(((CsgUnion) scene.Wd.shapes[0]).s2,Is.TypeOf(typeof(Plane)));
+            Assert.That(((CsgUnion) scene.Wd.shapes[0]).transformation, Is.TypeOf(typeof(Transformation)));
+            
+            Assert.That(scene.Wd.shapes[1], Is.TypeOf(typeof(CsgDifference)));
+            Assert.That(((CsgDifference) scene.Wd.shapes[1]).s1,Is.TypeOf(typeof(Box)));
+            Assert.That(((CsgDifference) scene.Wd.shapes[1]).s2,Is.TypeOf(typeof(Plane)));
+            Assert.That(((CsgDifference) scene.Wd.shapes[1]).transformation, Is.TypeOf(typeof(Transformation)));
+            
+            Assert.That(scene.Wd.shapes[2], Is.TypeOf(typeof(CsgIntersection)));
+            Assert.That(((CsgIntersection) scene.Wd.shapes[2]).s1,Is.TypeOf(typeof(Box)));
+            Assert.That(((CsgIntersection) scene.Wd.shapes[2]).s2,Is.TypeOf(typeof(Plane)));
+            Assert.That(((CsgIntersection) scene.Wd.shapes[2]).transformation, Is.TypeOf(typeof(Transformation)));
+        }
+        
     }

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Reflection;
@@ -440,8 +441,7 @@ public static partial class Program
         img.write_ldr_image(out_png, ".png", 2f);
         out_png.Close();
     }
-
-    [Verb("pfm2png", HelpText = "Pfm image")]
+     [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
     {
         [Option("factor", Default = 0.2f, HelpText = "Multiplicative factor")]
