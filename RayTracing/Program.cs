@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Reflection;
+using System;
+using System.Globalization;
 using CommandLine;
 using CommandLine.Text;
 
@@ -315,6 +317,16 @@ public static partial class Program
         HdrImage image = new HdrImage(w, h);
         World world = new World();
 
+        string file = "FirstScene.txt";
+        string output_pfm = "output.pfm";
+        Stream output_stream = File.OpenWrite(opts.output);
+        List<string> lista = new List<string>(Enum.GetNames<EnumKeyword>());
+        
+        IDictionary<string, float> dict = RenderScene.build_variable_table(lista);
+
+        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', dict, 1, 1,2, 4, 3 );
+
+        /*
         Colour beige = new Colour(1, 0.9f, 0.5f);
         Colour green = new Colour(0.3f, 0.5f, 0.1f);
         Colour blue = new Colour(0.1f, 0.2f, 0.5f);
@@ -336,7 +348,7 @@ public static partial class Program
         world.add(new Box(tran:Transformation.scaling(1,1,1), material:mirror_material));
         //world.add(new Sphere(Transformation.translation(new Vec(1f,2.5f,0)), mirror_material));
 
-
+ 
         Transformation cam_tr = Transformation.rotation_z(opts.Angle) * Transformation.translation(new Vec(-1f, 0f, 1f));
         Camera cam;
         if (opts.Camera != "perspective")
@@ -347,7 +359,8 @@ public static partial class Program
         {
             cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width / opts.Height, tran: cam_tr);
         }
-            
+           
+        
         ImageTracer imageTracer = new ImageTracer(image, cam, sample_per_side: 4);
 
         Renderer rend = new PathTracer(world, Colour.black, NRays:5 , MaxDepth: 4);
@@ -374,6 +387,7 @@ public static partial class Program
         Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
         img.write_ldr_image(out_png, ".png", 2f);
         out_png.Close();
+        */
     }
      
      //===============================================================================

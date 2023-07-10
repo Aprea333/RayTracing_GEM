@@ -9,6 +9,7 @@ using System.Net.WebSockets;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime;
 using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.CompilerServices;
 //using NUnit.Framework;
@@ -67,33 +68,33 @@ public abstract class Token
 
 public enum EnumKeyword 
 {
-    New,
-    Box,
-    Brdf,
-    Camera,
-    Colour,
-    Material,
-    Diffuse,
-    Specular,
-    Uniform,
-    Checkered,
-    Image,
-    Translation,
-    Pigment,
-    World,
-    Orthogonal,
-    Perspective,
-    RotationX,
-    RotationY,
-    RotationZ,
-    Identity,
-    Float,
-    Scaling,
-    Sphere,
-    Plane,
-    CsgUnion, 
-    CsgDifference,
-    CsgIntersection
+    New = 1,
+    Box = 2,
+    Brdf = 3,
+    Camera = 4,
+    Colour = 5,
+    Material = 6,
+    Diffuse = 7,
+    Specular = 8,
+    Uniform = 9,
+    Checkered = 10,
+    Image = 11,
+    Translation = 12,
+    Pigment = 13,
+    World = 14,
+    Orthogonal = 15,
+    Perspective = 16,
+    RotationX = 17,
+    RotationY = 18,
+    RotationZ = 19,
+    Identity = 20,
+    Float = 21,
+    Scaling = 22,
+    Sphere = 23,
+    Plane = 24,
+    CsgUnion = 25, 
+    CsgDifference = 26,
+    CsgIntersection = 27
 }
 
 public class KeywordToken : Token
@@ -348,6 +349,7 @@ public class InputStream
       while (true)
       {
           string ch = read_char();
+          char c = Convert.ToChar(ch);
           if ((Char.IsLetterOrDigit(Convert.ToChar(ch)) | ch == "_")!= true)
           {
               unread_char(ch);
@@ -592,7 +594,9 @@ public class Scene
                 case EnumKeyword.Scaling:
                     expect_symbol(input_file, "(");
                     float a = expect_number(input_file, scene);
+                    expect_symbol(input_file, ",");
                     float b = expect_number(input_file, scene);
+                    expect_symbol(input_file, ",");
                     float c = expect_number(input_file, scene);
                     result *= Transformation.scaling(a, b, c);
                     expect_symbol(input_file, ")");
