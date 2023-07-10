@@ -34,13 +34,12 @@ public class Box:Shape
         List<float> inv_ray_dir = new List<float> { inv_ray.direction.x, inv_ray.direction.y, inv_ray.direction.z };
         List<float> inv_ray_origin = new List<float> { inv_ray.origin.x, inv_ray.origin.y, inv_ray.origin.z };
         List<float> min =  new List<float> { Bound[0].x, Bound[0].y, Bound[0].z };
-        List<float> max =  new List<float> { Bound[0].x, Bound[0].y, Bound[0].z };
+        List<float> max =  new List<float> { Bound[1].x, Bound[1].y, Bound[1].z };
 
         for (int i = 0; i < 3; i++)
         {
-            float inv_dir = 1 / inv_ray_dir[i];
-            float t_near = (min[i] - inv_ray_origin[i]) * inv_dir;
-            float t_far = (max[i] - inv_ray_origin[i]) * inv_dir;
+            float t_near = (min[i] - inv_ray_origin[i]) / inv_ray_dir[i];
+            float t_far = (max[i] - inv_ray_origin[i]) / inv_ray_dir[i];
             //check if near is the first intersection, otherwise switch near and far
             if (t_near > t_far)
             {
@@ -56,12 +55,12 @@ public class Box:Shape
         List<HitRecord>? hits = new List<HitRecord>();
         
         //If t0 and t1 are > 0 add them to the hits list
-        if (t0 > 0)
+        if (t0 > 1e-5)
         {
             var hit_point0 = inv_ray.at(t0);
             hits.Add(new HitRecord(transformation*hit_point0, transformation*box_normal(hit_point0, r.direction), box_to_uv(hit_point0), t0, r, material ));
         }
-        if (t1 > 0)
+        if (t1 > 1e-5)
         {
             var hit_point1 = inv_ray.at(t1);
             hits.Add(new HitRecord(transformation*hit_point1, transformation*box_normal(hit_point1, r.direction), box_to_uv(hit_point1), t0, r, material ));
@@ -73,7 +72,9 @@ public class Box:Shape
 
     public override bool is_internal(Point p)
     {
-        throw new NotImplementedException();
+        p = transformation.inverse() * p;
+        return p.x >= Bound[0].x && p.x <= Bound[1].x && p.y >= Bound[0].y && p.y <= Bound[1].y && p.z >= Bound[0].z &&
+               p.z <= Bound[1].z;
     }
 
     /// <summary>
@@ -89,8 +90,8 @@ public class Box:Shape
         else if (Functions.are_close(p.x, Bound[1].x)) result = new Normal(1f, 0f, 0f);
         else if (Functions.are_close(p.y, Bound[0].y)) result = new Normal(0f, -1f, 0f);
         else if (Functions.are_close(p.y, Bound[1].y)) result = new Normal(0f, 1f, 0f);
-        else if (Functions.are_close(p.z, Bound[0].z)) result = new Normal(0f, -1f, 0f);
-        else result = new Normal(0f, 1f, 0f);
+        else if (Functions.are_close(p.z, Bound[0].z)) result = new Normal(0f, 0f, -1f);
+        else result = new Normal(0f, 0f, 1f);
         //normal is in the opposite direction to ray_dir
         if (result * ray_dir > 0) result.opposite_normal();
         return result;
@@ -107,12 +108,12 @@ public class Box:Shape
         float var1 = 0f;
         float var2 = 0f;
         Point min = Bound[0];
-        Point max = Bound[0];
+        Point max = Bound[1];
         int f = 0; //face of the box
         if (Functions.are_close(p.x, min.x))
         {
             f = 1;
-            var1 = 1 - (p.z - min.z) / (max.z - min.z);
+            var1 = 1f - (p.z - min.z) / (max.z - min.z);
             var2 =(p.y - min.y) / (max.y - min.y);
         }else if (Functions.are_close(p.y, max.y))
         {
@@ -128,7 +129,7 @@ public class Box:Shape
         {
             f = 4;
             var1 = (p.x - min.x) / (max.x - min.x);
-            var2 =1- (p.z - min.z) / (max.z - min.z);
+            var2 =1f - (p.z - min.z) / (max.z - min.z);
         }else if (Functions.are_close(p.x, max.x))
         {
             f = 5;
@@ -138,7 +139,7 @@ public class Box:Shape
         else 
         {
             f = 6;
-            var1 = 1-(p.x - min.x) / (max.x - min.x);
+            var1 = 1f -(p.x - min.x) / (max.x - min.x);
             var2 =(p.y - min.y) / (max.y - min.y);
         }
 
@@ -165,7 +166,7 @@ public class Box:Shape
         {
             u = (2f + var1) / 4;
             v = (1f + var2) / 3;
-        }else if (f == 6)
+        }else
         {
             u = (3f + var1) / 4;
             v = (1f + var2) / 3;

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Reflection;
@@ -17,10 +18,10 @@ public static partial class Program
             
         }
 
-        [Option("width", Default = 640, HelpText = "Width of the image to render")]
+        [Option("width", Default = 1440, HelpText = "Width of the image to render")]
         public int Width { get; set; }
 
-        [Option("height", Default = 480, HelpText = "Height of the image to render")]
+        [Option("height", Default = 900, HelpText = "Height of the image to render")]
         public int Height { get; set; }
 
         [Option("angle_deg", Default = 0.0f, HelpText = "Angle of view")]
@@ -296,7 +297,7 @@ public static partial class Program
             img.clamp_image();
             File.CreateText(opts.output).Close();
             Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
-            img.write_ldr_image(out_png, ".png", 1f);
+            img.write_ldr_image(out_png, ".png", 2f);
             out_png.Close();
             
 
@@ -332,9 +333,10 @@ public static partial class Program
         world.add(new Sphere(Transformation.scaling(210f,210f,210f)*Transformation.translation(new Vec(0,0,0.4f)), sky));
         world.add(new Plane(material:ground));
         world.add(new Sphere(Transformation.translation(new Vec(0,0,1)), sphere_material));
-        world.add(new Sphere(Transformation.translation(new Vec(1f,2.5f,0)), mirror_material));
-        
-        
+        world.add(new Box(tran:Transformation.scaling(1,1,1), material:mirror_material));
+        //world.add(new Sphere(Transformation.translation(new Vec(1f,2.5f,0)), mirror_material));
+
+
         Transformation cam_tr = Transformation.rotation_z(opts.Angle) * Transformation.translation(new Vec(-1f, 0f, 1f));
         Camera cam;
         if (opts.Camera != "perspective")
@@ -346,9 +348,9 @@ public static partial class Program
             cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width / opts.Height, tran: cam_tr);
         }
             
-        ImageTracer imageTracer = new ImageTracer(image, cam, sample_per_side: 3);
+        ImageTracer imageTracer = new ImageTracer(image, cam, sample_per_side: 4);
 
-        Renderer rend = new PathTracer(world, Colour.black, NRays: 15, MaxDepth: 5);
+        Renderer rend = new PathTracer(world, Colour.black, NRays:5 , MaxDepth: 4);
         imageTracer.fire_all_rays(rend);
 
         string root_directory = Environment.CurrentDirectory;
@@ -370,11 +372,76 @@ public static partial class Program
 
         File.CreateText(opts.output).Close();
         Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
-        img.write_ldr_image(out_png, ".png", 1f);
+        img.write_ldr_image(out_png, ".png", 2f);
         out_png.Close();
     }
+     
+     //===============================================================================
+    // DEMO BOX === DEMO BOX === DEMO BOX === DEMO BOX === DEMO BOX === DEMO BOX === DEMO BOX
+    //===============================================================================
+    
+     static void RunDemo5(DemoOption opts)
+    {
+        int w = opts.Width;
+        int h = opts.Height;
+        HdrImage image = new HdrImage(w, h);
+        World world = new World();
 
-    [Verb("pfm2png", HelpText = "Pfm image")]
+        Colour beige = new Colour(1, 0.9f, 0.5f);
+        Colour green = new Colour(0.3f, 0.5f, 0.1f);
+        
+
+        //Materials
+        
+        Material box_material = new Material(new DiffuseBrdf(new UniformPigment(beige)));
+        Material plane_material = new Material(new DiffuseBrdf(new UniformPigment(green)));
+        
+        //Add shapes
+        Point min = new Point(-1, -1, -1);
+        Point max = new Point(1, 1, 1);
+        world.add(new Cylinder(Transformation.translation(new Vec(1.5f,0,1.3f))*Transformation.scaling(0.5f,0.5f,2f), box_material));
+        //world.add(new Box(min: min, max: max, tran: Transformation.scaling(0.3f,0.3f,0.3f), material: box_material));
+
+
+        Transformation cam_tr = Transformation.rotation_z(opts.Angle) * Transformation.translation(new Vec(-2f, 0f, 1f));
+        Camera cam;
+        if (opts.Camera != "perspective")
+        {
+            cam = new OrthogonalCamera(aspect_ratio: (float)opts.Width / opts.Height, transformation: cam_tr);
+        }
+        else
+        {
+            cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width / opts.Height, tran: cam_tr);
+        }
+
+        ImageTracer imageTracer = new ImageTracer(image, cam);
+
+        Renderer rend = new FlatRenderer(world);
+        imageTracer.fire_all_rays(rend);
+
+        string root_directory = Environment.CurrentDirectory;
+        Console.WriteLine($"Root Dir: {root_directory}");
+        string path = Path.Combine(root_directory, "image.pfm");
+        File.CreateText(path).Close();
+        Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
+        imageTracer.Image.write_pfm(file_out, true);
+        file_out.Close();
+
+        HdrImage img = new HdrImage();
+
+        using (FileStream in_pfm = File.Open("image.pfm", FileMode.Open))
+        {
+            img.read_pfm_image(in_pfm);
+        }
+
+        img.clamp_image();
+
+        File.CreateText(opts.output).Close();
+        Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
+        img.write_ldr_image(out_png, ".png", 2f);
+        out_png.Close();
+    }
+     [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
     {
         [Option("factor", Default = 0.2f, HelpText = "Multiplicative factor")]

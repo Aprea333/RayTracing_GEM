@@ -12,7 +12,7 @@ public class Plane:Shape
         if (Math.Abs(invRay.direction.z) < 1e-5f) return null;
         var t = -invRay.origin.z / invRay.direction.z;
         //Check if t is smaller than the minimum or larger than the maximum
-        if (t < invRay.t_min || t >= invRay.t_max) return null;
+        if (t <= invRay.t_min || t >= invRay.t_max) return null;
 
         var hitPoint = invRay.at(t);
 

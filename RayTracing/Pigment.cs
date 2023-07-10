@@ -8,7 +8,7 @@ public abstract class Pigment
 
 public class UniformPigment : Pigment
 {
-    private Colour color;
+    public Colour color { get; }
 
     public UniformPigment(Colour? color=null)
     {
@@ -23,9 +23,9 @@ public class UniformPigment : Pigment
 
 public class CheckeredPigment : Pigment
 {
-    public Colour color1;
-    public Colour color2;
-    public int num_of_steps;
+    public Colour color1 { get; }
+    public Colour color2 { get; }
+    public int num_of_steps { get; }
 
     public CheckeredPigment(Colour color1, Colour color2, int numOfSteps = 10)
     {

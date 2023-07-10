@@ -1,6 +1,6 @@
 namespace RayTracing;
 
-public class Colour
+public struct Colour
 {
     public float r_c;
     public float g_c;

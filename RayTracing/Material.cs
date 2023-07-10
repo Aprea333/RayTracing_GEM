@@ -1,6 +1,6 @@
 ﻿namespace RayTracing;
 
-public class Material
+public struct Material
 {
     public Brdf brdf;
     public Pigment emitted_radiance;
