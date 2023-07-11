@@ -314,18 +314,18 @@ public static partial class Program
     {
         int w = opts.Width;
         int h = opts.Height;
-       // HdrImage image = new HdrImage(w, h);
-        //World world = new World();
+       
         
 
         string file = "FirstScene.txt";
+        
+        
         string output_pfm = "output.pfm";
         Stream output_stream = File.OpenWrite(opts.output);
         List<string> lista = new List<string>(Enum.GetNames<EnumKeyword>());
         IDictionary<string,float> myDic = ((EnumKeyword[])Enum.GetValues(typeof(EnumKeyword))).ToDictionary(k => k.ToString(), v => (float)v);
-        //IDictionary<string, float> dict = RenderScene.build_variable_table(lista);
 
-        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic, 1, 2,5, 4, 3 );
+        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic,2f , 1f,4,5, 3 );
 
         /*
         Colour beige = new Colour(1, 0.9f, 0.5f);

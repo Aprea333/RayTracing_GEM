@@ -5,13 +5,13 @@
                
                 
                 material plane_material( 
-                diffuse (checkered(<0, 1, 1>, <1, 0, 0>,10)),
+                diffuse (checkered(<0.3, 0.5, 0.1>, <0.1, 0.2, 0.5>,10)),
                 uniform (<0,0,0>)
                 )
                 
                 material sky_material(
-                diffuse (uniform (<0,0,1>)),
-                uniform (<0,1,0>)
+                diffuse (uniform (<1,0.9,0.5>)),
+                uniform (<0,0,0>)
                 )
                     
                     
@@ -26,10 +26,11 @@
                 )
                 
                 
+                #sphere(plane_material, scale(210,210,210) * translation([0,0,0.4]))
+                sphere (sky_material, scale(210,210,210)*translation([0,0,0.4]))
                 
                 plane (plane_material, identity)
-                sphere(sky_material,translation([0,0,1]))
-                sphere (sphere_material, translation([0,0,1]))
+                sphere (sphere_material,translation([0,0,1]))
                 sphere (mirror_material, translation([1,2.5,0]))
-                
+                #csgunion(sphere(sphere_material, translation([0, 0, 1])), plane(sphere_material, translation([0, 0, 1])), translation([-4, 0, 1]))
                

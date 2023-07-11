@@ -289,9 +289,9 @@ public class HdrImage
     /// <param name="mystream"></param>
     /// <param name="format"></param>
     /// <param name="gamma"></param>
-    public void write_ldr_image(Stream mystream, string? format, float gamma = 1.0f)
+    public void write_ldr_image(Stream mystream, string? format, float? gamma = 1)
     {
-        
+        var g = gamma ?? 1;
         var f = format ?? ".png";
         var bitmap = new Image<Rgb24>(Configuration.Default, width, height);
         for (int i = 0; i < height; i++)
@@ -299,8 +299,8 @@ public class HdrImage
             for (int j = 0; j < width; j++)
             {
                 var curColor = get_pixel(j, i);
-                bitmap[j, i] = new Rgb24((byte)(255*Math.Pow(curColor.r_c, 1 / gamma)),
-                    (byte)(255*Math.Pow(curColor.g_c, 1 / gamma)), (byte)(255*Math.Pow(curColor.b_c, 1 / gamma)));
+                bitmap[j, i] = new Rgb24((byte)(255*Math.Pow(curColor.r_c, 1 / g)),
+                    (byte)(255*Math.Pow(curColor.g_c, 1 / g)), (byte)(255*Math.Pow(curColor.b_c, 1 / g)));
 
             }
         }
