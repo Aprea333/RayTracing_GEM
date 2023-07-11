@@ -19,15 +19,22 @@ public class RenderScene
         {
             Console.WriteLine($"    - {item.Key} = {item.Value}");
         }
-
+        var root_directory = Environment.CurrentDirectory;
+        Console.WriteLine($"Root Dir: {root_directory}");
         Scene scene = new Scene();
-
-        using (FileStream inputSceneStream = File.OpenRead(file))
+        
+        string path = Path.Combine(root_directory, "FirstScene.txt");
+        File.CreateText(path).Close();
+        Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
+        InputStream input =  new InputStream(file_out, file);
+        scene = Scene.parse_scene(input, variables);
+        
+       /* using (InputStream inputSceneStream = new InputStream(file))
         {
             try
             {
-                scene = Scene.parse_scene(inputFile: new InputStream(stream: inputSceneStream, file_name: file),
-                    variables: variables);
+                InputStream input = new InputStream(stream: inputSceneStream, file_name: file);
+                scene = Scene.parse_scene(inputFile: input, variables: variables);
             }
             catch (GrammarError e)
             {
@@ -35,7 +42,8 @@ public class RenderScene
                 Console.WriteLine($"{loc.file_name}:{loc.line_num}:{loc.col_num}: {e.Message}");
                 return;
             }
-        }
+        }*/
+
 
         HdrImage image = new HdrImage(width, height);
 
@@ -101,6 +109,8 @@ public class RenderScene
             var parts = declaration.Split(":");
             if (parts.Length != 2)
             {
+                Console.WriteLine($"Lunghezza ={parts.Length}");
+                Console.WriteLine($"Stampami la lista che vedi {parts}");
                 throw new GrammarError("Error, the definition does not follow the pattern NAME:VALUE");
             }
 

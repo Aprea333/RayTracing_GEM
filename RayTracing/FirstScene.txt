@@ -1,4 +1,4 @@
-﻿#Create one infinitive plane, three spheres
+#Create one infinitive plane, three spheres
 
 #material
 plane_material material (diffuse (checkered (<0.3, 0.5, 0.1>, <0.1, 0.2, 0.5>,10)), uniform (<0,0,0>))
