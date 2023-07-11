@@ -314,8 +314,8 @@ public static partial class Program
     {
         int w = opts.Width;
         int h = opts.Height;
-        HdrImage image = new HdrImage(w, h);
-        World world = new World();
+       // HdrImage image = new HdrImage(w, h);
+        //World world = new World();
         
 
         string file = "FirstScene.txt";
@@ -325,7 +325,7 @@ public static partial class Program
         IDictionary<string,float> myDic = ((EnumKeyword[])Enum.GetValues(typeof(EnumKeyword))).ToDictionary(k => k.ToString(), v => (float)v);
         //IDictionary<string, float> dict = RenderScene.build_variable_table(lista);
 
-        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic, 1, 1,2, 4, 3 );
+        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic, 1, 2,5, 4, 3 );
 
         /*
         Colour beige = new Colour(1, 0.9f, 0.5f);
@@ -501,7 +501,7 @@ public static partial class Program
     
     static void Main(string[] args)
     {
-        CommandLine.Parser.Default.ParseArguments< DemoOption>(args)
+        Parser.Default.ParseArguments< DemoOption>(args)
             //.WithParsed<pfm2png_option>(RunOptionPfm)
             .WithParsed<DemoOption>(RunDemo4)
 

@@ -1,16 +1,35 @@
-#Create one infinitive plane, three spheres
 
-#material
-plane_material material (diffuse (checkered (<0.3, 0.5, 0.1>, <0.1, 0.2, 0.5>,10)), uniform (<0,0,0>))
-sky_material material (diffuse (uniform (<1,1,1>), uniform (<1,0.9,0.5>))
-sphere_material material (diffuse (uniform (<0.3,0.4,0.8>), uniform (<0,0,0>))
-mirror_material material (specular (uniform (<0.6,0.2,0.3>), uniform (<0,0,0>))
-
-#shapes
-plane (plane_material, identity)
-sphere (sky_material, scaling(210,210,210)*translation([0,0,0.4]))
-sphere (sphere_material, translation([0,0,1]))
-sphere (mirror_material, translation([1,2.5,0]))
-
-#camera
-camera (perspective, translation([-1,0,1], 1.6, 1))
+               float clock(140)                
+               camera (perspective, translation([-1,0,1]), 1.6, 1)
+                
+               
+                
+                material plane_material( 
+                diffuse (checkered(<0, 1, 1>, <1, 0, 0>,10)),
+                uniform (<0,0,0>)
+                )
+                
+                material sky_material(
+                diffuse (uniform (<0,0,1>)),
+                uniform (<0,1,0>)
+                )
+                    
+                    
+                 
+                material sphere_material (
+                diffuse (uniform (<0.3,0.4,0.8>)),
+                uniform (<0,0,0>)
+                )
+                material mirror_material (
+                specular (uniform (<0.6,0.2,0.3>)), 
+                uniform (<0,0,0>)
+                )
+                
+                
+                
+                plane (plane_material, identity)
+                sphere(sky_material,translation([0,0,1]))
+                sphere (sphere_material, translation([0,0,1]))
+                sphere (mirror_material, translation([1,2.5,0]))
+                
+               

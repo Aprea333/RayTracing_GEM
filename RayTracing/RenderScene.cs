@@ -8,6 +8,72 @@ namespace RayTracing;
 
 public class RenderScene
 {
+
+    public class Converter
+    {
+
+        public static void ExecuteConvert(string inputpfm, Stream outputldr, float factor, float gamma,
+            float? luminosity)
+        {
+            //string fmt = outputldr.Substring(outputldr.Length - 3, 3);
+
+            Console.WriteLine("\n\nStarting file conversion using these parameters:\n");
+
+            Console.WriteLine("pfmFile: " + inputpfm);
+            Console.WriteLine("ldrFile: " + outputldr);
+            Console.WriteLine("Factor: " + factor);
+            Console.WriteLine("Gamma: " + gamma);
+            Console.WriteLine(luminosity.HasValue ? ("Manual luminosity: " + luminosity) : "Average luminosity");
+
+            Console.WriteLine("\n");
+
+            HdrImage myImg = new HdrImage();
+
+            try
+            {
+                using (FileStream inputStream = File.OpenRead(inputpfm))
+                {
+                    myImg.read_pfm_image(inputStream);
+                    Console.WriteLine($"File {inputpfm} has been correctly read from disk.");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return;
+            }
+
+            Console.WriteLine("Starting Tone Mapping...");
+            try
+            {
+                Console.WriteLine(">>>> Normalizing image...");
+
+                if (luminosity.HasValue) myImg.normalize_image(factor, luminosity.Value);
+                else myImg.normalize_image(factor);
+
+                Console.WriteLine(">>>> Clamping image...");
+                myImg.clamp_image();
+
+                Console.WriteLine(">>>> Saving LDR image...");
+
+                myImg.write_ldr_image(outputldr, ".png", gamma);
+
+                Console.WriteLine($"File {outputldr} has been correctly written to disk.");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+        } //Convert
+
+
+    }
+
+
+
+
+
     public static void ExecuteRender(string file, int width, int height, string pfmFile,
         Stream ldrFile, int spp, char rend, IDictionary<string, float> variables,
         float factor, float gamma, int maxDepth, int nRays, int rrLimit)
@@ -19,15 +85,21 @@ public class RenderScene
         {
             Console.WriteLine($"    - {item.Key} = {item.Value}");
         }
-        var root_directory = Environment.CurrentDirectory;
-        Console.WriteLine($"Root Dir: {root_directory}");
-        Scene scene = new Scene();
+
+        //Scene scene = new Scene();
+        //var root_directory = Environment.CurrentDirectory;
+        //Console.WriteLine($"Root Dir: {root_directory}");
+        //string path = Path.Combine(root_directory, file);
         
-        string path = Path.Combine(root_directory, "FirstScene.txt");
-        File.CreateText(path).Close();
-        Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
-        InputStream input =  new InputStream(file_out, file);
-        scene = Scene.parse_scene(input, variables);
+        Stream inputStream = File.OpenRead(file);
+        InputStream input =  new InputStream(inputStream, file);
+        Scene scene = Scene.parse_scene(input, variables);
+          
+        
+        
+        
+       // InputStream input =  new InputStream(file_out, file);
+        //scene = Scene.parse_scene(input, variables);
         
        /* using (InputStream inputSceneStream = new InputStream(file))
         {
@@ -44,8 +116,7 @@ public class RenderScene
             }
         }*/
 
-
-        HdrImage image = new HdrImage(width, height);
+       HdrImage image = new HdrImage(width, height);
 
         // Run the ray-tracer
         if (scene.Camera != null)
@@ -65,7 +136,7 @@ public class RenderScene
             }
             else if (rend == 'p')
             {
-                Console.WriteLine("\nUsing flat renderer:");
+                Console.WriteLine("\nUsing PathTracer renderer:");
                 renderer = new PathTracer(scene.Wd, NRays:nRays, russianRoulette: rrLimit, MaxDepth: maxDepth);
             }
 
@@ -206,67 +277,7 @@ public class RenderScene
     }
 }
 */
-
-public class Converter
-{
-
-    public static void ExecuteConvert(string inputpfm, Stream outputldr, float factor, float gamma,
-        float? luminosity)
-    {
-        //string fmt = outputldr.Substring(outputldr.Length - 3, 3);
-
-        Console.WriteLine("\n\nStarting file conversion using these parameters:\n");
-
-        Console.WriteLine("pfmFile: " + inputpfm);
-        Console.WriteLine("ldrFile: " + outputldr);
-        Console.WriteLine("Factor: " + factor);
-        Console.WriteLine("Gamma: " + gamma);
-        Console.WriteLine(luminosity.HasValue ? ("Manual luminosity: " + luminosity) : "Average luminosity");
-
-        Console.WriteLine("\n");
-
-        HdrImage myImg = new HdrImage();
-
-        try
-        {
-            using (FileStream inputStream = File.OpenRead(inputpfm))
-            {
-                myImg.read_pfm_image(inputStream);
-                Console.WriteLine($"File {inputpfm} has been correctly read from disk.");
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-            return;
-        }
-
-        Console.WriteLine("Starting Tone Mapping...");
-        try
-        {
-            Console.WriteLine(">>>> Normalizing image...");
-
-            if (luminosity.HasValue) myImg.normalize_image(factor, luminosity.Value);
-            else myImg.normalize_image(factor);
-
-            Console.WriteLine(">>>> Clamping image...");
-            myImg.clamp_image();
-
-            Console.WriteLine(">>>> Saving LDR image...");
-
-            myImg.write_ldr_image(outputldr, ".png", gamma);
-
-            Console.WriteLine($"File {outputldr} has been correctly written to disk.");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-            return;
-        }
-
-    } //Convert
-
-} //Main Funcs
+ //Main Funcs
 
 
        
