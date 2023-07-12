@@ -157,6 +157,7 @@ public class RenderScene
             using (FileStream outpfmstream = File.OpenWrite(pfmFile))
             {
                 image.write_pfm(outpfmstream, true);
+                
                 Console.WriteLine($"Image saved in {pfmFile}");
             }
 
