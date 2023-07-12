@@ -26,11 +26,11 @@
                 )
                 
                 
-                #sphere(plane_material, scale(210,210,210) * translation([0,0,0.4]))
+            
                 sphere (sky_material, scale(210,210,210)*translation([0,0,0.4]))
                 
                 plane (plane_material, identity)
-                sphere (sphere_material,translation([0,0,1]))
+                sphere (sphere_material,scale(0.5,0.5,0.5)*translation([0,0,1]))
                 sphere (mirror_material, translation([1,2.5,0]))
                 #csgunion(sphere(sphere_material, translation([0, 0, 1])), plane(sphere_material, translation([0, 0, 1])), translation([-4, 0, 1]))
                
