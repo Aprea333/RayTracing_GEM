@@ -25,6 +25,6 @@ public class PCG
 
     public float random_float()
     {
-        return random() / 0xffffffff;
+        return ((float) random()) / 0xffffffff;
     }
 }

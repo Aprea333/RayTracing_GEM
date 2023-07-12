@@ -9,16 +9,18 @@ public struct HitRecord
     public Vec2D surface_point { get; set; }
     public float t { get; set; } 
     public Ray ray { get; set; }
+    public  Material mt { get; set; }
 
-    public HitRecord(Point wp, Normal n, Vec2D sp, float T, Ray r)
+    public HitRecord(Point wp, Normal n, Vec2D sp, float T, Ray r, Material material)
     {
         world_point = wp;
         normal = n;
         surface_point = sp;
         t = T;
         ray = r;
+        mt = material;
     }
-
+    
     public static bool are_close(HitRecord a, HitRecord b)
     {
         float eps = 1e-5f;

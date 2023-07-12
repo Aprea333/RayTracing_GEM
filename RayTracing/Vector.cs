@@ -151,13 +151,16 @@ public struct Vec
         return x * x + y * y + z * z;
     }
 
-    public void normalize()
+    public Vec normalize()
     {
         float l = norm();
         x /= l;
         y /= l;
         z /= l;
+        return new Vec(x, y, z);
     }
+    
+    
 
     /// <summary>
     /// Convert Vec to Normal
@@ -170,6 +173,11 @@ public struct Vec
         n.y = y;
         n.z = z;
         return n;
+    }
+
+    public Point to_point()
+    {
+        return new Point(x, y, z);
     }
 }
 

@@ -48,6 +48,18 @@ public class HdrImage
         }
     }
 
+    public HdrImage(Stream input_stream)
+    {
+        hdr_image = new List<Colour>();
+        read_pfm_image(input_stream);
+    }
+
+    public HdrImage(string file_name)
+    {
+        hdr_image = new List<Colour>();
+        using Stream fileStream = File.OpenRead(file_name);
+        read_pfm_image(fileStream);
+    }
     public bool valid_coordinates(int x, int y)
         => x >= 0 && x < width && y < height && y >= 0;
 
@@ -167,13 +179,13 @@ public class HdrImage
         (width, height) = parse_img_size(read_line(myStream));
         bool endianness = parse_endianness_isLittle(read_line(myStream));
         hdr_image.Capacity = width * height;
-        for (int i = 0; i < width * height; i++) // pezzo di codice importante, da mettere insieme
+        for (int i = 0; i < width * height; i++) 
         {
             Colour c = new Colour();
             hdr_image.Insert(i, c);
         }
 
-        //HDR result = new HDR(width, height);          Secondo me non aveva senso metterlo
+        //HDR result = new HDR(width, height);         
         for (int y = height - 1; y >= 0; y--)
         {
             for (int x = 0; x < width; x++)
@@ -186,9 +198,19 @@ public class HdrImage
         }
     }
 
-    public void write_float(Stream mystream, float value)
+    public void write_float(Stream mystream, float value, bool le)
     {
         var seq = BitConverter.GetBytes(value);
+        if (!le && BitConverter.IsLittleEndian)
+        {
+            Array.Reverse(seq);
+        }
+
+        if (le && !BitConverter.IsLittleEndian)
+        {
+            Array.Reverse(seq);
+        }
+
         mystream.Write(seq, 0, seq.Length);
     }
 
@@ -205,9 +227,9 @@ public class HdrImage
             for (int x = 0; x < width; x++)
             {
                 Colour col = get_pixel(x, y);
-                write_float(mystream, col.r_c);
-                write_float(mystream, col.g_c);
-                write_float(mystream, col.b_c);
+                write_float(mystream, col.r_c, end);
+                write_float(mystream, col.g_c, end);
+                write_float(mystream, col.b_c, end);
             }
         }
 
@@ -233,11 +255,14 @@ public class HdrImage
     public void normalize_image(float factor, float? luminosity = null)
     {
         var lum = luminosity ?? average_luminosity();
-        foreach (var t in hdr_image)
+        float c = factor / lum;
+        for (int i = 0; i < height; i++)
         {
-            t.r_c = t.r_c * (factor / lum);
-            t.g_c = t.g_c * (factor / lum);
-            t.b_c = t.b_c * (factor / lum);
+            for (int j = 0; j < width; j++)
+            {
+                var t = get_pixel(j, i);
+                set_pixel(new Colour(t.r_c*c, t.g_c*c, t.b_c*c), j, i);
+            }
         }
     }
 
@@ -248,11 +273,13 @@ public class HdrImage
 
     public void clamp_image()
     {
-        foreach (var pix in hdr_image)
+        for (int i = 0; i < height; i++)
         {
-            pix.r_c = clamp(pix.r_c);
-            pix.g_c = clamp(pix.g_c);
-            pix.b_c = clamp(pix.b_c);
+            for (int j = 0; j < width; j++)
+            {
+                var pix = get_pixel(j, i);
+                set_pixel(new Colour(clamp(pix.r_c), clamp(pix.g_c), clamp(pix.b_c)), j, i);
+            }
         }
     }
 
@@ -262,9 +289,9 @@ public class HdrImage
     /// <param name="mystream"></param>
     /// <param name="format"></param>
     /// <param name="gamma"></param>
-    public void write_ldr_image(Stream mystream, string? format, float? gamma = null)
+    public void write_ldr_image(Stream mystream, string? format, float? gamma = 1)
     {
-        var g = gamma ?? 1.0;
+        var g = gamma ?? 1;
         var f = format ?? ".png";
         var bitmap = new Image<Rgb24>(Configuration.Default, width, height);
         for (int i = 0; i < height; i++)
@@ -272,8 +299,8 @@ public class HdrImage
             for (int j = 0; j < width; j++)
             {
                 var curColor = get_pixel(j, i);
-                bitmap[j, i] = new Rgb24((byte)(255 * Math.Pow(curColor.r_c, 1 / g)),
-                    (byte)(255 * Math.Pow(curColor.g_c, 1 / g)), (byte)(255 * Math.Pow(curColor.b_c, 1 / g)));
+                bitmap[j, i] = new Rgb24((byte)(255*Math.Pow(curColor.r_c, 1 / g)),
+                    (byte)(255*Math.Pow(curColor.g_c, 1 / g)), (byte)(255*Math.Pow(curColor.b_c, 1 / g)));
 
             }
         }
