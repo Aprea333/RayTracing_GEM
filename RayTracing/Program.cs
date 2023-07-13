@@ -310,6 +310,7 @@ public static partial class Program
     // DEMO 2 PLANES 2 SPHERES === DEMO 2 PLANES 2 SPHERES === DEMO 2 PLANES 2 SPHERES
     //===============================================================================
     
+     [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Single[]; size: 26580MB")]
      static void RunDemo4(DemoOption opts)
     {
         int w = opts.Width;
@@ -317,8 +318,9 @@ public static partial class Program
        
         
 
-        //string file = "FirstScene.txt";
-        string file = "Texture/SecondScene.txt";
+        //string file = "texture/FirstScene.txt";
+        //string file = "texture/SecondScene.txt";
+        string file = "texture/Cornell.txt";
         
         
         string output_pfm = "output.pfm";
@@ -326,7 +328,7 @@ public static partial class Program
         List<string> lista = new List<string>(Enum.GetNames<EnumKeyword>());
         IDictionary<string,float> myDic = ((EnumKeyword[])Enum.GetValues(typeof(EnumKeyword))).ToDictionary(k => k.ToString(), v => (float)v);
 
-        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'f', myDic,2f , 1f,4,3, 3 );
+        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic,1f , 0.2f,4,3, 3 );
 
         /*
         Colour beige = new Colour(1, 0.9f, 0.5f);
