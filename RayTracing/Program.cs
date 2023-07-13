@@ -316,39 +316,22 @@ public static partial class Program
         int h = opts.Height;
         World world = new World();
         HdrImage image = new HdrImage(w,h);
-
-
-
-
-        //string file = "FirstScene.txt";
-        string file = "Texture/SecondScene.txt";
+//string file = "FirstScene.txt";
+        string file = "texture/FirstScene.txt";
         
         string output_pfm = "output.pfm";
-        string output_png = "output.png";
+       
         Stream output_stream = File.OpenWrite(opts.output);
-        List<string> lista = new List<string>()
-        {
-            "clock : 150"
-        };
         
-        /*RenderScene.ExecuteRender(file, w, h, output_pfm,  output_stream, 1, 'f', lista, 1f, 1f,3,3,3);
-        */
-        
-        
-        //List<string> lista = new List<string>(Enum.GetNames<EnumKeyword>());
         IDictionary<string,float> myDic = ((EnumKeyword[])Enum.GetValues(typeof(EnumKeyword))).ToDictionary(k => k.ToString(), v => (float)v);
         
         //RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic, 1f , 1f,3,3, 3 );
 
-
-        RenderScene.ExecuteRender(file, w, h, output_pfm, output_png, output_stream, 1, 'p', 0.5f, 1f, 3, 3, 3);
-        /*Colour beige = new Colour(1, 0.9f, 0.5f);
-=======
-        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'f', myDic,2f , 1f,4,3, 3 );
+        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic,1f , 2f,5,4, 3 );
 
         /*
         Colour beige = new Colour(1, 0.9f, 0.5f);
->>>>>>> cb58d720ff7f771dd52002005326f23fd0c181a7
+
         Colour green = new Colour(0.3f, 0.5f, 0.1f);
         Colour blue = new Colour(0.1f, 0.2f, 0.5f);
         Colour navy = new Colour(0.3f, 0.4f, 0.8f);

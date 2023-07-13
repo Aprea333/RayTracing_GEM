@@ -62,7 +62,7 @@ public class RenderScene
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("ERROR IN CONVERTER");
             }
 
         } //Convert
@@ -87,38 +87,22 @@ public class RenderScene
     /// <param name="nRays"></param>
     /// <param name="rrLimit"></param>
     /// <param name="declare_float"></param>
-    public static void ExecuteRender(string input_scene_file, int width, int height, string pfm_output,
-        string png_output,
-        Stream ldrFile, int spp, char rend, float factor, float gamma, int maxDepth, int nRays, int rrLimit, List<string> declare_float = null)
+    public static void ExecuteRender(string file, int width, int height, string pfmFile,
+        Stream ldrFile, int spp, char rend, IDictionary<string, float> variables, float factor, float gamma, int maxDepth, int nRays, int rrLimit)
     {
         Console.WriteLine("CHECK1");
         
-        if (declare_float == null) declare_float = new List<string>();
-
-        IDictionary<string, float> variables = build_variable_table(declare_float);
         if (variables.Count == 0) Console.WriteLine("    - No Variables");
         foreach (var item in variables)
         {
             Console.WriteLine($"    - {item.Key} = {item.Value}");
-        } 
-        
-        Scene scene = new Scene();
-        using (FileStream fs = File.Open(input_scene_file, FileMode.Open))
-        {
-            try
-            {
-                InputStream input = new InputStream(fs, input_scene_file);
-                scene = Scene.parse_scene(input, variables);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
         }
-        
 
-       HdrImage image = new HdrImage(width, height);
+        Stream inputStream = File.OpenRead(file);
+        InputStream input = new InputStream(inputStream, file);
+        Scene scene = Scene.parse_scene(input, variables);
+        
+        HdrImage image = new HdrImage(width, height);
 
         // Run the ray-tracer
         if (scene.Camera != null)
@@ -156,23 +140,15 @@ public class RenderScene
 
 
             Console.WriteLine("Saving in pfm format...");
-            using (FileStream outpfmstream = File.OpenWrite(pfm_output))
+            using (FileStream outpfmstream = File.OpenWrite(pfmFile))
             {
                 image.write_pfm(outpfmstream, true);
-                Console.WriteLine($"\nImage saved in {pfm_output}");
+                Console.WriteLine($"\nImage saved in {pfmFile}");
 
             }
 
-            image.normalize_image(factor);
-            image.clamp_image();
-
-            using (Stream outpngstream = File.OpenWrite(png_output))
-            {
-                image.write_ldr_image(outpngstream, gamma: gamma);
-            }
+            Converter.ExecuteConvert(pfmFile, ldrFile, factor, gamma, null);
             
-            //Converter.ExecuteConvert(pfmFile, ldrFile, factor, gamma, null);
-
             sw.Stop();
             TimeSpan ts = sw.Elapsed;
             string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds,

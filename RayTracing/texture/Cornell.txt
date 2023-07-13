@@ -1,0 +1,70 @@
+﻿float angle1(45)
+float angle2(-45)
+
+#MATERIAL
+
+#material green_mat(diffuse(uniform(<0.1,1,0.1>)), uniform (<0,0,0>))
+#material red_mat(diffuse(uniform(<1,0.1,0.1>)), uniform (<0,0,0>))
+#material white_mat(diffuse(uniform(<1,1,1>)), uniform (<0,0,0>))
+#material light_mat(diffuse(uniform(<1,1,1>)), uniform (<1,1,1>))
+
+#SHAPE
+
+#BIG BOX
+#box([3,5,5], [-6,-5,-3], identity, white_mat)
+
+#COLORED WALLS
+#box([3,8,5], [-5,4.99,-3], identity, red_mat)
+#box([3,-4.99,5], [-5,-8,-3], identity, white_mat)
+
+#BOXES
+#box([2,2.1,-0.5], [0,0.9,-3], rotation_z(angle1), white_mat)
+#box([2,-0.9,-0.5], [0,-2.1,-3], rotatio_z(angle2), white_mat)
+
+#LIGHT BOX
+#box([0.5,0.5,7], [-0.5,-0.5,4.9], identity, light_mat)
+
+#CAMERA
+#camera (perspective, translation([-5,0,0.5]), 1, 1)
+
+ float clock(140)                
+               camera (perspective, translation([-1,0,0]), 1.6, 1)
+                
+               
+                
+                material plane_material( 
+                diffuse (checkered(<0.3, 0.5, 0.1>, <0.1, 0.2, 0.5>,10)),
+                uniform (<0,0,0>)
+                )
+                
+                material sky_material(
+                diffuse (uniform (<1,0.9,0.5>)),
+                uniform (<0,0,0>)
+                )
+                    
+                    
+                 
+                material sphere_material (
+                diffuse (uniform (<0.3,0.4,0.8>)),
+                uniform (<0,0,0>)
+                )
+                material mirror_material (
+                specular (uniform (<0.6,0.2,0.3>)), 
+                uniform (<0,0,0>)
+                )
+                material box_material(
+                specular(uniform(<0.54,0,0.54>)),
+                uniform(<0,0,0>)
+                )
+                
+                material coke(diffuse(image("image/Coke.pfm")), uniform(<0,0,0>))
+            
+                sphere (sky_material, scale(210,210,210)*translation([0,0,0.4]))
+                
+                plane (plane_material, identity)
+                #sphere (box_material,translation([1.5,0,1]))
+                #sphere (mirror_material, translation([2,2.5,0])*scale(1.3,1.3,1.3))
+                #box ([1,1,1],[0,0,0],translation([0.8,-3,0])*scale(1.3,1.3,1.3),sphere_material)
+                cylinder(coke, scale(5,5,1))
+                #csgunion(sphere(sphere_material, translation([0, 0, 1])), plane(sphere_material, translation([0, 0, 1])), translation([-4, 0, 1]))
+               

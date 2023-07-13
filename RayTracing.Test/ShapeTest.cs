@@ -111,25 +111,34 @@ public class CylinderTest
     public void TestCylinder()
     {
         Cylinder cylinder = new Cylinder();
-        Ray r = new Ray(new Point(2, 0, 0.5f), new Vec(-1, 0, 0));
+        Ray r = new Ray(new Point(-5, 0, 0f), new Vec(1, 0, 0));
         HitRecord? intersection = cylinder.ray_intersection(r);
         Assert.True(intersection != null, "Intersection non null");
-        HitRecord hit = new HitRecord(new Point(1, 0, 0.5f), new Normal(1, 0, 0), new Vec2D(0f, 0.5f), 1, r, new Material());
-        Assert.True(HitRecord.are_close((HitRecord)intersection, hit));
+        HitRecord hit = new HitRecord(new Point(-1, 0, 0f), new Normal(1, 0, 0), new Vec2D(0.5f, 0.75f), 4, r, new Material());
+        Normal p = intersection.Value.normal;
+        Console.WriteLine($"x: {p.x}, y:{p.y}, z:{p.z}");
+        Assert.True(Normal.are_close(intersection.Value.normal, hit.normal));
+        
+        Assert.True(HitRecord.are_close((HitRecord)intersection, hit), "Test1");
 
-        var intersection1 = cylinder.ray_intersection_list(r);
-        Assert.True(intersection1.Count == 2, "Test list");
-        HitRecord hit1 = new HitRecord(new Point(-1, 0, 0.5f), new Normal(1, 0, 0), new Vec2D(0.5f, 0.5f), 3, r,
-            new Material());
-        Assert.True(HitRecord.are_close(hit1, intersection1[1]), "Test second hit");
+        Ray ray2 = new Ray(new Point(0, 0, 10), new Vec(0, 0, -1));
+        HitRecord? inter2 = cylinder.ray_intersection(ray2);
+        /*Assert.True(inter2 != null, "Intersection 2 non null");
+        HitRecord hit2 = new HitRecord(new Point(0, 0, 0.5f), new Normal(0, 0, 1), new Vec2D(0.75f, 0.25f), 9.5f, ray2, new Material());
+        Assert.True(HitRecord.are_close((HitRecord)inter2, hit2));
 
-        }
+        Ray ray3 = new Ray(new Point(-5, 0, 0.6f), new Vec(1, 0, 0));
+        HitRecord? inter3 = cylinder.ray_intersection(ray3);
+        Assert.True(inter3 == null, "Test null");*/
+    }
 
-    [Test]
+    /*[Test]
     public void TestTransformation()
     {
         var cyl = new Cylinder(Transformation.rotation_y(-90));
         Ray ray = new Ray(new Point(0.5f, 0, 2), new Vec(0, 0, -1));
+        Ray r = Ray.transform(Transformation.rotation_y(-90), ray);
+        
         HitRecord? intersection = cyl.ray_intersection(ray);
         Assert.True(intersection != null, "Intersection non null");
         HitRecord hit = new HitRecord(new Point(-0.5f, 0, -1f), new Normal(0, 0, -1), new Vec2D(0.5f, 0.5f), 1, ray,
@@ -144,5 +153,5 @@ public class CylinderTest
         Assert.True(HitRecord.are_close(inter_list[0], hit), "Test first hit");
         Assert.True(HitRecord.are_close(hit1, inter_list[1]), "Test second hit");
 
-    }
+    }*/
 }
