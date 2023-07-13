@@ -18,13 +18,15 @@ public class PCG
     {
         ulong oldstate = state;
         state = oldstate * 6364136223846793005ul + inc;
+
         uint xorshifted = (uint)(((oldstate >> 18) ^ oldstate) >> 27);
         uint rot = (uint)(oldstate >> 59);
-        return (xorshifted >> (int)rot) | (xorshifted << (int)((-rot) & 31));
+        return (xorshifted >> (int)rot) | (xorshifted << (int)(-rot & 31));
+
     }
 
     public float random_float()
     {
-        return ((float) random()) / uint.MaxValue;
+        return ((float)random()) / uint.MaxValue;
     }
 }

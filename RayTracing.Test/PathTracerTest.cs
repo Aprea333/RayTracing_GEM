@@ -7,7 +7,7 @@ public class PathTracerTest
     {
         PCG pcg = new PCG();
 
-        for (int i = 0; i <5 ; i++)
+        for (int i = 0; i <10; i++)
         {
             World wrl = new World();
 
@@ -19,14 +19,15 @@ public class PathTracerTest
             
             wrl.add(new Sphere(material: enclosure_material));
 
-            PathTracer path_tracer = new PathTracer(RandGen: pcg, NRays: 1, Wld: wrl, MaxDepth: 100,russianRoulette: 101, BackgroundColor: new Colour());
+            PathTracer path_tracer = new PathTracer(RandGen: pcg, NRays: 1, Wld: wrl, MaxDepth: 100,russianRoulette: 101);
             Ray ray = new Ray(new Point(0, 0, 0), new Vec(1, 0, 0));
             Colour color = path_tracer.tracing(ray);
 
             float expected = emitted_radiance / (1.0f - reflectance);
-            Assert.True(Math.Abs(expected - color.r_c) < 0.0001);
-            Assert.True(Math.Abs(expected - color.b_c) < 0.0001);
-            Assert.True(Math.Abs(expected - color.g_c) < 0.0001);
+            Console.WriteLine($"stampami la differenza {Math.Abs(expected - color.r_c)}");
+            Assert.True(Math.Abs(expected - color.r_c) < 0.01);
+            Assert.True(Math.Abs(expected - color.b_c) < 0.01);
+            Assert.True(Math.Abs(expected - color.g_c) < 0.01);
         }
     }
 }

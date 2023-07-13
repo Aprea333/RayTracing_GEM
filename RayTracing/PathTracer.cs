@@ -24,12 +24,13 @@ public class PathTracer:Renderer
 
     public override Colour tracing(Ray ray)
     {
+
         if (ray.depth > MaxDepth)
         {
             return Colour.black;
 
         }
-        
+
 
         HitRecord? hit_record = Wld.ray_intersection(ray);
         if (hit_record == null)

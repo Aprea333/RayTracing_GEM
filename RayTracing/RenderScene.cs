@@ -160,6 +160,7 @@ public class RenderScene
             {
                 image.write_pfm(outpfmstream, true);
                 Console.WriteLine($"\nImage saved in {pfm_output}");
+
             }
 
             image.normalize_image(factor);
