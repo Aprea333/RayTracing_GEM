@@ -16,7 +16,6 @@ public class Cylinder:Shape
 
     public override List<HitRecord>? ray_intersection_list(Ray r)
     {
-       
         var inv_ray = Ray.transform(transformation, r);
         float a = inv_ray.direction.x * inv_ray.direction.x + inv_ray.direction.y * inv_ray.direction.y;
         float b = 2f * (inv_ray.direction.x * inv_ray.origin.x + inv_ray.direction.y * inv_ray.origin.y);
@@ -57,8 +56,31 @@ public class Cylinder:Shape
             if (normal * inv_ray.direction > 0f) normal = normal.opposite_normal();
             intersection.Add(new HitRecord(transformation*hit_point2, transformation*normal, new Vec2D(u,v), tmax, r, material));
         }
+        
+        //intersection with bottom and up
+        Plane bottom = new Plane(Transformation.translation(new Vec(0, 0, 0)));
+        HitRecord? hit_bottom = bottom.ray_intersection(r);
+        if (hit_bottom.HasValue)
+        {
+            Point intern = hit_bottom.Value.world_point;
+            if (intern.x * intern.x + intern.y * intern.y < 1)
+            {
+                intersection.Add(new HitRecord(transformation*intern, hit_bottom.Value.normal, hit_bottom.Value.surface_point, hit_bottom.Value.t, r, material));
+            }
+        }
+        
+        Plane up = new Plane(Transformation.translation(new Vec(0, 0, 1f)));
+        HitRecord? hit_up = up.ray_intersection(r);
+        if (hit_up.HasValue)
+        {
+            Point intern = hit_up.Value.world_point;
+            if (intern.x * intern.x + intern.y * intern.y < 1)
+            {
+                intersection.Add(new HitRecord(transformation*intern, hit_up.Value.normal, hit_up.Value.surface_point, hit_up.Value.t, r, material));
+            }
+        }
 
-        return intersection.Count == 0 ? null : intersection;
+        return intersection.Count == 0 ? null : intersection.OrderBy(hit => hit.t).ToList();;
     }
     
     public override bool is_internal(Point point)

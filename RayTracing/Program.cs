@@ -314,21 +314,30 @@ public static partial class Program
     {
         int w = opts.Width;
         int h = opts.Height;
+        World world = new World();
+        HdrImage image = new HdrImage(w,h);
        
         
-
         string file = "FirstScene.txt";
-        
-        
         string output_pfm = "output.pfm";
+        string output_png = "output.png";
         Stream output_stream = File.OpenWrite(opts.output);
-        List<string> lista = new List<string>(Enum.GetNames<EnumKeyword>());
+        List<string> lista = new List<string>()
+        {
+            "clock : 150"
+        };
+        
+        /*RenderScene.ExecuteRender(file, w, h, output_pfm,  output_stream, 1, 'f', lista, 1f, 1f,3,3,3);
+        */
+        
+        
+        //List<string> lista = new List<string>(Enum.GetNames<EnumKeyword>());
         IDictionary<string,float> myDic = ((EnumKeyword[])Enum.GetValues(typeof(EnumKeyword))).ToDictionary(k => k.ToString(), v => (float)v);
+        
+        //RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic, 1f , 1f,3,3, 3 );
 
-        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic,2f , 1f,4,5, 3 );
-
-        /*
-        Colour beige = new Colour(1, 0.9f, 0.5f);
+        RenderScene.ExecuteRender(file, w, h, output_pfm, output_png, output_stream, 1, 'p', 0.5f, 1f, 3, 3, 3);
+        /*Colour beige = new Colour(1, 0.9f, 0.5f);
         Colour green = new Colour(0.3f, 0.5f, 0.1f);
         Colour blue = new Colour(0.1f, 0.2f, 0.5f);
         Colour navy = new Colour(0.3f, 0.4f, 0.8f);
@@ -344,13 +353,13 @@ public static partial class Program
         
         //Add shapes
         world.add(new Sphere(Transformation.scaling(210f,210f,210f)*Transformation.translation(new Vec(0,0,0.4f)), sky));
-        world.add(new Plane(material:ground));
-        world.add(new Sphere(Transformation.translation(new Vec(0,0,1)), sphere_material));
-        world.add(new Box(tran:Transformation.scaling(1,1,1), material:mirror_material));
+        //world.add(new Plane(material:ground));
+        //world.add(new Sphere(Transformation.translation(new Vec(0,0,1)), sphere_material));
+        //world.add(new Box(tran:Transformation.scaling(0.5f,0.5f,0.5f), material:mirror_material));
         //world.add(new Sphere(Transformation.translation(new Vec(1f,2.5f,0)), mirror_material));
-
+        //world.add(new Cylinder(new Transformation(), sphere_material));
  
-        Transformation cam_tr = Transformation.rotation_z(opts.Angle) * Transformation.translation(new Vec(-1f, 0f, 1f));
+        Transformation cam_tr = Transformation.rotation_z(opts.Angle) * Transformation.translation(new Vec(-2f, 0f, 0f));
         Camera cam;
         if (opts.Camera != "perspective")
         {
@@ -362,9 +371,9 @@ public static partial class Program
         }
            
         
-        ImageTracer imageTracer = new ImageTracer(image, cam, sample_per_side: 4);
-
-        Renderer rend = new PathTracer(world, Colour.black, NRays:5 , MaxDepth: 4);
+        ImageTracer imageTracer = new ImageTracer(image, cam, sample_per_side: 1);
+        Renderer rend = new FlatRenderer(world);
+        //Renderer rend = new PathTracer(world, Colour.black, NRays:3 , MaxDepth: 2);
         imageTracer.fire_all_rays(rend);
 
         string root_directory = Environment.CurrentDirectory;
@@ -382,17 +391,18 @@ public static partial class Program
             img.read_pfm_image(in_pfm);
         }
 
+        img.normalize_image(0.25f);
         img.clamp_image();
 
         File.CreateText(opts.output).Close();
         Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
-        img.write_ldr_image(out_png, ".png", 2f);
+        img.write_ldr_image(out_png, ".png", 0.5f);
         out_png.Close();
-        */
+*/
     }
      
-     //===============================================================================
-    // DEMO BOX === DEMO BOX === DEMO BOX === DEMO BOX === DEMO BOX === DEMO BOX === DEMO BOX
+     //==============================================================================
+    // DEMO BOX === DEMO BOX === DEMO BOX === DEMO BOX === DEMO BOX === DEMO BOX === 
     //===============================================================================
     
      static void RunDemo5(DemoOption opts)
@@ -459,13 +469,13 @@ public static partial class Program
      [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
     {
-        [Option("factor", Default = 0.2f, HelpText = "Multiplicative factor")]
+        [Option("factor", Default = 0.5f, HelpText = "Multiplicative factor")]
         public float Factor { get; set; }
 
-        [Option("gamma", Default = 1.0f, HelpText = "value to be used for gamma correction")]
+        [Option("gamma", Default = 0.5f, HelpText = "value to be used for gamma correction")]
         public float Gamma { get; set; }
 
-        [Option("input_file", Required = true, HelpText = "path + input file name + .pfm")]
+        [Option("input_file", Default = "output.pfm", HelpText = "path + input file name + .pfm")]
         public string input { get; set; } = null!;
 
         [Option("output_file", Default = "image.png", HelpText = "path + output file name + .png")]

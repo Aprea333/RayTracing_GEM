@@ -5,8 +5,8 @@ public struct Colour
     public float r_c;
     public float g_c;
     public float b_c;
-    public static Colour black = new Colour(0f,0f,0f);
-    public static Colour white = new Colour(255f, 255f, 255f);
+    public static Colour white = new Colour(0,0,0);
+    public static Colour black = new Colour(255f,255f,255f);
 
     public Colour()
     {
