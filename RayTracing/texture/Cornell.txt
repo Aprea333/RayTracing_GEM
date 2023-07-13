@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 material red_wall (
 diffuse(uniform(<1,0,0>)),

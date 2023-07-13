@@ -289,7 +289,7 @@ public class HdrImage
     /// <param name="mystream"></param>
     /// <param name="format"></param>
     /// <param name="gamma"></param>
-    public void write_ldr_image(Stream mystream, string? format, float? gamma = 1)
+    public void write_ldr_image(Stream mystream, string? format = null, float? gamma = 1)
     {
         var g = gamma ?? 1;
         var f = format ?? ".png";

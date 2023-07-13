@@ -16,7 +16,6 @@ public class Cylinder:Shape
 
     public override List<HitRecord>? ray_intersection_list(Ray r)
     {
-       
         var inv_ray = Ray.transform(transformation, r);
         float a = inv_ray.direction.x * inv_ray.direction.x + inv_ray.direction.y * inv_ray.direction.y;
         float b = 2f * (inv_ray.direction.x * inv_ray.origin.x + inv_ray.direction.y * inv_ray.origin.y);
@@ -29,36 +28,51 @@ public class Cylinder:Shape
         float tmax = (-b+delta_sqrt)/(2f*a);
         
         var intersection = new List<HitRecord>();
+
+        if (tmin > 1e-5)
+        {
+            Point hit_point = inv_ray.at(tmin);
+            if (hit_point.z > -0.5f && hit_point.z < 0.5f)
+            {
+                intersection.Add(new HitRecord(transformation*hit_point, transformation*cylider_normal(hit_point, r.direction), cyl_toUV(hit_point), tmin, r, material));
+            }
+        }
+        if (tmax > 1e-5)
+        {
+            Point hit_point = inv_ray.at(tmax);
+            if (hit_point.z > -0.5f && hit_point.z < 0.5f)
+            {
+                intersection.Add(new HitRecord(transformation*hit_point, transformation*cylider_normal(hit_point, r.direction), cyl_toUV(hit_point), tmax, r, material));
+            }
+        }
         
-        //Minimum
-        Point hit_point1 = inv_ray.at(tmin);
-        //Angle phi, if negative add 2pi to make it positive
-        float phi1 = (float)Math.Atan2(hit_point1.y, hit_point1.x);
-        if (phi1 < 0) phi1 += 2f * (float)Math.PI;
-        if (tmin < inv_ray.t_max && tmin > inv_ray.t_min && hit_point1.z is > 0f and < 1f)
+        //BOTTOM
+        Plane bottom = new Plane(Transformation.translation(new Vec(0, 0, -0.5f)));
+        HitRecord? hit_bottom = bottom.ray_intersection(inv_ray);
+        if (hit_bottom.HasValue)
         {
-            float u = phi1 / (2f * (float)Math.PI);
-            float v = hit_point1.z;
-            Normal normal = new Normal(hit_point1.x, hit_point1.y, 0f);
-            if (normal * inv_ray.direction > 0f) normal = normal.opposite_normal();
-            intersection.Add(new HitRecord(transformation*hit_point1, transformation*normal, new Vec2D(u,v), tmin, r, material));
+            Point intern = hit_bottom.Value.world_point;
+            if (intern.x * intern.x + intern.y * intern.y < 1)
+            {
+                intersection.Add(new HitRecord(transformation*intern, transformation*cylider_normal(intern, r.direction), cyl_toUV(intern), hit_bottom.Value.t, r, material));
+            }
         }
-        //Max
-        Point hit_point2 = inv_ray.at(tmax);
-        //Angle phi, if negative add 2pi to make it positive
-        float phi2 = (float)Math.Atan2(hit_point2.y, hit_point2.x);
-
-        if (phi2 < 0) phi2 += 2f * (float)Math.PI;
-        if (tmax < inv_ray.t_max && tmax > inv_ray.t_min && hit_point2.z is > 0f and < 1f)
+        
+        //UP
+        
+        Plane up = new Plane(Transformation.translation(new Vec(0, 0, 0.5f)));
+        HitRecord? hit_up = up.ray_intersection(inv_ray);
+        if (hit_up.HasValue)
         {
-            float u = phi2 / (2f * (float)Math.PI);
-            float v = hit_point2.z;
-            Normal normal = new Normal(hit_point2.x, hit_point2.y, 0f);
-            if (normal * inv_ray.direction > 0f) normal = normal.opposite_normal();
-            intersection.Add(new HitRecord(transformation*hit_point2, transformation*normal, new Vec2D(u,v), tmax, r, material));
+            Point intern = hit_up.Value.world_point;
+            if (intern.x * intern.x + intern.y * intern.y < 1)
+            {
+                intersection.Add(new HitRecord(transformation*intern, transformation*cylider_normal(intern, r.direction), cyl_toUV(intern), hit_up.Value.t, r, material));
+
+            }
         }
 
-        return intersection.Count == 0 ? null : intersection;
+        return intersection.Count == 0 ? null : intersection.OrderBy(hit => hit.t).ToList();;
     }
     
     public override bool is_internal(Point point)
@@ -66,6 +80,40 @@ public class Cylinder:Shape
         Point p = transformation.inverse() * point;
         var dist = p.x * p.x + p.y * p.y;
         return dist < 1f && p.z is >= 0f and <= 1f;
+    }
+
+    private Normal cylider_normal(Point point, Vec dir)
+    {
+        Point inv_point = transformation.inverse() * point;
+        Vec inv_dir = transformation.inverse() * dir;
+        Normal result = new Normal(inv_point.x, inv_point.y, 0);
+
+        if (Functions.are_close(inv_point.z, 0.5f)) result = new Normal(0, 0, 1);
+        if (Functions.are_close(inv_point.z, -0.5f)) result = new Normal(0, 0, -1);
+        if (inv_point.x * inv_point.x + inv_point.y * inv_point.y > 0) result = result.opposite_normal();
+
+        return result;
+    }
+
+    private Vec2D cyl_toUV(Point point)
+    {
+        float u, v;
+        if (Functions.are_close(point.z, 0.5f))
+        {
+            u = 0.5f + (point.x + 1f) / 4f;
+            v = (point.y + 1) / 4f;
+        }else if (Functions.are_close(point.z, -0.5f))
+        {
+            u = (point.x + 1f) / 4f;
+            v = (point.y + 1f) / 4f;
+        }
+        else
+        {
+            u = (float)((((float)Math.Atan2(point.y, point.x) + (2f * Math.PI)) % (2f * Math.PI)) / (2f * Math.PI));
+            v = 1f - (point.z + 0.5f) / 2f;
+        }
+
+        return new Vec2D(u, v);
     }
 
 }

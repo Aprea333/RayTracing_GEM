@@ -24,12 +24,13 @@ public class PathTracer:Renderer
 
     public override Colour tracing(Ray ray)
     {
-        if (ray.depth > MaxDepth) 
-            //return Colour.black;
-            return Colour.white;
-            
-        
-        
+
+        if (ray.depth > MaxDepth)
+        {
+            return Colour.black;
+
+        }
+
 
         HitRecord? hit_record = Wld.ray_intersection(ray);
         if (hit_record == null)
@@ -56,7 +57,6 @@ public class PathTracer:Renderer
         {
             for (int ray_index = 0; ray_index < NRays; ray_index++)
             {
-                
                 Ray new_ray = hit_material.brdf.Scatter_Ray(RandGen, hit_record.Value.ray.direction,
                     hit_record.Value.world_point,
                     hit_record.Value.normal,

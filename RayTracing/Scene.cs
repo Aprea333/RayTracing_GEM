@@ -94,7 +94,8 @@ public enum EnumKeyword
     Plane = 24,
     CsgUnion = 25, 
     CsgDifference = 26,
-    CsgIntersection = 27
+    CsgIntersection = 27,
+    Cylinder = 28
 }
 
 public class KeywordToken : Token
@@ -129,7 +130,8 @@ public class KeywordToken : Token
         {"plane", EnumKeyword.Plane},
         {"csgunion", EnumKeyword.CsgUnion},
         {"csgdifference", EnumKeyword.CsgDifference},
-        {"csgintersection", EnumKeyword.CsgIntersection}
+        {"csgintersection", EnumKeyword.CsgIntersection},
+        {"cylinder", EnumKeyword.Cylinder}
     };
 
     public KeywordToken(SourceLocation Location,EnumKeyword keyword):base(Location)
@@ -689,6 +691,17 @@ public class Scene
         return new Plane(tran, scene.Materials[material_name]);
     }
 
+    public static Cylinder parse_cylinder(InputStream input_file, Scene scene)
+    {
+        expect_symbol(input_file, "(");
+        var material_name = expect_identifier(input_file);
+        if (!scene.Materials.ContainsKey(material_name))
+            throw new GrammarError("Unknown material", input_file.location);
+        expect_symbol(input_file, ",");
+        Transformation tran = parse_transformation(input_file, scene);
+        expect_symbol(input_file, ")");
+        return new Cylinder(tran, scene.Materials[material_name]);
+    }
     public static Box parse_box(InputStream input_file, Scene scene)
     {
         expect_symbol(input_file, "(");
@@ -733,7 +746,7 @@ public class Scene
     {
         EnumKeyword[] list =
         {
-            EnumKeyword.Sphere, EnumKeyword.Plane, EnumKeyword.Box, EnumKeyword.CsgDifference,
+            EnumKeyword.Sphere, EnumKeyword.Plane, EnumKeyword.Box, EnumKeyword.Cylinder, EnumKeyword.CsgDifference,
             EnumKeyword.CsgIntersection,
             EnumKeyword.CsgUnion
         };
@@ -746,6 +759,9 @@ public class Scene
                 break;
             case EnumKeyword.Plane:
                 shape = parse_plane(input_file, scene);
+                break;
+            case EnumKeyword.Cylinder:
+                shape = parse_cylinder(input_file, scene);
                 break;
             case EnumKeyword.Box:
                 shape = parse_box(input_file, scene);
@@ -847,6 +863,9 @@ public class Scene
                         break;
                     case EnumKeyword.Plane:
                         scene.Wd.add(parse_plane(inputFile, scene));
+                        break;
+                    case EnumKeyword.Cylinder:
+                        scene.Wd.add(parse_cylinder(inputFile, scene));
                         break;
                     case EnumKeyword.Box:
                         scene.Wd.add(parse_box(inputFile, scene));

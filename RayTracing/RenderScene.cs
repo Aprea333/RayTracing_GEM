@@ -62,7 +62,7 @@ public class RenderScene
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("ERROR IN CONVERTER");
             }
 
         } //Convert
@@ -70,53 +70,39 @@ public class RenderScene
 
     }
 
-
-
-
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="input_scene_file">file.txt</param>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <param name="pfm_output"></param>
+    /// <param name="png_output"></param>
+    /// <param name="ldrFile"></param>
+    /// <param name="spp"></param>
+    /// <param name="rend"></param>
+    /// <param name="factor"></param>
+    /// <param name="gamma"></param>
+    /// <param name="maxDepth"></param>
+    /// <param name="nRays"></param>
+    /// <param name="rrLimit"></param>
+    /// <param name="declare_float"></param>
     public static void ExecuteRender(string file, int width, int height, string pfmFile,
-        Stream ldrFile, int spp, char rend, IDictionary<string, float> variables,
-        float factor, float gamma, int maxDepth, int nRays, int rrLimit)
+        Stream ldrFile, int spp, char rend, IDictionary<string, float> variables, float factor, float gamma, int maxDepth, int nRays, int rrLimit)
     {
         Console.WriteLine("CHECK1");
-
+        
         if (variables.Count == 0) Console.WriteLine("    - No Variables");
         foreach (var item in variables)
         {
             Console.WriteLine($"    - {item.Key} = {item.Value}");
         }
 
-        //Scene scene = new Scene();
-        //var root_directory = Environment.CurrentDirectory;
-        //Console.WriteLine($"Root Dir: {root_directory}");
-        //string path = Path.Combine(root_directory, file);
-        
         Stream inputStream = File.OpenRead(file);
-        InputStream input =  new InputStream(inputStream, file);
+        InputStream input = new InputStream(inputStream, file);
         Scene scene = Scene.parse_scene(input, variables);
-          
         
-        
-        
-       // InputStream input =  new InputStream(file_out, file);
-        //scene = Scene.parse_scene(input, variables);
-        
-       /* using (InputStream inputSceneStream = new InputStream(file))
-        {
-            try
-            {
-                InputStream input = new InputStream(stream: inputSceneStream, file_name: file);
-                scene = Scene.parse_scene(inputFile: input, variables: variables);
-            }
-            catch (GrammarError e)
-            {
-                SourceLocation loc = e.location;
-                Console.WriteLine($"{loc.file_name}:{loc.line_num}:{loc.col_num}: {e.Message}");
-                return;
-            }
-        }*/
-
-       HdrImage image = new HdrImage(width, height);
+        HdrImage image = new HdrImage(width, height);
 
         // Run the ray-tracer
         if (scene.Camera != null)
@@ -137,7 +123,7 @@ public class RenderScene
             else if (rend == 'p')
             {
                 Console.WriteLine("\nUsing PathTracer renderer:");
-                renderer = new PathTracer(scene.Wd, NRays:nRays, russianRoulette: rrLimit, MaxDepth: maxDepth);
+                renderer = new PathTracer(scene.Wd, NRays:nRays, russianRoulette: rrLimit, MaxDepth: maxDepth, RandGen: new PCG(42UL, 54UL));
             }
 
             else
@@ -157,12 +143,12 @@ public class RenderScene
             using (FileStream outpfmstream = File.OpenWrite(pfmFile))
             {
                 image.write_pfm(outpfmstream, true);
-                
-                Console.WriteLine($"Image saved in {pfmFile}");
+                Console.WriteLine($"\nImage saved in {pfmFile}");
+
             }
 
             Converter.ExecuteConvert(pfmFile, ldrFile, factor, gamma, null);
-
+            
             sw.Stop();
             TimeSpan ts = sw.Elapsed;
             string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds,
@@ -203,82 +189,9 @@ public class RenderScene
 
         return variables;
     }
+    
+    
 }
-
-
-/*{
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="file">File .txt that describe the scene</param>
-    /// <param name="width">Width of the image</param>
-    /// <param name="height">Height of the image</param>
-    /// <param name="pfm_file">Output file in pfm format</param>
-    /// <param name="spp">Samples per pixel for antialiasing</param>
-    /// <param name="render">Render type</param>
-    /// <param name="variables">Dictionary</param>
-    /// <param name="gamma"></param>
-    /// <param name="max_depth"></param>
-    /// <param name="n_rays"></param>
-    /// <param name="rrlimit"></param>
-    public static void ExecuteRenderer(string file, int width, int height, string pfm_file, int spp, char rend, Dictionary<string, float> variables, float gamma, int max_depth, int n_rays, int rrlimit)
-    {
-        if (variables.Count == 0) Console.WriteLine("No variables");
-        //Type of variables
-        foreach (var item in variables)
-        {
-            Console.WriteLine($"    -{item.Key} = {item.Value}");
-        }
-
-        Scene scene = new Scene();
-
-        using (FileStream input_stream = File.OpenRead(file))
-        {
-            try
-            {
-                scene = Scene.parse_scene(new InputStream(input_stream, file), variables);
-            }
-            catch (GrammarError error)
-            {
-                SourceLocation location = error.location;
-                Console.WriteLine($"{location.file_name}:{location.line_num}:{location.col_num}: {error.Message}");
-                return;
-            }
-        }
-        
-        //Create image
-        HdrImage image = new HdrImage(width, height);
-        ImageTracer tracer = new ImageTracer(image, scene.Camera, (int)MathF.Sqrt(spp));
-        Renderer renderer;
-        if (rend == 'o')
-        {
-            Console.WriteLine("\nUsing on/off renderer:");
-            renderer = new OnOffRenderer( scene.Wd);
-        }
-        else if (rend == 'f')
-        {
-            Console.WriteLine("\nUsing flat renderer:");
-            renderer = new FlatRenderer(world: scene.Wd);
-        }
-        else if (rend == 'r')
-        {
-            Console.WriteLine("\nUsing a path tracer:");
-            renderer = new PathTracer(scene.Wd, NRays: n_rays, MaxDepth: max_depth, russianRoulette: rrlimit);
-            Console.WriteLine($">>>> Max depth: {((PathTracer)renderer).MaxDepth}");
-            Console.WriteLine($">>>> Russian Roulette Limit: {((PathTracer)renderer).RussianRoulette}");
-            Console.WriteLine($">>>> Number of rays: {((PathTracer)renderer).NRays}");
-        }else
-        {
-            Console.WriteLine($"Unknown renderer: {rend}");
-            return;
-        }
-
-        Stopwatch sw = new Stopwatch();
-        tracer.fire_all_rays(renderer);
-    }
-}
-*/
- //Main Funcs
 
 
        
