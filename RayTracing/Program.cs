@@ -311,13 +311,13 @@ public static partial class Program
     //===============================================================================
     
      [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Single[]; size: 26580MB")]
+     [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Single[]; size: 461969MB")]
      static void RunDemo4(DemoOption opts)
     {
         int w = opts.Width;
         int h = opts.Height;
 
-       
-        
+
 
         //string file = "texture/FirstScene.txt";
         //string file = "texture/SecondScene.txt";
@@ -335,10 +335,9 @@ public static partial class Program
         
         IDictionary<string,float> myDic = ((EnumKeyword[])Enum.GetValues(typeof(EnumKeyword))).ToDictionary(k => k.ToString(), v => (float)v);
         
-        //RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic, 1f , 1f,3,3, 3 );
+        
 
-
-        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic,1f , 2f,4,3, 3 );
+        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic,1f , 2f,4,15, 3 );
 
         /*
         Colour beige = new Colour(1, 0.9f, 0.5f);

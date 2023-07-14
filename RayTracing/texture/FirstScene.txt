@@ -1,8 +1,6 @@
-float angle1(45)
-float angle2(-45)
 
 
-               float clock(140)                
+              
                camera (perspective, translation([-1,1,1]), 1.6, 1)
                 
                
@@ -17,12 +15,11 @@ float angle2(-45)
                 uniform (<0,0,0>)
                 )
                     
-                    material whiteMaterial
+                 material whiteMaterial
                     (diffuse(uniform(<1, 1, 1>)),
-                     uniform(<0, 0, 0>)
+                     uniform(<1, 1, 1>)
                      ) 
                      
-                  
                  
                 material sphere_material (
                 diffuse (uniform (<0.3,0.4,0.8>)),
@@ -56,7 +53,7 @@ float angle2(-45)
                 uniform(<0,0,0>)
                 )    
             
-                #sphere (sky_material, scale(210,210,210)*translation([0,0,0.4]))
+         
                 sphere (whiteMaterial, scale(210,210,210)*translation([0,0,0.4]))
                 
                 
@@ -65,38 +62,14 @@ float angle2(-45)
                 sphere (mirror_material, translation([2,2.5,0])*scale(1.3,1.3,1.3))
                 sphere(star,translation([1,4,1])*scale(0.7,0.7,0.7))
                 sphere(red_moon,translation([1,2,2.5])*scale(0.7,0.7,0.7)*rotation_z(30)*rotation_x(90))
-                #box ([1,1,1],[0,0,0],translation([0.8,-3,0])*scale(1.3,1.3,1.3),sphere_material)
-                box ([1,1,1],[0,0,0],translation([0.8,-3,0])*scale(1.3,1.3,1.3),dice)
-                #box ([0,0,0],[1,1,1],translation([0.8,-3,0])*scale(1.3,1.3,1.3),dice)
-                box ([1,1,1],[0,0,0],translation([0.8,-3,2])*scale(1.3,1.3,1.3),minecraft)
-                #csgunion(sphere(sphere_material, translation([0, 0, 1])), plane(sphere_material, translation([0, 0, 1])), translation([-4, 0, 1]))
                
-=======
-#MATERIAL
-
-material greenMat(diffuse(uniform(<0,1,0>)), uniform (<0,0,0>))
-material redMat(diffuse(uniform(<1,0,0>)), uniform (<0,0,0>))
-material whiteMat(diffuse(uniform(<1,1,1>)), uniform (<0,0,0>))
-material lightMat(diffuse(uniform(<1,1,1>)), uniform (<1,1,1>))
-
-#SHAPE
-
-#BIG BOX
-#sphere (whiteMat, scale(210,210,210)*translation([0,0,0.4]))
-box ([3,5,5], [-6,-5,-3], identity, whiteMat)
-
-#COLORED WALLS
-box([3,8,5], [-5,4.99,-3], identity, redMat)
-box([3,-4.99,5], [-5,-8,-3], identity, greenMat)
-
-#BOXES
-box([2,2.1,-0.5], [0,0.9,-3], rotation_z(angle1), whiteMat)
-box([2,-0.9,-0.5], [0,-2.1,-3], rotation_z(angle2), whiteMat)
-
-#LIGHT BOX
-box([0.5,0.5,7], [-0.5,-0.5,4.9], identity, lightMat)
-
-#CAMERA
-camera (perspective, translation([-5,0,0.5]), 1, 1)
+                box ([1,1,1],[0,0,0],translation([0.8,-3,0])*scale(1.3,1.3,1.3),dice)
               
->>>>>>> e5ad736a78919aa5d40e1aa5cac2955358cc9aa0
+                box ([1,1,1],[0,0,0],translation([0.8,-3,2])*scale(1.3,1.3,1.3),minecraft)
+                
+               
+
+
+
+              
+

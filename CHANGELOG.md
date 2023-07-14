@@ -1,4 +1,8 @@
-﻿# Version 0.2.0
+﻿# Version 0.3.0
+- Add new shapes: Sphere, box, plane,Cylinder
+- Add Parser of the scene
+
+# Version 0.2.0
 - Fixed an issue with the vertical order of the image #6
 
 # Version 0.1.0

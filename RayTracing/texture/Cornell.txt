@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 material red_wall (
 diffuse(uniform(<1,0,0>)),
@@ -12,26 +11,13 @@ uniform(<0,0,0>)
 
 material white_mat(
 diffuse(uniform(<1,1,1>)),
- uniform(<0,0,0>)
- )
-
-material light_mat (
-diffuse(uniform(<0.8, 0.8, 0.8>)),
-uniform(<1, 1, 1>)
+uniform(<0,0,0>)
 )
 
-
-#plane (red_wall, translation([0 , 3.0 , 0]) * rotation_x(90))
-      
-#plane (green_wall, translation([0 , -3.0 , 0]) * rotation_x(90))
-  
-  #box con minimo e massimo invertiti     
-#box ([-1.01, -2.01 , 0],[3.0, 2.01, 3],translation([-1,0,1.45])*scale(0.2,0.192,0.2), white_mat)
-#box ([-1.01, -2.01 , 0],[3.0, 2.01, 3],translation([-1,0,0])*scale(0.2,0.192,0.2), white_mat)
-#box ([-1.01, -2.01 , 0],[3.0, 2.01, 3],translation([5,0,-2.1])*scale(1.4,4,2.9), white_mat)
-#box([0.7, -0.3, 2.95],[1, 0.3, 3.0],scale(0.65,0.65,0.65), light_mat)
-#box ([-0.25,-0.5, 0],[0.25, 0.5, 1],translation([1.5 , 0.7 , 0.0]) * rotation_z(120), white_mat)
-#box([-0.25,-0.5, 0.0],[0.25, 0.5, 1.0],translation([1.5 , -0.7 , 0.0]) * rotation_z(60), white_mat)
+material light_mat(
+diffuse(uniform(<1, 1, 1>)),
+uniform(<1, 1, 1>)
+)
 
 
 #box ([3.0, 2.01, 3],[-1.01, -2.01 , 0],translation([-1,0,1.45])*scale(0.2,0.192,0.2), white_mat)
@@ -50,13 +36,39 @@ uniform(<1, 1, 1>)
 
 
 
-box([3,5,5],[-6,-5,-3],identity,white_mat)
+box([3,5,5],[-6,-5,-4],identity,white_mat)
 
-box([2,2.1,-0.5], [0,0.9,-3], rotation_z(45), white_mat)
-box([2,-0.9,-0.5], [0,-2.1,-3], rotation_z(-45), white_mat)
+box([2,2.1,-0.5], [0,0.9,-3],translation([1.1,-1,3])* rotation_z(45), white_mat)
+box([2,-0.9,-0.5], [0,-2.1,-3],translation([1,1,3])*scale(1,1,2)*rotation_z(45), white_mat)
 box([3,8,5], [-5,4.99,-3], identity, red_wall)
 box([3,-4.99,5], [-5,-8,-3], identity, green_wall)
-box([0.5,0.5,7], [-3.5,-0.5,4.9], scale(1,1,1), light_mat)
-camera(perspective, translation([-5, 0, 0.5]), 1, 1.0)
+box([0.5,0.5,7], [-1.5,-0.5,4.9], scale(1,1,1), light_mat)
+camera(perspective, translation([-5, 0, 0]), 1, 1.0)
 
 
+#MATERIAL
+
+material greenMat(diffuse(uniform(<0,1,0>)), uniform (<0,0,0>))
+material redMat(diffuse(uniform(<1,0,0>)), uniform (<0,0,0>))
+material whiteMat(diffuse(uniform(<1,1,1>)), uniform (<0,0,0>))
+material lightMat(diffuse(uniform(<1,1,1>)), uniform (<1,1,1>))
+
+#SHAPE
+
+#BIG BOX
+#sphere (whiteMat, scale(210,210,210)*translation([0,0,0.4]))
+#box ([3,5,5], [-6,-5,-3], identity, whiteMat)
+
+#COLORED WALLS
+#box([3,8,5], [-5,4.99,-3], identity, redMat)
+#box([3,-4.99,5], [-5,-8,-3], identity, greenMat)
+
+#BOXES
+#box([2,2.1,-0.5], [0,0.9,-3], rotation_z(angle1), whiteMat)
+#box([2,-0.9,-0.5], [0,-2.1,-3], rotation_z(angle2), whiteMat)
+
+#LIGHT BOX
+#box([0.5,0.5,7], [-0.5,-0.5,4.9], identity, lightMat)
+
+#CAMERA
+#camera (perspective, translation([-5,0,0.5]), 1, 1)
