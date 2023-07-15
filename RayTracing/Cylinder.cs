@@ -5,7 +5,26 @@ public class Cylinder:Shape
     public Cylinder(Transformation? tran = null, Material? material= null) : base(tran, material)
     {
     }
+    
+    //CONSTRUCTOR ONLY FOR UNION OF THREE CYLINDER
+    public Cylinder(Point center, float radius, float height, Vec direction, Material? material = null) : base(null,
+        material)
+    {
+        Transformation scale = Transformation.scaling(radius, radius, height);
+        Transformation translation = Transformation.translation(center.convert_to_vec());
+        Transformation rotation = null;
+        //ANGLES
+        if (Vec.are_close(direction,new Vec(1,0,0))) rotation = Transformation.rotation_y(90);
+        else if (Vec.are_close(direction, new Vec(0, 1, 0))) rotation = Transformation.rotation_x(90);
+        else if (Vec.are_close(direction, new Vec(0, 0, 1))) rotation = new Transformation();
+        else
+        {
+            throw new GrammarError("Direction must be normalized");
+        }
 
+        Transformation tran = (translation * rotation);
+        transformation = tran * scale;
+    }
     public override HitRecord? ray_intersection(Ray r)
     {
         List<HitRecord>? intersection = ray_intersection_list(r);
@@ -16,12 +35,11 @@ public class Cylinder:Shape
 
     public override List<HitRecord>? ray_intersection_list(Ray r)
     {
-        var inv_ray = Ray.transform(transformation, r);
+        var inv_ray = Ray.transform(transformation.inverse(), r);
         float a = inv_ray.direction.x * inv_ray.direction.x + inv_ray.direction.y * inv_ray.direction.y;
         float b = 2f * (inv_ray.direction.x * inv_ray.origin.x + inv_ray.direction.y * inv_ray.origin.y);
         float c = inv_ray.origin.x * inv_ray.origin.x + inv_ray.origin.y * inv_ray.origin.y - 1f;
         float delta = b * b - 4f * a * c;
-        if (delta <= 0) return null;
         //Solution
         float delta_sqrt = (float)Math.Sqrt(delta);
         float tmin = (-b-delta_sqrt)/(2f*a);
@@ -79,7 +97,7 @@ public class Cylinder:Shape
     {
         Point p = transformation.inverse() * point;
         var dist = p.x * p.x + p.y * p.y;
-        return dist < 1f && p.z is >= 0f and <= 1f;
+        return dist < 1f && p.z is >= -0.5f and <= 0.5f;
     }
 
     private Normal cylider_normal(Point point, Vec dir)
@@ -87,7 +105,7 @@ public class Cylinder:Shape
         Point inv_point = transformation.inverse() * point;
         Vec inv_dir = transformation.inverse() * dir;
         Normal result = new Normal(inv_point.x, inv_point.y, 0);
-
+        result = result.normalization();
         if (Functions.are_close(inv_point.z, 0.5f)) result = new Normal(0, 0, 1);
         if (Functions.are_close(inv_point.z, -0.5f)) result = new Normal(0, 0, -1);
         if (inv_point.x * inv_point.x + inv_point.y * inv_point.y > 0) result = result.opposite_normal();

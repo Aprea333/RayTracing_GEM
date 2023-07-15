@@ -45,7 +45,7 @@ public class Box:Shape
             {
                 (t_near, t_far) = (t_far, t_near);
             }
-
+            
             t0 = t_near > t0 ? t_near : t0;
             t1 = t_far < t1 ? t_far : t1;
             //If there are zero intersections, return a null list
@@ -63,7 +63,7 @@ public class Box:Shape
         if (t1 > 1e-5)
         {
             var hit_point1 = inv_ray.at(t1);
-            hits.Add(new HitRecord(transformation*hit_point1, transformation*box_normal(hit_point1, r.direction), box_to_uv(hit_point1), t0, r, material ));
+            hits.Add(new HitRecord(transformation*hit_point1, transformation*box_normal(hit_point1, r.direction), box_to_uv(hit_point1), t1, r, material ));
         }
 
         return hits;
@@ -73,8 +73,8 @@ public class Box:Shape
     public override bool is_internal(Point p)
     {
         p = transformation.inverse() * p;
-        return p.x >= Bound[0].x && p.x <= Bound[1].x && p.y >= Bound[0].y && p.y <= Bound[1].y && p.z >= Bound[0].z &&
-               p.z <= Bound[1].z;
+        return p.x > Bound[0].x && p.x < Bound[1].x && p.y > Bound[0].y && p.y < Bound[1].y && p.z > Bound[0].z &&
+               p.z < Bound[1].z;
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ public class Box:Shape
         else if (Functions.are_close(p.z, Bound[0].z)) result = new Normal(0f, 0f, -1f);
         else result = new Normal(0f, 0f, 1f);
         //normal is in the opposite direction to ray_dir
-        if (result * ray_dir > 0) result.opposite_normal();
+        if (result * ray_dir > 0) result = result.opposite_normal();
         return result;
     }
 
@@ -107,6 +107,8 @@ public class Box:Shape
     {
         float var1 = 0f;
         float var2 = 0f;
+        float u = 0;
+        float v = 0;
         Point min = Bound[0];
         Point max = Bound[1];
         int f = 0; //face of the box
@@ -115,59 +117,42 @@ public class Box:Shape
             f = 1;
             var1 = 1f - (p.z - min.z) / (max.z - min.z);
             var2 =(p.y - min.y) / (max.y - min.y);
+            u = (0f + var1) / 4;
+            v = (1f + var2) / 3;
         }else if (Functions.are_close(p.y, max.y))
         {
             f = 2;
             var1 = (p.x - min.x) / (max.x - min.x);
             var2 =(p.z - min.z) / (max.z - min.z);
+            u = (1f + var1) / 4;
+            v = (2f + var2) / 3;
         }else if (Functions.are_close(p.z, min.z))
         {
             f = 3;
             var1 = (p.x - min.x) / (max.x - min.x);
             var2 =(p.y - min.y) / (max.y - min.y);
+            u = (1f + var1) / 4;
+            v = (1f + var2) / 3;
         }else if (Functions.are_close(p.y, min.y))
         {
             f = 4;
             var1 = (p.x - min.x) / (max.x - min.x);
             var2 =1f - (p.z - min.z) / (max.z - min.z);
+            u = (1f + var1) / 4;
+            v = (0f + var2) / 3;
         }else if (Functions.are_close(p.x, max.x))
         {
             f = 5;
             var1 = (p.z - min.z) / (max.z - min.z);
             var2 = (p.y - min.y) / (max.y - min.y);
-        }
-        else 
-        {
-            f = 6;
-            var1 = 1f -(p.x - min.x) / (max.x - min.x);
-            var2 =(p.y - min.y) / (max.y - min.y);
-        }
-
-        float u = 0;
-        float v = 0;
-        //Using the site in the summery
-        if (f == 1)
-        {
-            u = (0f + var1) / 4;
-            v = (1f + var2) / 3;
-        }else if (f == 2)
-        {
-            u = (1f + var1) / 4;
-            v = (2f + var2) / 3;
-        }else if (f == 3)
-        {
-            u = (1f + var1) / 4;
-            v = (1f + var2) / 3;
-        }else if (f == 4)
-        {
-            u = (1f + var1) / 4;
-            v = (0f + var2) / 3;
-        }else if (f == 5)
-        {
             u = (2f + var1) / 4;
             v = (1f + var2) / 3;
-        }else
+        }
+        else if (Functions.are_close(p.z, max.z))
         {
+            f = 6;
+            var1 = 1f - (p.x - min.x) / (max.x - min.x);
+            var2 = (p.y - min.y) / (max.y - min.y);
             u = (3f + var1) / 4;
             v = (1f + var2) / 3;
         }
