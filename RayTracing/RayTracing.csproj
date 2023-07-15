@@ -9,6 +9,9 @@
 
     <ItemGroup>
       <PackageReference Include="CommandLineParser" Version="2.9.1" />
+      <PackageReference Include="ConsoleProgressBar" Version="2.0.0" />
+      <PackageReference Include="ProgressBar" Version="1.0.10" />
+      <PackageReference Include="ShellProgressBar" Version="5.2.0" />
       <PackageReference Include="SixLabors.ImageSharp" Version="3.0.0" />
     </ItemGroup>
 

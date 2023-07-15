@@ -2,7 +2,7 @@
 
 namespace RayTracing;
 using System.Threading.Tasks;
-//using ConsoleProgressBar;
+using ConsoleProgressBar;
 using ShellProgressBar;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,6 +46,8 @@ public class ImageTracer
 
     [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: RayTracing.Transformation; size: 585894MB")]
     [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Single[]; size: 158MB")]
+    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Single[]; size: 10401MB")]
+    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Single[]; size: 33906MB")]
     public void fire_all_rays(Renderer rend)
     {
         int totalTicks = Image.height;
@@ -56,8 +58,8 @@ public class ImageTracer
             ForegroundColor = ConsoleColor.Yellow,
             ForegroundColorDone = ConsoleColor.Green,
             BackgroundColor = ConsoleColor.DarkBlue,
-            ProgressBarOnBottom = false,
-            CollapseWhenFinished = false,
+            ProgressBarOnBottom = true,
+            CollapseWhenFinished = true,
             DisplayTimeInRealTime = true
         };
         //StringBuilder progressMessage = new StringBuilder();
@@ -68,7 +70,7 @@ public class ImageTracer
         int rowCompleted = 0;
         char progressBarCharacter = '\u25A0';
         
-        using (var pbar = new ProgressBar(totalTicks, "Progress:", options))
+        using (var pbar = new ConsoleProgressBar.ProgressBar())
         {
 
             try
@@ -111,7 +113,7 @@ public class ImageTracer
                         Console.SetCursorPosition(0, Console.CursorTop);
                         Console.Write("[");
                         Console.Write(new string(progressBarCharacter, progressBarFilledWidth));
-                        //Console.Write(new string(' ', progressBarWidth - progressBarFilledWidth));
+                        Console.Write(new string(' ', progressBarWidth - progressBarFilledWidth));
                         Console.Write("] {0}%   ", (int)(progress * 100));
                       
                     }
