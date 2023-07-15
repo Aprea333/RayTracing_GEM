@@ -103,6 +103,36 @@ public class BoxTest
         HitRecord? intersection4 = box.ray_intersection(r4);
         Assert.True(intersection4 == null, "Check null intersection");
     }
+
+    [Test]
+    public void TestTransformation()
+    {
+        Material mat = new Material(new DiffuseBrdf(new UniformPigment(new Colour(1, 0, 0))),
+            new UniformPigment(new Colour(0,0,0)));
+        Box box = new Box(tran:Transformation.scaling(5, 5, 5), material:mat);
+        Ray r = new Ray(new Point(-10, 3, 0), new Vec(1, 0, 0));
+        HitRecord? intersection = box.ray_intersection(r);
+        Assert.True(intersection != null, "Check non null intersection with ray directed along the x-axis" );
+        HitRecord hit = new HitRecord(new Point(-5, 3, 0), new Normal(-0.2f, 0, 0), new Vec2D(0.125f, 0.6f), 5, r,
+            new Material());
+        Assert.True(HitRecord.are_close(hit, (HitRecord)intersection), "Test intersections are close");
+        Ray r2 = new Ray(new Point(0, 10, 10), new Vec(0, 0, -1));
+        HitRecord? intersection2 = box.ray_intersection(r2);
+        Assert.True(intersection2 == null, "Check null intersection");
+        Ray r3 = new Ray(new Point(-3, 0.5f, 0.5f), new Vec(1, 0, 0));
+        HitRecord? inter = box.ray_intersection(r3);
+        Assert.True(inter != null, "Check non null intersection in the box" );
+        Colour c = inter.Value.mt.brdf.Pig.get_colour(inter.Value.surface_point);
+        Colour d = inter.Value.mt.emitted_radiance.get_colour(inter.Value.surface_point);
+        Assert.True(Colour.are_close(c, new Colour(1,0,0)));
+        Assert.True(Colour.are_close(d, new Colour(0,0,0)));
+        List<HitRecord> list = box.ray_intersection_list(r);
+        HitRecord hit2 = list[1];
+        Colour c2 = hit2.mt.brdf.Pig.get_colour(hit2.surface_point);
+        Colour d2 = hit2.mt.emitted_radiance.get_colour(hit2.surface_point);
+        Assert.True(Colour.are_close(c2, new Colour(1,0,0)));
+        Assert.True(Colour.are_close(d2, new Colour(0,0,0)));
+    }
 }
 
 public class CylinderTest
@@ -115,43 +145,36 @@ public class CylinderTest
         HitRecord? intersection = cylinder.ray_intersection(r);
         Assert.True(intersection != null, "Intersection non null");
         HitRecord hit = new HitRecord(new Point(-1, 0, 0f), new Normal(1, 0, 0), new Vec2D(0.5f, 0.75f), 4, r, new Material());
-        Normal p = intersection.Value.normal;
-        Console.WriteLine($"x: {p.x}, y:{p.y}, z:{p.z}");
         Assert.True(Normal.are_close(intersection.Value.normal, hit.normal));
         
         Assert.True(HitRecord.are_close((HitRecord)intersection, hit), "Test1");
 
-        Ray ray2 = new Ray(new Point(0, 0, 10), new Vec(0, 0, -1));
+        Ray ray2 = new Ray(new Point(0f, 0f, 10), new Vec(0, 0, -1));
         HitRecord? inter2 = cylinder.ray_intersection(ray2);
-        /*Assert.True(inter2 != null, "Intersection 2 non null");
+        Assert.True(inter2 != null, "Intersection 2 non null");
         HitRecord hit2 = new HitRecord(new Point(0, 0, 0.5f), new Normal(0, 0, 1), new Vec2D(0.75f, 0.25f), 9.5f, ray2, new Material());
-        Assert.True(HitRecord.are_close((HitRecord)inter2, hit2));
+        Assert.True(HitRecord.are_close((HitRecord)inter2, hit2), "Check up intersection");
 
         Ray ray3 = new Ray(new Point(-5, 0, 0.6f), new Vec(1, 0, 0));
         HitRecord? inter3 = cylinder.ray_intersection(ray3);
-        Assert.True(inter3 == null, "Test null");*/
+        Assert.True(inter3 == null, "Test null");
     }
 
-    /*[Test]
+    [Test]
     public void TestTransformation()
     {
-        var cyl = new Cylinder(Transformation.rotation_y(-90));
-        Ray ray = new Ray(new Point(0.5f, 0, 2), new Vec(0, 0, -1));
-        Ray r = Ray.transform(Transformation.rotation_y(-90), ray);
-        
+        var cyl = new Cylinder(Transformation.rotation_x(90));
+        Ray ray = new Ray(new Point(-5f, 0f, 0f), new Vec(1, 0, 0));
         HitRecord? intersection = cyl.ray_intersection(ray);
         Assert.True(intersection != null, "Intersection non null");
-        HitRecord hit = new HitRecord(new Point(-0.5f, 0, -1f), new Normal(0, 0, -1), new Vec2D(0.5f, 0.5f), 1, ray,
+        HitRecord hit = new HitRecord(new Point(-1f, 0f, 0f), new Normal(1f, 0f, 0), new Vec2D(0.5f, 0.75f), 4f, ray,
             new Material());
-        Assert.True(HitRecord.are_close(hit, (HitRecord)intersection));
+        Assert.True(HitRecord.are_close(hit, (HitRecord)intersection), "Check intersection");
         
         //Test second intersection
-        var inter_list = cyl.ray_intersection_list(ray);
-        Assert.True(inter_list.Count == 2, "Test list");
-        HitRecord hit1 = new HitRecord(new Point(-0.5f, 0, 1f), new Normal(0, 0, -1), new Vec2D(0f, 0.5f), 3, ray,
-            new Material());
-        Assert.True(HitRecord.are_close(inter_list[0], hit), "Test first hit");
-        Assert.True(HitRecord.are_close(hit1, inter_list[1]), "Test second hit");
-
-    }*/
+        Ray ray2 = new Ray(new Point(0f, 5f, 5f), new Vec(0, 0, -1));
+        HitRecord? inter = cyl.ray_intersection(ray2);
+        Assert.True(inter == null, "Intersection  null");
+        
+    }
 }

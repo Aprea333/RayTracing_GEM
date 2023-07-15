@@ -44,7 +44,17 @@ public class CsgUnion:Shape
 
         var intersection = new List<HitRecord>(); 
         if(inter1 !=null) intersection.AddRange(inter1);
-        if(inter2 !=null) intersection.AddRange(inter2);
+        if (inter2 != null)
+        {
+            for (int i = inter2.Count-1; i >= 0; i--)
+            {
+                if (s1.is_internal(inter2[i].world_point))
+                {
+                    inter2.RemoveAt(i);
+                }
+            }
+            intersection.AddRange(inter2);
+        }
         return intersection.Count != 0 ? intersection.OrderBy(o => o.t).ToList() : null;
     }
 
@@ -89,7 +99,9 @@ public class CsgDifference : Shape
     /// <returns>The first element on the list of intersections. If no intersection is found "null" is returned.</returns>
     public override HitRecord? ray_intersection(Ray r)
     {
-        return ray_intersection_list(r)?[0];
+        List<HitRecord>? intersection = ray_intersection_list(r);
+        if (intersection is { Count: 0 }) return null;
+        return intersection?[0];
     }
 
     /// <summary>
@@ -99,8 +111,9 @@ public class CsgDifference : Shape
     /// <returns>The list of intersections. If no intersection is found, <"null"< is returned.</returns>
     public override List<HitRecord>? ray_intersection_list(Ray r)
     {
-        var inv_ray = Ray.transform(transformation, r);
-        var inter1 = s1.ray_intersection_list(inv_ray);
+        var inv_ray = Ray.transform(transformation.inverse(), r);
+        List<HitRecord>? list = new List<HitRecord>();
+        var inter1 = s1.ray_intersection_list(r);
         if (inter1 == null) return null;
         //Remove all the intersections inside s2 
         for (int i = inter1.Count - 1; i >= 0; i--)
@@ -108,7 +121,7 @@ public class CsgDifference : Shape
             if (s2.is_internal(inter1[i].world_point)) inter1.RemoveAt(i);
         }
         //Remove all the intersections on the surface of s2 that are not inside s1
-        var inter2 = s2.ray_intersection_list(inv_ray);
+        var inter2 = s2.ray_intersection_list(r);
         if (inter2 != null)
         {
             for (int i = inter2.Count - 1; i >= 0; i--)
@@ -118,7 +131,7 @@ public class CsgDifference : Shape
         }
         //Create the new list
         var intersection = new List<HitRecord>();
-        intersection.AddRange(inter1);
+        if(inter1!=null) intersection.AddRange(inter1);
         if(inter2!=null) intersection.AddRange(inter2);
         return intersection.Count != 0 ? intersection.OrderBy(o => o.t).ToList() : null;
 

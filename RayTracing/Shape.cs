@@ -30,3 +30,25 @@ public abstract class Shape
         return new CsgIntersection(s1, s2);
     }
 }
+
+public static class Useful_Shape
+{
+       
+        
+    public static Shape union_shapes(Transformation? transf = null)
+    {
+        Material yellow = new Material(new DiffuseBrdf(new UniformPigment(new Colour(1, 1, 0))));
+        Material red = new Material(new DiffuseBrdf(new UniformPigment(new Colour(1, 0, 0))));
+        Material blue =new Material(new DiffuseBrdf(new UniformPigment(new Colour(0, 0, 1))));
+        Shape C1 = new Cylinder(new Point(0, 0, 0), 0.7f, 3f, new Vec(1, 0, 0), yellow);
+        Shape C2 = new Cylinder(new Point(0, 0, 0), 0.7f, 3f, new Vec(0, 1, 0), yellow);
+        Shape C3 = new Cylinder(new Point(0, 0, 0), 0.7f, 3f, new Vec(0, 0, 1), yellow);
+        Shape S = new Sphere(Transformation.scaling(1.35f, 1.35f, 1.35f), blue);
+        Shape B = new Box(material:red);
+        Shape cyl_tot = (C1 + C2) + C3;
+        Shape ext = S * B;
+        Shape tot = ext-cyl_tot;
+        if (transf != null) tot.transformation = transf;
+        return tot;
+    }
+}

@@ -95,7 +95,8 @@ public enum EnumKeyword
     CsgUnion = 25, 
     CsgDifference = 26,
     CsgIntersection = 27,
-    Cylinder = 28
+    Cylinder = 28,
+    UnionShape = 29
 }
 
 public class KeywordToken : Token
@@ -131,7 +132,8 @@ public class KeywordToken : Token
         {"csgunion", EnumKeyword.CsgUnion},
         {"csgdifference", EnumKeyword.CsgDifference},
         {"csgintersection", EnumKeyword.CsgIntersection},
-        {"cylinder", EnumKeyword.Cylinder}
+        {"cylinder", EnumKeyword.Cylinder},
+        {"unionshape", EnumKeyword.UnionShape}
     };
 
     public KeywordToken(SourceLocation Location,EnumKeyword keyword):base(Location)
@@ -430,6 +432,7 @@ public class Scene
 {
     public World Wd;
     public IDictionary<string, Material> Materials;
+    public static IDictionary<string, Shape> Shapes;
     public Camera? Camera;
     public IDictionary<string, float> FloatVariables;
     public HashSet<string> OverriddenVariables;
@@ -782,6 +785,17 @@ public class Scene
         return shape;
     }
 
+    public static Shape parse_union_shape(InputStream input_file, Scene scene)
+    {
+        expect_symbol(input_file, "(");
+        Transformation transformation = parse_transformation(input_file, scene);
+        //expect_symbol(input_file, ",");
+        //(string? name, Material material) = parse_material(input_file, scene);
+        expect_symbol(input_file, ")");
+        Shape s = Useful_Shape.union_shapes(transformation);
+        return s;
+    }
+
     public static CsgUnion parse_union(InputStream input_file, Scene scene)
     {
         expect_symbol(input_file, "(");
@@ -878,6 +892,9 @@ public class Scene
                         break;
                     case EnumKeyword.CsgIntersection:
                         scene.Wd.add(parse_intersection(inputFile, scene));
+                        break;
+                    case EnumKeyword.UnionShape:
+                        scene.Wd.add(parse_union_shape(inputFile,scene));
                         break;
                     /*case EnumKeyword.Camera when scene.Camera != null:
                         throw new GrammarError("You cannot define more than one camera", what.Location);*/
