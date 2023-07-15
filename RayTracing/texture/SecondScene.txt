@@ -1,32 +1,40 @@
               
-              camera (perspective, translation([-1,1,2])*rotation_z(-30), 1.6, 1)
               
-              material Red_Material
-              (diffuse(uniform(<1, 1, 1>)),
-               uniform(<1, 0, 0>)
-               ) 
+              camera (perspective, translation([-1,0,2]), 1.6, 1)
+             
                
                material mirror_material (
-               specular (uniform (<0.6,0.2,0.3>)), 
-               uniform (<255,255,255>)
+               specular (uniform (<0.3,0.5,1>)), 
+               uniform (<0,0,0>)
                )
                
-                material red(
-                diffuse(uniform(<0.54,0,0.54>)),
-                uniform(<0,0,0>)
-                )
-                
-                material beige(
-                diffuse(uniform(<138,102,66>)),
+                material white(
+                diffuse(uniform(<1,1,1>)),
                 uniform(<1,1,1>)
                 )
                 
-                material plane_material( 
-                diffuse (checkered(<0.3, 0.5, 0.1>, <0.1, 0.2, 0.5>,10)),
-                uniform (<0,0,0>)
+               
+                
+                
+                material red(
+                diffuse(uniform(<0.54,0,0.54>)),
+                uniform(<0,0,0>)
+                 )
+               
+            
+                material blu(
+                diffuse(uniform(<0,0.54,0.54>)),
+                uniform(<0,0,0>)
+                )
+                
+                material viola(
+                diffuse(uniform(<0.54,0.54,0>)),
+                uniform(<0,0,0>)
                 )
                 
                 
+                plane(mirror_material,identity)               
                 sphere(red,translation([1.5,0,1])) 
-                sphere(beige,translation([1.5,0,3]))
-                plane (plane_material, identity)
+                sphere(blu,translation([1.5,2,1]))
+                sphere(viola,translation([1.5,-2,1]))
+                sphere(white,translation([1.5,0,3]))

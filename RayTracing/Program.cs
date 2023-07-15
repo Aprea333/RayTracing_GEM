@@ -319,25 +319,17 @@ public static partial class Program
 
 
 
-        //string file = "texture/FirstScene.txt";
-        //string file = "texture/SecondScene.txt";
-        string file = "texture/Cornell.txt";
-        
+         //string file = "texture/FirstScene.txt";
+        string file = "texture/SecondScene.txt";
+        //string file = "texture/Cornell.txt";
+       
 
-        World world = new World();
-        HdrImage image = new HdrImage(w,h);
-
-
-        
         string output_pfm = "output.pfm";
        
         Stream output_stream = File.OpenWrite(opts.output);
         
         IDictionary<string,float> myDic = ((EnumKeyword[])Enum.GetValues(typeof(EnumKeyword))).ToDictionary(k => k.ToString(), v => (float)v);
-        
-        
-
-        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic,1f , 2f,4,15, 3 );
+        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'f', myDic,1f , 2f,3, 5, 3 );
 
         /*
         Colour beige = new Colour(1, 0.9f, 0.5f);

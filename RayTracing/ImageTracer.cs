@@ -1,8 +1,13 @@
-﻿using System.Net.Mime;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace RayTracing;
-
+using System.Threading.Tasks;
+//using ConsoleProgressBar;
+using ShellProgressBar;
+using System.Text;
+using System.Threading.Tasks;
 public delegate Colour Function(Ray r);
+
 public class ImageTracer
 {
     public HdrImage Image;
@@ -17,10 +22,11 @@ public class ImageTracer
         this.pcg = pcg ?? new PCG();
         this.sample_per_side = sample_per_side;
     }
+
     public Ray fire_ray(int col, int row, float u_pixel = 0.5f, float v_pixel = 0.5f)
     {
-        float u = (col+u_pixel)/(Image.width);
-        float v = 1 - (row+v_pixel)/(Image.height);
+        float u = (col + u_pixel) / (Image.width);
+        float v = 1 - (row + v_pixel) / (Image.height);
         return Camera.fire_ray(u, v);
     }
 
@@ -32,49 +38,106 @@ public class ImageTracer
             {
                 Ray r = this.fire_ray(j, i);
                 Colour c = func(r);
-                Image.set_pixel(c,j,i);
+                Image.set_pixel(c, j, i);
             }
         }
     }
-    
-    
-    public void fire_all_rays(Renderer func)
+
+
+    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: RayTracing.Transformation; size: 585894MB")]
+    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Single[]; size: 158MB")]
+    public void fire_all_rays(Renderer rend)
     {
+        int totalTicks = Image.height;
         
-        
-        var max_ticks = Image.height;
-        
-        for (int row = 0; row < Image.height; row++)
+        var options = new ProgressBarOptions
         {
-            for (int col = 0; col < Image.width; col++)
+            ProgressCharacter = '\u25A0',
+            ForegroundColor = ConsoleColor.Yellow,
+            ForegroundColorDone = ConsoleColor.Green,
+            BackgroundColor = ConsoleColor.DarkBlue,
+            ProgressBarOnBottom = false,
+            CollapseWhenFinished = false,
+            DisplayTimeInRealTime = true
+        };
+        //StringBuilder progressMessage = new StringBuilder();
+        //var progressBar = new ConsoleProgressBar.ProgressBar();
+        //using (var pbar = new ShellProgressBar.ProgressBar(totalTicks, "", options))
+        int progressBarWidth = Console.WindowWidth - 20; // Larghezza della barra di progresso
+        
+        int rowCompleted = 0;
+        char progressBarCharacter = '\u25A0';
+        
+        using (var pbar = new ProgressBar(totalTicks, "Progress:", options))
+        {
+
+            try
             {
-                Colour cum_color = new Colour(0,0,0);
-                if (sample_per_side > 0)
+
+                Parallel.For((long)0, Image.height, i =>
                 {
-                    for (int inter_pixel_row = 0; inter_pixel_row < sample_per_side; inter_pixel_row++)
+                    for (int j = 0; j < Image.width; j++)
                     {
-                        for (int inter_pixel_col = 0; inter_pixel_col < sample_per_side; inter_pixel_col++)
+                        Colour appo = new Colour(0, 0, 0);
+                        if (sample_per_side > 0)
                         {
-                            float u_pix = (inter_pixel_col + pcg.random_float()) / sample_per_side;
-                            float v_pix = (inter_pixel_row + pcg.random_float()) / sample_per_side;
-                            Ray r = fire_ray(col, row, u_pix, v_pix);
-                            cum_color += func.tracing(r);
+                            for (int iPixRow = 0; iPixRow < sample_per_side; iPixRow++)
+                            {
+                                for (int iPixCol = 0; iPixCol < sample_per_side; iPixCol++)
+                                {
+                                    float uPix = (iPixCol + pcg.random_float()) / sample_per_side;
+                                    float vPix = (iPixRow + pcg.random_float()) / sample_per_side;
+                                    Ray rr = fire_ray(col: j, row: (int)i, u_pixel: uPix, v_pixel: vPix);
+                                    appo += rend.tracing(rr);
+                                }
+                            }
+
+                            Image.set_pixel(appo * (1.0f / (float)Math.Pow(sample_per_side, 2)), j, (int)i);
+                        }
+                        else
+                        {
+                            Ray ray = fire_ray(j, (int)i);
+                            Colour me_in = rend.tracing(ray);
+                            Image.set_pixel(me_in, j, (int)i);
                         }
                     }
 
-                    Image.set_pixel(cum_color * (1.0f / (sample_per_side * sample_per_side)), col, row);
-                }
-                else
-                {
-                    Ray r = fire_ray(col, row);
-                    Image.set_pixel(func.tracing(r), col, row);
-                }
-                
+                    lock (pbar)
+                    {
+                        rowCompleted++;
+                        float progress = (float)rowCompleted / totalTicks;
+                        int progressBarFilledWidth = (int)(progressBarWidth * progress);
+
+                        Console.SetCursorPosition(0, Console.CursorTop);
+                        Console.Write("[");
+                        Console.Write(new string(progressBarCharacter, progressBarFilledWidth));
+                        //Console.Write(new string(' ', progressBarWidth - progressBarFilledWidth));
+                        Console.Write("] {0}%   ", (int)(progress * 100));
+                      
+                    }
+
+                });
             }
+            catch (AggregateException)
+            {
+
+            }
+
+            finally
+            {
+                Console.CursorVisible = true;
+                Console.WriteLine();
+            }
+
+
         }
     }
-    
 }
+
+
+
+
+
 
 public abstract class function
 {

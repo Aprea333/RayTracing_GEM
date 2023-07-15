@@ -90,12 +90,12 @@ public class RenderScene
     public static void ExecuteRender(string file, int width, int height, string pfmFile,
         Stream ldrFile, int spp, char rend, IDictionary<string, float> variables, float factor, float gamma, int maxDepth, int nRays, int rrLimit)
     {
-        Console.WriteLine("CHECK1");
+        //Console.WriteLine("CHECK1");
         
         if (variables.Count == 0) Console.WriteLine("    - No Variables");
-        foreach (var item in variables)
+       // foreach (var item in variables)
         {
-            Console.WriteLine($"    - {item.Key} = {item.Value}");
+            //Console.WriteLine($"    - {item.Key} = {item.Value}");
         }
 
         Stream inputStream = File.OpenRead(file);
