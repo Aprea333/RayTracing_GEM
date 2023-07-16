@@ -6,7 +6,7 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
 Welcome to RayTracing_Gem!
-This is a raytracing library written in C#. It was developed for the course _Numerical Methods for Photorealistic Image Generation_ held by Prof. [Maurizio Tomasi][1] at Università degli Studi di Milano (A.Y. 2022-2023).
+This is a raytracing library written in C#. It was developed for the course _Numerical Methods for Photorealistic Image Generation_ held by Prof. [Maurizio Tomasi](https://github.com/ziotom78) at Università degli Studi di Milano (A.Y. 2022-2023).
 
 The contibutors to the project are [Giacomo Aprea](https://github.com/Aprea333), [Emanuele Ricci](https://github.com/emaskusku) and [Michela Dinatolo](https://github.com/micheladinatolo).
 
@@ -37,16 +37,30 @@ Once everything (shapes and observer) is defined and in place, the code solves t
 RayTracing_GEM requires .NET 7.0.201 to run. It is possible to download the latest version [here](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 This library uses some external libraries. The user should not worry as .NET automatically imports them with the repository download. The libraries are:
 - [CommandLineParser](https://github.com/commandlineparser/commandline) to build the Command Line Interface
-- SHELL PROGRESS BAR to show a progress bar during while rendering
+- [ShellProgressBar](https://www.nuget.org/packages/ShellProgressBar/) to show a progress bar during while rendering
+- [ImageSharp](https://www.nuget.org/packages/SixLabors.ImageSharp/2.1.1) to converta pfm image into an LDR image
 
 This library is available for Windows, Linux and MacOS systems.
 
 ## Usage
 In order to use the library you can clone this repository through the command
 
-  git@github.com:Aprea333/RayTracing_GEM.git
+`git@github.com:Aprea333/RayTracing_GEM.git`
 
-Alternatively, you can download the latest version of the code from the [releases page]
+Alternatively, you can download the latest version of the code from the [releases page](https://github.com/Aprea333/RayTracing_GEM/releases).
+To check that the code works as expected, uou can run the suite of tests using the following command:
+`dotnet test`
+
+To get command line help for the usage, and see all the commands for the different mode, use the command:
+`dotnet run`
+
+### Demo mode
+Use this mode to create a simple image. For example, running the following command
+`dotnet run -- demo[options]`
+the image on the right will be generated. The same image is obtained in render mode from the input file INPUT.
+
+To view all the possible options of the demo command you can run
+`dotnet run --demo -help`
 
 ## License
 The code is released under GNU General Public License. See the file [REFERENCE](https://github.com/Aprea333/RayTracing_GEM/blob/master/LICENSE) for further informations.
@@ -55,6 +69,7 @@ The code is released under GNU General Public License. See the file [REFERENCE](
 See the file [REFERENCE](https://github.com/Aprea333/RayTracing_GEM/blob/master/CHANGELOG.md) for history
 
 ## Gallery
+Work in progress...
 <p float = "center">
 <img  src="./RayTracing/image/ColoredSpheres.jpg" height = "300" />
 </p>
