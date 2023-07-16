@@ -1,4 +1,4 @@
-<img  align= "right" width="500" src = "./RayTracing/image/ColoredSpheres.jpg"/>
+<img  align= "right" width="500" src = "./RayTracing/threesphere.png"/>
 
 
 # RayTracing_GEM
@@ -56,7 +56,7 @@ See the file [REFERENCE](https://github.com/Aprea333/RayTracing_GEM/blob/master/
 
 ## Gallery
 <p float = "center">
-<img  src="./RayTracing/image/ColoredSpheres.jpg" height = "300" />
+<img  src="./RayTracing/threesphere.png" height = "300" />
 </p>
 
 ## Issue tracking
