@@ -17,13 +17,14 @@ public static partial class Program
     {
         public DemoOption()
         {
-            
+           
         }
 
-        [Option("width", Default = 600, HelpText = "Width of the image to render")]
+        [Option("width", Default = 640, HelpText = "Width of the image to render")]
         public int Width { get; set; }
 
-        [Option("height", Default = 600, HelpText = "Height of the image to render")]
+        [Option("height", Default = 480, HelpText = "Height of the image to render")]
+
         public int Height { get; set; }
 
         [Option("angle_deg", Default = 0.0f, HelpText = "Angle of view")]
@@ -34,6 +35,8 @@ public static partial class Program
         
         [Option("output_file", Default = "image.png", HelpText = "path + output file name + .png")]
         public string output { get; set; } = null!;
+        
+        
 
 
     }
@@ -354,6 +357,9 @@ public static partial class Program
     
      [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Single[]; size: 26580MB")]
      [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Single[]; size: 461969MB")]
+     [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: RayTracing.HitRecord[]; size: 487MB")]
+     [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: RayTracing.Transformation; size: 6700MB")]
+     [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.RuntimeFieldInfoStub; size: 561MB")]
      static void RunDemo4(DemoOption opts)
     {
         //=============================================================================
@@ -363,19 +369,20 @@ public static partial class Program
 
         HdrImage img = new HdrImage();
 
+<<<<<<< HEAD
         */
 
+        
 
         
         //=============================================================================
         // DA TXT === DA TXT === DA TXT === DA TXT === DA TXT === DA TXT === DA TXT ===
         //=============================================================================
-        
-         
-        //string file = "texture/FirstScene.txt";
+
+         //string file = "texture/FirstScene.txt";
         //string file = "texture/SecondScene.txt";
-        
-         string file = "texture/Cornell.txt";
+        string file = "texture/Cornell.txt";
+        //string file = "texture/spheres.txt";
         
         int w = opts.Width;
         int h = opts.Height;
@@ -394,7 +401,6 @@ public static partial class Program
         
 
         RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic,1f , 2f,4,4, 3 );
-
 
         /*
         Colour beige = new Colour(1, 0.9f, 0.5f);

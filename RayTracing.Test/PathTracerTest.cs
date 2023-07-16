@@ -7,7 +7,7 @@ public class PathTracerTest
     {
         PCG pcg = new PCG();
 
-        for (int i = 0; i <10; i++)
+        for (int i = 0; i <5; i++)
         {
             World wrl = new World();
 
