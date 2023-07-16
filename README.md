@@ -62,6 +62,9 @@ the image on the right will be generated. The same image is obtained in render m
 To view all the possible options of the demo command you can run
 `dotnet run --demo -help`
 
+### Render mode
+Use this [tutorial](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/Examples/Tutorial.md)
+
 ## License
 The code is released under GNU General Public License. See the file [REFERENCE](https://github.com/Aprea333/RayTracing_GEM/blob/master/LICENSE) for further informations.
 
