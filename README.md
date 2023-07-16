@@ -1,3 +1,6 @@
+<img  align= "right" width="200" src = "./RayTracing/image/ColoredSpheres.jpg"/>
+
+
 # RayTracing_GEM
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
