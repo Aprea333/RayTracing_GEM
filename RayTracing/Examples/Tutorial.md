@@ -147,6 +147,7 @@ We declare a camera in the following way:
 `camera = (type, transformation, aspect_ratio, distance)`
 
 where `aspect_ratio` is a floating number defining how larger than the height is the image, `distance` represents the distance between the observer and the screen.
+
 __Type: perspective, orthogonal__
 
 Examples: 
