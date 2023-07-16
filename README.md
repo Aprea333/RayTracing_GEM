@@ -1,4 +1,4 @@
-<img  align= "right" width="200" src = "./RayTracing/image/ColoredSpheres.jpg"/>
+<img  align= "right" width="300" src = "./RayTracing/image/ColoredSpheres.jpg"/>
 
 
 # RayTracing_GEM
