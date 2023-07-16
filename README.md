@@ -53,7 +53,7 @@ See the file [REFERENCE](https://github.com/Aprea333/RayTracing_GEM/blob/master/
 
 ## Gallery
 <p float = "center">
-<img  src="./RayTracing/image/ColoredSpheres.png" height = "300" />
+<img  src="./RayTracing/image/ColoredSpheres.jpg" height = "300" />
 </p>
 
 ## Issue tracking
