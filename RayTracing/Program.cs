@@ -20,10 +20,10 @@ public static partial class Program
             
         }
 
-        [Option("width", Default = 1440, HelpText = "Width of the image to render")]
+        [Option("width", Default = 600, HelpText = "Width of the image to render")]
         public int Width { get; set; }
 
-        [Option("height", Default = 900, HelpText = "Height of the image to render")]
+        [Option("height", Default = 600, HelpText = "Height of the image to render")]
         public int Height { get; set; }
 
         [Option("angle_deg", Default = 0.0f, HelpText = "Angle of view")]
@@ -300,8 +300,54 @@ public static partial class Program
             
 
         }
+
+        //========================================================================
+        // RANDOM SPHERES === RANDOM SPHERES === RANDOM SPHERES === RANDOM SPHERES
+        //========================================================================
+        static void RunDemo_cas(DemoOption opts)
+        {
+            int w = opts.Width;
+            int h = opts.Height;
+            World world = new World();
+            HdrImage image = new HdrImage(w,h);
+            float min = Sphere.sphere_random_generation(50, world);
+            Transformation cam_tr = Transformation.rotation_z(opts.Angle) * Transformation.translation(new Vec(min+7, 0, 1.3f));
+            Camera cam;
+            if (opts.Camera != "perspective")
+            {
+                cam = new OrthogonalCamera(aspect_ratio: (float)opts.Width / opts.Height, transformation: cam_tr);
+            }
+            else
+            {
+                cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width / opts.Height, tran: cam_tr);
+            }
         
-    
+            ImageTracer imageTracer = new ImageTracer(image, cam, sample_per_side: 4);
+            Renderer rend = new PathTracer(world, new Colour(1, 1, 1), new PCG(), 5, 4, 3);
+            imageTracer.fire_all_rays(rend);
+
+            string root_directory = Environment.CurrentDirectory;
+            Console.WriteLine($"Root Dir: {root_directory}");
+            string path = Path.Combine(root_directory, "image.pfm");
+            File.CreateText(path).Close();
+            Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
+            imageTracer.Image.write_pfm(file_out, true);
+            file_out.Close();
+            HdrImage img = new HdrImage();
+
+            using (FileStream in_pfm = File.Open("image.pfm", FileMode.Open))
+            {
+                img.read_pfm_image(in_pfm);
+            }
+
+            img.normalize_image(0.25f);
+            img.clamp_image();
+
+            File.CreateText(opts.output).Close();
+            Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
+            img.write_ldr_image(out_png, ".png", 2f);
+            out_png.Close();
+        }
     //===============================================================================
     // DEMO 2 PLANES 2 SPHERES === DEMO 2 PLANES 2 SPHERES === DEMO 2 PLANES 2 SPHERES
     //===============================================================================
@@ -313,57 +359,11 @@ public static partial class Program
         //=============================================================================
         // CASUAL === CASUAL === CASUAL === CASUAL === CASUAL === CASUAL === CASUAL ===
         //=============================================================================
-        /*int w = opts.Width;
-        int h = opts.Height;
-        World world = new World();
-        HdrImage image = new HdrImage(w,h);
-        float min = Sphere.sphere_casual_generation(50, world);
-        Transformation cam_tr = Transformation.rotation_z(opts.Angle) * Transformation.translation(new Vec(min+5, 0, 1.3f));
-        Camera cam;
-        if (opts.Camera != "perspective")
-        {
-            cam = new OrthogonalCamera(aspect_ratio: (float)opts.Width / opts.Height, transformation: cam_tr);
-        }
-        else
-        {
-            cam = new PerspectiveCamera(aspect_ratio: (float)opts.Width / opts.Height, tran: cam_tr);
-        }
-        
-        ImageTracer imageTracer = new ImageTracer(image, cam, sample_per_side: 4);
-        Renderer rend = new PathTracer(world, new Colour(1, 1, 1), new PCG(), 5, 4, 3);
-        //Renderer rend = new PathTracer(world, Colour.black, NRays:3 , MaxDepth: 2);
-        imageTracer.fire_all_rays(rend);
-
-        string root_directory = Environment.CurrentDirectory;
-        Console.WriteLine($"Root Dir: {root_directory}");
-        string path = Path.Combine(root_directory, "image.pfm");
-        File.CreateText(path).Close();
-        Stream file_out = File.Open(path, FileMode.Open, FileAccess.Write, FileShare.None);
-        imageTracer.Image.write_pfm(file_out, true);
-        file_out.Close();
+        /*
 
         HdrImage img = new HdrImage();
 
-<<<<<<< HEAD
-         //string file = "texture/FirstScene.txt";
-        string file = "texture/SecondScene.txt";
-        //string file = "texture/Cornell.txt";
-       
-
-=======
-        using (FileStream in_pfm = File.Open("image.pfm", FileMode.Open))
-        {
-            img.read_pfm_image(in_pfm);
-        }
-
-        img.normalize_image(1f);
-        img.clamp_image();
-
-        File.CreateText(opts.output).Close();
-        Stream out_png = File.Open(opts.output, FileMode.Open, FileAccess.Write, FileShare.None);
-        img.write_ldr_image(out_png, ".png", 1f);
-        out_png.Close();*/
-        
+        */
 
 
         
@@ -393,7 +393,7 @@ public static partial class Program
 
         
 
-        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic,1f , 2f,4,3, 3 );
+        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic,1f , 2f,4,4, 3 );
 
 
         /*
@@ -574,7 +574,7 @@ public static partial class Program
     {
         Parser.Default.ParseArguments< DemoOption>(args)
             //.WithParsed<pfm2png_option>(RunOptionPfm)
-            .WithParsed<DemoOption>(RunDemo4)
+            .WithParsed<DemoOption>(RunDemo_cas)
 
             .WithNotParsed(HandleError);
     }

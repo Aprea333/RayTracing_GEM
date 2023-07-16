@@ -94,31 +94,35 @@ public class Sphere:Shape
         return new Vec2D(u >= 0f ? u : u + 1f, v);
     }
 
-    public static float sphere_casual_generation(int n_sphere, World world)
+    /// <summary>
+    /// function that adds to the world a number of spheres generated in random positions and with random colors 
+    /// </summary>
+    /// <param name="n_sphere">Number of random spheres</param>
+    /// <param name="world"></param>
+    /// <returns></returns>
+    public static float sphere_random_generation(int n_sphere, World world)
     {
-        var sky_material = new Material(new DiffuseBrdf(new UniformPigment(new Colour(0, 0, 0))),
+        var sky_material = new Material(new DiffuseBrdf(new UniformPigment(new Colour(0,0,0))),
             new UniformPigment(new Colour(1, 0.9f, 0.5f)));
         var ground_material =
             new Material(new DiffuseBrdf(new CheckeredPigment(new Colour(0.3f, 0.5f, 0.1f),
                 new Colour(0.1f, 0.2f, 0.5f))));
         var ground_material2 =
             new Material(new DiffuseBrdf(new UniformPigment(new Colour(0.53f, 0.81f, 0.98f))));
-        var sphere2_material = new Material(new DiffuseBrdf(new UniformPigment(new Colour(0.7f, 0.85f, 0.9f))),
+        var sphere2_material = new Material(new DiffuseBrdf(new UniformPigment(new Colour(0.5f, 0.5f, 0f))),
             new UniformPigment(new Colour()));
-        var sphere1_material = new Material(new SpecularBrdf(new UniformPigment(new Colour(1f, 0f, 0f))),
-            new UniformPigment(new Colour()));
-        var sphere3_material = new Material(new SpecularBrdf(new UniformPigment(new Colour(0f, 1f, 0f))),
+        var sphere1_material = new Material(new SpecularBrdf(new UniformPigment(new Colour(1,1,1))),
+            new UniformPigment(new Colour(0,0,0)));
+        var sphere3_material = new Material(new SpecularBrdf(new UniformPigment(new Colour(0f, 0.5f, 0.5f))),
             new UniformPigment(new Colour()));
 
-
-        
         world.add(new Sphere(Transformation.scaling(200,200,200)*Transformation.translation(new Vec(0,0,0.4f)), sky_material));
         world.add(new Plane(material:ground_material2));
         Console.WriteLine("\nInitializing shapes...");
         PCG pcg = new PCG();
         //limits
         float xlim = 20f;
-        float ylim = 30f;
+        float ylim = 20f;
         float small = 0.5f;
         float large = 3f;
         int max_tries = 20; //maximum numbers of tries
@@ -135,9 +139,9 @@ public class Sphere:Shape
         List<Vec> center = new List<Vec>();
         
         Sphere large1 = new Sphere(Transformation.scaling(large, large, large) *
-                                   Transformation.translation(v1), sphere1_material);
+                                   Transformation.translation(v1), sphere2_material);
         Sphere large2 = new Sphere(Transformation.scaling(large, large, large) *
-                                   Transformation.translation(v2), sphere2_material);
+                                   Transformation.translation(v2), sphere1_material);
         Sphere large3 = new Sphere(Transformation.scaling(large, large, large) *
                                    Transformation.translation(v3), sphere3_material);
         all_spheres.Add(large1);
@@ -168,7 +172,6 @@ public class Sphere:Shape
             if (i % 5 == 0)
             {
                 mat.brdf = new DiffuseBrdf(new ImagePigment(moon));
-                Console.WriteLine("\nAdd moon");
             }
             
             else if (i % 2 == 0)
@@ -230,12 +233,6 @@ public class Sphere:Shape
 
         }
 
-        int n = all_spheres.Count;
-        Console.WriteLine($"\nNumber: {n}. \n{min_x}");
-        for (int i = 0; i < center.Count; i++)
-        {
-            Console.WriteLine($"\nX: {center[i].x}, Y: {center[i].y} ");
-        }
         return min_x;
     }
 }
