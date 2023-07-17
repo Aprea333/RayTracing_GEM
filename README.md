@@ -56,14 +56,18 @@ To get command line help for the usage, and see all the commands for the differe
 
 ### Demo mode
 Use this mode to create a simple image. For example, running the following command
+
 `dotnet run -- demo[options]`
-the image on the right will be generated. The same image is obtained in render mode from the input file INPUT.
+
+the image on the right will be generated. This image is composed of randomly positioned and randomly colored spheres using the PCG random number generator implemented in the code.
 
 To view all the possible options of the demo command you can run
 `dotnet run --demo -help`
 
 ### Render mode
 Use this [tutorial](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/Examples/Tutorial.md)
+
+More information will be available shortly.
 
 ## License
 The code is released under GNU General Public License. See the file [REFERENCE](https://github.com/Aprea333/RayTracing_GEM/blob/master/LICENSE) for further informations.
