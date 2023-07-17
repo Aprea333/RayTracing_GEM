@@ -37,10 +37,10 @@ public struct Normal
     /// <returns></returns>
     public static bool are_close(Normal a, Normal b)
     {
-        double epsilon = 1e-5;
-        float x = a.x - b.x;
-        float y = a.y - b.y;
-        float z = a.z - b.z;
+        const double epsilon = 1e-5;
+        var x = a.x - b.x;
+        var y = a.y - b.y;
+        var z = a.z - b.z;
 
         return Math.Sqrt(x * x + y * y + z * z) < epsilon;
     }
@@ -106,9 +106,9 @@ public struct Normal
     /// <returns>a vector</returns>
     public static Vec operator ^(Vec v, Normal n)
     {
-        float x = v.y * n.z - v.z * n.y;
-        float y = v.z * n.x - v.x * n.z;
-        float z = v.x * n.y - v.y * n.x;
+        var x = v.y * n.z - v.z * n.y;
+        var y = v.z * n.x - v.x * n.z;
+        var z = v.x * n.y - v.y * n.x;
 
         return new Vec(x,y,z);
     }
@@ -121,7 +121,7 @@ public struct Normal
     /// <returns>a vector</returns>
     public static Vec operator ^(Normal n, Vec v)
     {
-        Vec w = v ^ n;
+        var w = v ^ n;
         return w.neg();
     }
 
@@ -133,9 +133,9 @@ public struct Normal
     /// <returns>a normal</returns>
     public static Normal operator ^(Normal v, Normal n)
     {
-        float x = v.y * n.z - v.z * n.y;
-        float y = v.z * n.x - v.x * n.z;
-        float z = v.x * n.y - v.y * n.x;
+        var x = v.y * n.z - v.z * n.y;
+        var y = v.z * n.x - v.x * n.z;
+        var z = v.x * n.y - v.y * n.x;
         return new Normal(x, y, z);
     }
     
@@ -163,7 +163,7 @@ public struct Normal
     /// <returns></returns>
     public Normal normalization()
     {
-        float scal = 1/norm();
+        var scal = 1/norm();
         return new Normal(this.x*scal, this.y*scal, this.z*scal);
     }
     
@@ -176,23 +176,23 @@ public struct Normal
     /// <returns>tuple containing the three vectors (e1,e2,e3) of the basis</returns>
     public static (Vec, Vec, Vec) create_onb_from_z(Normal n)
     {
-        Normal normal = n.normalization();
+        var normal = n.normalization();
         float sign;
         if (normal.z > 0) sign = 1f;
         else sign = -1f;
-        float a = (float)(-1.0f / (sign + normal.z));
-        float b = normal.x * normal.y * a;
+        var a = (float)(-1.0f / (sign + normal.z));
+        var b = normal.x * normal.y * a;
 
-        Vec e1 = new Vec((float)(1.0 + sign * normal.x * normal.x * a), sign * b, -sign * normal.x);
-        Vec e2 = new Vec(b, sign + normal.y * normal.y * a, -normal.y);
-        Vec e3 = new Vec(normal.x, normal.y, normal.z);
+        var e1 = new Vec((float)(1.0 + sign * normal.x * normal.x * a), sign * b, -sign * normal.x);
+        var e2 = new Vec(b, sign + normal.y * normal.y * a, -normal.y);
+        var e3 = new Vec(normal.x, normal.y, normal.z);
         var onb = (e1, e2, e3);
         return onb;
     }
     
     public Vec To_vec()
     {
-        return new(x, y, z);
+        return new Vec(x, y, z);
     }
     
 }

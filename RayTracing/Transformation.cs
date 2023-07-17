@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.Metadata.Profiles.Exif;
 namespace RayTracing;
 
 
-public class Transformation
+public struct Transformation
 {
     public float [] m;
     public float[] minv;
@@ -48,12 +48,12 @@ public class Transformation
     /// <returns></returns>
     public static float [] matrix_product (float [] a, float [] b)
     {
-        float[] prod = new float[16];
-        for (int i = 0; i < 16; i++)
+        var prod = new float[16];
+        for (var i = 0; i < 16; i++)
         {
-            int j = i / 4;
-            int c = j*4;
-            for (int k = i%4; k < 16; k += 4)
+            var j = i / 4;
+            var c = j*4;
+            for (var k = i%4; k < 16; k += 4)
             {
                 prod[i] += a[c] * b[k];
                 c++;
@@ -74,22 +74,14 @@ public class Transformation
 
     public static Point translation_point(Transformation T, Point p)
     {
-        float x = p.x * T.m[0] + p.y * T.m[1] + p.z * T.m[2] + T.m[3];
-        float y = p.x * T.m[4] + p.y * T.m[5] + p.z * T.m[6] + T.m[7];
-        float z = p.x * T.m[8] + p.y * T.m[9] + p.z * T.m[10] + T.m[11];
-        float w = p.x * T.m[12] + p.y * T.m[13] + p.z * T.m[14] + T.m[15];
+        var x = p.x * T.m[0] + p.y * T.m[1] + p.z * T.m[2] + T.m[3];
+        var y = p.x * T.m[4] + p.y * T.m[5] + p.z * T.m[6] + T.m[7];
+        var z = p.x * T.m[8] + p.y * T.m[9] + p.z * T.m[10] + T.m[11];
+        var w = p.x * T.m[12] + p.y * T.m[13] + p.z * T.m[14] + T.m[15];
         
         Point newp = new Point(x,y,z);
         
-        if (Math.Abs(w - 1) < 1e-5)
-        {
-            return newp;
-        }
-
-        else
-        {
-            return new Point(x/w, y/w, z/w);
-        }
+        return Math.Abs(w - 1) < 1e-5 ? newp : new Point(x/w, y/w, z/w);
         
     }
     
@@ -107,7 +99,7 @@ public static Vec translation_vec(Transformation T, Vec v)
     /// <returns></returns>
     public static bool are_close(float[] m1, float [] m2)
     {
-        for (int i = 0; i < 16; i++)
+        for (var i = 0; i < 16; i++)
         {
             if (Math.Abs(m1[i] - m2[i]) > 0.00001)
             {
@@ -123,13 +115,9 @@ public static Vec translation_vec(Transformation T, Vec v)
 /// <param name="T2"></param>
 /// <returns></returns>
     public static bool are_close(Transformation T1, Transformation T2)
-    {
-        if (are_close(T1.m, T2.m) && are_close(T1.minv, T2.minv))
-        {
-            return true;
-        }
-        return false;
-    }
+{
+    return are_close(T1.m, T2.m) && are_close(T1.minv, T2.minv);
+}
 
     /// <summary>
     /// Check if m and minv are one the inverse of the other: the matrix product has to be
@@ -138,7 +126,7 @@ public static Vec translation_vec(Transformation T, Vec v)
     /// <returns></returns>
     public bool is_consistent()
     {
-        float[] prod = matrix_product(m, minv);
+        var prod = matrix_product(m, minv);
         return are_close(prod, new float [] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1} );
     }
     
@@ -150,19 +138,19 @@ public static Vec translation_vec(Transformation T, Vec v)
 
     public Vec scale_transformation(Vec a)
     {
-        Vec res = new Vec(a.x * m[0], a.y * m[5], a.z * m[10]);
+        var res = new Vec(a.x * m[0], a.y * m[5], a.z * m[10]);
         return res;
     }
     
     public Normal scale_transformation(Normal a)
     {
-        Normal res = new Normal(a.x / m[0], a.y / m[5], a.z / m[10]);
+        var res = new Normal(a.x / m[0], a.y / m[5], a.z / m[10]);
         return res;
     }
     
     public Point scale_transformation(Point a)
     {
-        Point res = new Point(a.x * m[0], a.y * m[5], a.z * m[10]);
+        var res = new Point(a.x * m[0], a.y * m[5], a.z * m[10]);
         return res;
     }
 
@@ -173,7 +161,7 @@ public static Vec translation_vec(Transformation T, Vec v)
     /// <returns>the transformation due to rotation</returns>
     public static Transformation rotation_x(float angle) //angle in deg
     {
-        float rad = (float)(angle * Math.PI / 180.0);
+        var rad = (float)(angle * Math.PI / 180.0);
         float[] mat = {1,0,0,0,0,(float)Math.Cos(rad),-(float)Math.Sin(rad),0,0,(float)Math.Sin(rad),(float)Math.Cos(rad),0,0,0,0,1};
         float[] inv = {1,0,0,0,0,(float)Math.Cos(rad),(float)Math.Sin(rad),0,0,-(float)Math.Sin(rad),(float)Math.Cos(rad),0,0,0,0,1};
         return new Transformation(mat, inv);
@@ -186,7 +174,7 @@ public static Vec translation_vec(Transformation T, Vec v)
     /// <returns>the transformation due to rotation</returns>
     public static Transformation rotation_y(float angle) //angle in deg
     {
-        float rad = (float)(angle * Math.PI / 180.0);
+        var rad = (float)(angle * Math.PI / 180.0);
         float[] mat = {(float)Math.Cos(rad), 0, (float)Math.Sin(rad),0,0,1,0,0, -(float)Math.Sin(rad),0,(float)Math.Cos(rad),0,0,0,0,1};
         float[] inv = {(float)Math.Cos(rad), 0, -(float)Math.Sin(rad),0,0,1,0,0, (float)Math.Sin(rad),0,(float)Math.Cos(rad),0,0,0,0,1};
         return new Transformation(mat, inv);
@@ -199,7 +187,7 @@ public static Vec translation_vec(Transformation T, Vec v)
     /// <returns>the transformation due to rotation</returns>
     public static Transformation rotation_z(float angle) //angle in deg
     {
-        float rad = (float)(angle * Math.PI / 180.0);
+        var rad = (float)(angle * Math.PI / 180.0);
         float[] mat = {(float)Math.Cos(rad), -(float)Math.Sin(rad), 0,0, (float)Math.Sin(rad), (float)Math.Cos(rad), 0,0, 0, 0, 1,0,0,0,0,1};
         float[] inv = {(float)Math.Cos(rad), (float)Math.Sin(rad), 0,0, -(float)Math.Sin(rad), (float)Math.Cos(rad), 0,0,0,0, 1,0,0,0,0,1};
         return new Transformation(mat, inv);
@@ -213,12 +201,12 @@ public static Vec translation_vec(Transformation T, Vec v)
     /// <returns>transformation</returns>
     public static Transformation operator *(Transformation A, Transformation B)
     {
-        float[] c1 = new float[16];
-        float[] c2 = new float[16];
+        var c1 = new float[16];
+        var c2 = new float[16];
         
         c1 = matrix_product(A.m, B.m);
         c2 = matrix_product(B.minv, A.minv);
-        Transformation C = new Transformation(c1, c2);
+        var C = new Transformation(c1, c2);
         return C;
     }
 
@@ -230,19 +218,17 @@ public static Vec translation_vec(Transformation T, Vec v)
     /// <returns>point</returns>
     public static Point operator *(Transformation t, Point p)
     {
-        Point r = new Point
+        var r = new Point
         {
             x = t.m[0] * p.x + t.m[1] * p.y + t.m[2] * p.z + t.m[3],
             y = t.m[4] * p.x + t.m[5] * p.y + t.m[6] * p.z + t.m[7],
             z = t.m[8] * p.x + t.m[9] * p.y + t.m[10] * p.z + t.m[11]
         };
-        float w = t.m[12] * p.x + t.m[13] * p.y + t.m[14] * p.z + t.m[15];
-        if (w != 1)
-        {
-            r.x = r.x / w;
-            r.y = r.y / w;
-            r.z = r.z / w;
-        }
+        var w = t.m[12] * p.x + t.m[13] * p.y + t.m[14] * p.z + t.m[15];
+        if (w == 1) return r;
+        r.x = r.x / w;
+        r.y = r.y / w;
+        r.z = r.z / w;
 
         return r;
 
@@ -256,13 +242,13 @@ public static Vec translation_vec(Transformation T, Vec v)
     /// <returns>vector</returns>
     public static Vec operator *(Transformation t, Vec v)
     {
-        Vec r = new Vec
+        var r = new Vec
         {
             x = t.m[0] * v.x + t.m[1] * v.y + t.m[2] * v.z,
             y = t.m[4] * v.x + t.m[5] * v.y + t.m[6] * v.z,
             z = t.m[8] * v.x + t.m[9] * v.y + t.m[10] * v.z
         };
-        float w = t.m[12] * v.x + t.m[13] * v.y + t.m[14] * v.z;
+        var w = t.m[12] * v.x + t.m[13] * v.y + t.m[14] * v.z;
         if (w != 0)
         {
             throw new Exception("Error: the fourth element must be equal to zero");
@@ -278,7 +264,7 @@ public static Vec translation_vec(Transformation T, Vec v)
     /// <returns></returns>
     public static Normal operator *(Transformation t, Normal n)
     {
-        Normal r = new Normal()
+        var r = new Normal()
         {
             x = t.minv[0] * n.x + t.minv[4] * n.y + t.minv[8] * n.z,
             y = t.minv[1] * n.x + t.minv[5] * n.y + t.minv[9] * n.z,

@@ -12,7 +12,7 @@ public class Cylinder:Shape
     {
         Transformation scale = Transformation.scaling(radius, radius, height);
         Transformation translation = Transformation.translation(center.convert_to_vec());
-        Transformation rotation = null;
+        Transformation? rotation = null;
         //ANGLES
         if (Vec.are_close(direction,new Vec(1,0,0))) rotation = Transformation.rotation_y(90);
         else if (Vec.are_close(direction, new Vec(0, 1, 0))) rotation = Transformation.rotation_x(90);
@@ -22,8 +22,8 @@ public class Cylinder:Shape
             throw new GrammarError("Direction must be normalized");
         }
 
-        Transformation tran = (translation * rotation);
-        transformation = tran * scale;
+        Transformation? tran = (translation * rotation);
+        transformation = (Transformation)(tran * scale);
     }
     public override HitRecord? ray_intersection(Ray r)
     {

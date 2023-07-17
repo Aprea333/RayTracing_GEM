@@ -15,10 +15,6 @@ public static partial class Program
     [Verb("demo", HelpText = "Demo")]
     private class DemoOption
     {
-        public DemoOption()
-        {
-           
-        }
 
         [Option("width", Default = 640, HelpText = "Width of the image to render")]
         public int Width { get; set; }
@@ -33,7 +29,7 @@ public static partial class Program
         [Option("camera", Default = "perspective", HelpText = "Type of camera")]
         public string Camera { get; set; }
         
-        [Option("output_file", Default = "image.png", HelpText = "path + output file name + .png")]
+        [Option("output_file", Default = "Cornell_25-8.png", HelpText = "path + output file name + .png")]
         public string output { get; set; } = null!;
         
         
@@ -309,12 +305,12 @@ public static partial class Program
         //========================================================================
         static void RunDemo_cas(DemoOption opts)
         {
-            int w = opts.Width;
-            int h = opts.Height;
-            World world = new World();
-            HdrImage image = new HdrImage(w,h);
-            float min = Sphere.sphere_random_generation(50, world);
-            Transformation cam_tr = Transformation.rotation_z(opts.Angle) * Transformation.translation(new Vec(min+7, 0, 1.3f));
+            var w = opts.Width;
+            var h = opts.Height;
+            var world = new World();
+            var image = new HdrImage(w,h);
+            var min = Sphere.sphere_random_generation(50, world);
+            var cam_tr = Transformation.rotation_z(opts.Angle) * Transformation.translation(new Vec(min+7, 0, 1.3f));
             Camera cam;
             if (opts.Camera != "perspective")
             {
@@ -360,7 +356,7 @@ public static partial class Program
      [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: RayTracing.HitRecord[]; size: 487MB")]
      [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: RayTracing.Transformation; size: 6700MB")]
      [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.RuntimeFieldInfoStub; size: 561MB")]
-     static void RunDemo4(DemoOption opts)
+     private static void RunDemo4(DemoOption opts)
     {
         //=============================================================================
         // CASUAL === CASUAL === CASUAL === CASUAL === CASUAL === CASUAL === CASUAL ===
@@ -369,7 +365,6 @@ public static partial class Program
 
         HdrImage img = new HdrImage();
 
-<<<<<<< HEAD
         */
 
         
@@ -379,20 +374,19 @@ public static partial class Program
         // DA TXT === DA TXT === DA TXT === DA TXT === DA TXT === DA TXT === DA TXT ===
         //=============================================================================
 
-         //string file = "texture/FirstScene.txt";
-        //string file = "texture/SecondScene.txt";
-        string file = "texture/Cornell.txt";
-        //string file = "texture/spheres.txt";
+         //var file = "texture/FirstScene.txt";
+        //var file = "texture/SecondScene.txt";
+        var file = "texture/Cornell.txt";
+        //var file = "texture/spheres.txt";
         
-        int w = opts.Width;
-        int h = opts.Height;
-        World world = new World();
-        HdrImage image = new HdrImage(w,h);
-
-
+        var w = opts.Width;
+        var h = opts.Height;
         
 
-        string output_pfm = "output.pfm";
+
+        
+
+        var output_pfm = "output.pfm";
        
         Stream output_stream = File.OpenWrite(opts.output);
         
@@ -400,7 +394,7 @@ public static partial class Program
 
         
 
-        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 1, 'p', myDic,1f , 2f,4,4, 3 );
+        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 25, 'p', myDic,0.18f , 3f,3,8, 3 );
 
         /*
         Colour beige = new Colour(1, 0.9f, 0.5f);
@@ -536,16 +530,16 @@ public static partial class Program
      [Verb("pfm2png", HelpText = "Pfm image")]
     class pfm2png_option
     {
-        [Option("factor", Default = 0.5f, HelpText = "Multiplicative factor")]
+        [Option("factor", Default = 0.18f, HelpText = "Multiplicative factor")]
         public float Factor { get; set; }
 
-        [Option("gamma", Default = 0.5f, HelpText = "value to be used for gamma correction")]
+        [Option("gamma", Default = 3f, HelpText = "value to be used for gamma correction")]
         public float Gamma { get; set; }
 
         [Option("input_file", Default = "output.pfm", HelpText = "path + input file name + .pfm")]
         public string input { get; set; } = null!;
 
-        [Option("output_file", Default = "image.png", HelpText = "path + output file name + .png")]
+        [Option("output_file", Default = "cornell_10rays.png", HelpText = "path + output file name + .png")]
         public string output { get; set; } = null!;
     }
 
@@ -578,9 +572,9 @@ public static partial class Program
     
     static void Main(string[] args)
     {
-        Parser.Default.ParseArguments< DemoOption>(args)
+        Parser.Default.ParseArguments<DemoOption>(args)
             //.WithParsed<pfm2png_option>(RunOptionPfm)
-            .WithParsed<DemoOption>(RunDemo_cas)
+            .WithParsed<DemoOption>(RunDemo4)
 
             .WithNotParsed(HandleError);
     }

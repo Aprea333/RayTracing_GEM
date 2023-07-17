@@ -3,8 +3,9 @@
 public abstract class Shape
 {
     public Transformation transformation { get; set; }
-    public Material material { get; }
-    public Shape(Transformation? tran, Material? material)
+    protected Material material { get; }
+
+    protected Shape(Transformation? tran, Material? material)
     {
         transformation = tran ?? new Transformation();
         this.material = material ?? new Material();
@@ -37,9 +38,9 @@ public static class Useful_Shape
         
     public static Shape union_shapes(Transformation? transf = null)
     {
-        Material yellow = new Material(new DiffuseBrdf(new UniformPigment(new Colour(1, 1, 0))));
-        Material red = new Material(new DiffuseBrdf(new UniformPigment(new Colour(1, 0, 0))));
-        Material blue =new Material(new DiffuseBrdf(new UniformPigment(new Colour(0, 0, 1))));
+        var yellow = new Material(new DiffuseBrdf(new UniformPigment(new Colour(1, 1, 0))));
+        var red = new Material(new DiffuseBrdf(new UniformPigment(new Colour(1, 0, 0))));
+        var blue =new Material(new DiffuseBrdf(new UniformPigment(new Colour(0, 0, 1))));
         Shape C1 = new Cylinder(new Point(0, 0, 0), 0.7f, 3f, new Vec(1, 0, 0), yellow);
         Shape C2 = new Cylinder(new Point(0, 0, 0), 0.7f, 3f, new Vec(0, 1, 0), yellow);
         Shape C3 = new Cylinder(new Point(0, 0, 0), 0.7f, 3f, new Vec(0, 0, 1), yellow);
@@ -48,7 +49,7 @@ public static class Useful_Shape
         Shape cyl_tot = (C1 + C2) + C3;
         Shape ext = S * B;
         Shape tot = ext-cyl_tot;
-        if (transf != null) tot.transformation = transf;
+        if (transf != null) tot.transformation = (Transformation)transf;
         return tot;
     }
 }
