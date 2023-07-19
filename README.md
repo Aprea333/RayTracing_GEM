@@ -8,6 +8,7 @@
 ![Maintenance](https://img.shields.io/github/commit-activity/m/aprea333/RayTracing_GEM?color=yellow)
 ![Top Language](https://img.shields.io/github/languages/top/aprea333/RayTracing_GEM?color=red)
 ![release](https://img.shields.io/badge/version-0.3.0-violet)
+![GitHub contributors](https://img.shields.io/github/contributors/aprea333/RayTracing_GEM?color=white)
 
 Welcome to RayTracing_Gem!
 This is a raytracing library written in C#. It was developed for the course _Numerical Methods for Photorealistic Image Generation_ held by Prof. [Maurizio Tomasi](https://github.com/ziotom78) at Università degli Studi di Milano (A.Y. 2022-2023).
