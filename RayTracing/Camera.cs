@@ -18,6 +18,13 @@ public class PerspectiveCamera : Camera
         this.aspect_ratio = aspect_ratio;
         T = tran ?? new Transformation();
     }
+    
+    /// <summary>
+    /// Launch of a new ray in perspective projection
+    /// </summary>
+    /// <param name="u"></param>
+    /// <param name="v"></param>
+    /// <returns></returns>
     public Ray fire_ray(float u, float v)
     {
         Point origin = new Point(-distance, 0.0f, 0.0f);

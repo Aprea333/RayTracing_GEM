@@ -38,15 +38,14 @@ public class CsgUnion:Shape
     /// <returns>The list of intersections. If no intersection is found, <"null"< is returned.</returns>
     public override List<HitRecord>? ray_intersection_list(Ray r)
     {
-        var inv_ray = Ray.transform(transformation, r);
-        var inter1 = s1.ray_intersection_list(inv_ray);
-        var inter2 = s2.ray_intersection_list(inv_ray);
+        var inter1 = s1.ray_intersection_list(r);
+        var inter2 = s2.ray_intersection_list(r);
 
         var intersection = new List<HitRecord>(); 
         if(inter1 !=null) intersection.AddRange(inter1);
         if (inter2 != null)
         {
-            for (int i = inter2.Count-1; i >= 0; i--)
+            for (int i = 0; i < inter2.Count; i++) 
             {
                 if (s1.is_internal(inter2[i].world_point))
                 {
@@ -111,7 +110,6 @@ public class CsgDifference : Shape
     /// <returns>The list of intersections. If no intersection is found, <"null"< is returned.</returns>
     public override List<HitRecord>? ray_intersection_list(Ray r)
     {
-        var inv_ray = Ray.transform(transformation.inverse(), r);
         List<HitRecord>? list = new List<HitRecord>();
         var inter1 = s1.ray_intersection_list(r);
         if (inter1 == null) return null;
@@ -129,10 +127,26 @@ public class CsgDifference : Shape
                 if(!s1.is_internal(inter2[i].world_point)) inter2.RemoveAt(i);
             }
         }
+
+        if (inter1 != null && inter2!=null)
+        {
+            for (int i = 0; i < inter1.Count; i++)
+            {
+                for (int j = 0; j < inter2.Count; j++)
+                {
+                    if (Point.are_close(inter1[i].world_point, inter2[j].world_point))
+                    {
+                        inter2.RemoveAt(j);
+                    }
+                }
+            }
+        }
+        
         //Create the new list
         var intersection = new List<HitRecord>();
         if(inter1!=null) intersection.AddRange(inter1);
         if(inter2!=null) intersection.AddRange(inter2);
+        
         return intersection.Count != 0 ? intersection.OrderBy(o => o.t).ToList() : null;
 
     }
@@ -188,8 +202,7 @@ public class CsgIntersection : Shape
     /// <returns>The list of intersections. If no intersection is found, <"null"< is returned.</returns>
     public override List<HitRecord>? ray_intersection_list(Ray r)
     {
-        var inv_ray = Ray.transform(transformation, r);
-        var inter1 = s1.ray_intersection_list(inv_ray);
+        var inter1 = s1.ray_intersection_list(r);
         if (inter1 == null) return null;
         //Remove all the intersections in s1 that are not inside s2 
         for (int i = inter1.Count - 1; i >= 0; i--)
@@ -197,7 +210,7 @@ public class CsgIntersection : Shape
             if (!s2.is_internal(inter1[i].world_point)) inter1.RemoveAt(i);
         }
         //Remove all the intersections in s2 that are not inside s1
-        var inter2 = s2.ray_intersection_list(inv_ray);
+        var inter2 = s2.ray_intersection_list(r);
         if (inter2 == null) return null;
         for (int i = inter2.Count - 1; i >= 0; i--)
         {

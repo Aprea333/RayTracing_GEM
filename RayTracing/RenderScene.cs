@@ -71,7 +71,7 @@ public class RenderScene
     }
 
     /// <summary>
-    /// 
+    /// Function that reads the input file and converts it into a scene
     /// </summary>
     /// <param name="input_scene_file">file.txt</param>
     /// <param name="width"></param>

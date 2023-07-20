@@ -13,7 +13,7 @@ public class Cylinder:Shape
         Transformation scale = Transformation.scaling(radius, radius, height);
         Transformation translation = Transformation.translation(center.convert_to_vec());
         Transformation? rotation = null;
-        //ANGLES
+        //CREATE A CYLINDER ON THE THREE AXIS
         if (Vec.are_close(direction,new Vec(1,0,0))) rotation = Transformation.rotation_y(90);
         else if (Vec.are_close(direction, new Vec(0, 1, 0))) rotation = Transformation.rotation_x(90);
         else if (Vec.are_close(direction, new Vec(0, 0, 1))) rotation = new Transformation();
@@ -64,7 +64,7 @@ public class Cylinder:Shape
             }
         }
         
-        //BOTTOM
+        //BOTTOM FACE
         Plane bottom = new Plane(Transformation.translation(new Vec(0, 0, -0.5f)));
         HitRecord? hit_bottom = bottom.ray_intersection(inv_ray);
         if (hit_bottom.HasValue)
@@ -76,8 +76,7 @@ public class Cylinder:Shape
             }
         }
         
-        //UP
-        
+        //UP FACE
         Plane up = new Plane(Transformation.translation(new Vec(0, 0, 0.5f)));
         HitRecord? hit_up = up.ray_intersection(inv_ray);
         if (hit_up.HasValue)

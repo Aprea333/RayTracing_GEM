@@ -21,7 +21,7 @@ public class Box:Shape
 
     /// <summary>
     ///
-    ///Usin https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection.html
+    ///Using https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection.html
     /// </summary>
     /// <param name="r"></param>
     /// <returns></returns>

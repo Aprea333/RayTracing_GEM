@@ -11,21 +11,53 @@ public abstract class Shape
         this.material = material ?? new Material();
     }
 
+    /// <summary>
+    /// Function that returns the value of the first valid intersection
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns>Hit Record</returns>
     public abstract HitRecord? ray_intersection(Ray r);
+    
+    /// <summary>
+    /// List of all valid intersections of the ray with the shape
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public abstract List<HitRecord>? ray_intersection_list(Ray r);
 
     public abstract bool is_internal(Point p);
 
+    /// <summary>
+    /// For all the shapes, the possibility of making intersection, union and difference is added.
+    /// This is the union operator, it returns a new shape
+    /// </summary>
+    /// <param name="s1">First shape</param>
+    /// <param name="s2">Second shape</param>
+    /// <returns></returns>
     public static CsgUnion operator +(Shape s1, Shape s2)
     {
         return new CsgUnion(s1, s2);
     }
 
+    /// <summary>
+    /// For all the shapes, the possibility of making intersection, union and difference is added.
+    /// This is the difference operator, it returns a new shape
+    /// </summary>
+    /// <param name="s1">First shape</param>
+    /// <param name="s2">Second shape</param>
+    /// <returns></returns>
     public static CsgDifference operator -(Shape s1, Shape s2)
     {
         return new CsgDifference(s1, s2);
     }
 
+    /// <summary>
+    /// For all the shapes, the possibility of making intersection, union and difference is added.
+    /// This is the intersection operator, it returns a new shape
+    /// </summary>
+    /// <param name="s1">First shape</param>
+    /// <param name="s2">Second shape</param>
+    /// <returns></returns>
     public static CsgIntersection operator *(Shape s1, Shape s2)
     {
         return new CsgIntersection(s1, s2);

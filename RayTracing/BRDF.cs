@@ -28,6 +28,15 @@ public class DiffuseBrdf : Brdf
         return Pig.get_colour(uv) * (float)(1.0f / Math.PI);
     }
 
+    /// <summary>
+    /// function that generates a scatter ray from a normal using the pcg
+    /// </summary>
+    /// <param name="pcg">generator</param>
+    /// <param name="incoming_dir">direction</param>
+    /// <param name="interaction_point"></param>
+    /// <param name="normal">normal to the surface</param>
+    /// <param name="depth"></param>
+    /// <returns></returns>
     public override Ray Scatter_Ray(PCG pcg, Vec incoming_dir, Point interaction_point, Normal normal, int depth)
     {
         (Vec e1, Vec e2, Vec e3) = Normal.create_onb_from_z(normal); 
@@ -60,6 +69,15 @@ public class SpecularBrdf : Brdf
         return Math.Abs(theta_in - theta_out) < ThresholdAngleRad ? Pig.get_colour(uv) : Colour.black;
     }
 
+    /// <summary>
+    /// The scatter ray in this case has the same direction of the incoming ray
+    /// </summary>
+    /// <param name="pcg"></param>
+    /// <param name="incoming_dir"></param>
+    /// <param name="interaction_point"></param>
+    /// <param name="normal"></param>
+    /// <param name="depth"></param>
+    /// <returns></returns>
     public override Ray Scatter_Ray(PCG pcg, Vec incoming_dir, Point interaction_point, Normal normal, int depth)
     {
         var Ray_dir = new Vec(incoming_dir.x, incoming_dir.y, incoming_dir.z).normalize();

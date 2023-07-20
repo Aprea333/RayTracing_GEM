@@ -1,4 +1,3 @@
-
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq.Expressions;
@@ -30,12 +29,20 @@ public class HdrImage
     public int height;
     public List<Colour> hdr_image = new List<Colour>();
 
+    /// <summary>
+    /// Construtor
+    /// </summary>
     public HdrImage()
     {
         width = 0;
         height = 0;
     }
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="w">Width</param>
+    /// <param name="h">Height</param>
     public HdrImage(int w, int h)
     {
         width = w;
@@ -48,34 +55,65 @@ public class HdrImage
         }
     }
 
+    /// <summary>
+    /// Function that read a stream
+    /// </summary>
+    /// <param name="input_stream">Stream</param>
     public HdrImage(Stream input_stream)
     {
         hdr_image = new List<Colour>();
         read_pfm_image(input_stream);
     }
 
+    /// <summary>
+    /// Function that read a stream from the name of the file
+    /// </summary>
+    /// <param name="file_name">Name of the file</param>
     public HdrImage(string file_name)
     {
         hdr_image = new List<Colour>();
         using Stream fileStream = File.OpenRead(file_name);
         read_pfm_image(fileStream);
     }
-    public bool valid_coordinates(int x, int y)
+    
+    /// <summary>
+    /// Boolean function that checks if two coordinates are in the image
+    /// </summary>
+    /// <param name="x">x coordinate</param>
+    /// <param name="y">y coordinate</param>
+    /// <returns>Bool</returns>
+    private bool valid_coordinates(int x, int y)
         => x >= 0 && x < width && y < height && y >= 0;
 
+    /// <summary>
+    /// Function that set a colour in a pixel
+    /// </summary>
+    /// <param name="c">Colour</param>
+    /// <param name="x">x coordinate</param>
+    /// <param name="y">y coordinate</param>
     public void set_pixel(Colour c, int x, int y)
     {
         Debug.Assert(valid_coordinates(x, y), "Invalid coordinates");
         hdr_image[y * width + x] = c;
     }
 
+    /// <summary>
+    /// Function that get the colour of a pixel
+    /// </summary>
+    /// <param name="x">x coordinate</param>
+    /// <param name="y">y coordinate</param>
+    /// <returns>Colour</returns>
     public Colour get_pixel(int x, int y)
     {
         Debug.Assert(valid_coordinates(x, y), "Invalid coordinates");
         return hdr_image[y * width + x];
     }
 
-
+    /// <summary>
+    /// Function that read a line byte to byte
+    /// </summary>
+    /// <param name="myStream"></param>
+    /// <returns></returns>
     public static string read_line(Stream myStream)
     {
         var result = "";
@@ -89,6 +127,12 @@ public class HdrImage
         }
     }
 
+    /// <summary>
+    /// Function that verifies if the endianness is 1 or -1
+    /// </summary>
+    /// <param name="line3">Line of the file</param>
+    /// <returns>True if endianness is -1</returns>
+    /// <exception cref="InvalidPfmFileFormatException">Exeption</exception>
     public static bool parse_endianness_isLittle(string line3)
     {
         float end;
@@ -110,7 +154,14 @@ public class HdrImage
         return (end < 0);
     }
 
-    public static float read_float(Stream mystream, bool le)
+    /// <summary>
+    /// Read a float and return it
+    /// </summary>
+    /// <param name="mystream">Stream that is read</param>
+    /// <param name="le">Value for little endian, if false we use Array.Reverse</param>
+    /// <returns>Float</returns>
+    /// <exception cref="InvalidPfmFileFormatException"></exception>
+    private static float read_float(Stream mystream, bool le)
     {
         byte[] bytes = new byte[4];
         try
@@ -138,6 +189,12 @@ public class HdrImage
         return BitConverter.ToSingle(bytes);
     }
 
+    /// <summary>
+    /// Function used to parse the image 
+    /// </summary>
+    /// <param name="line">Line read</param>
+    /// <returns>the dimension</returns>
+    /// <exception cref="InvalidPfmFileFormatException"></exception>
     public static (int, int) parse_img_size(string line)
     {
         var elements = line.Split(" ");
@@ -198,6 +255,12 @@ public class HdrImage
         }
     }
 
+    /// <summary>
+    /// Function used to write a float in a stream
+    /// </summary>
+    /// <param name="mystream">Stream</param>
+    /// <param name="value">Value of the float</param>
+    /// <param name="le">value for little endian</param>
     public void write_float(Stream mystream, float value, bool le)
     {
         var seq = BitConverter.GetBytes(value);
@@ -214,6 +277,11 @@ public class HdrImage
         mystream.Write(seq, 0, seq.Length);
     }
 
+    /// <summary>
+    /// Function used to write a pfm in a stream
+    /// </summary>
+    /// <param name="mystream">Stream</param>
+    /// <param name="end">value for little endianness</param>
     public void write_pfm(Stream mystream, bool end)
     {
         var endString = end == BitConverter.IsLittleEndian ? "-1.0" : "1.0";
@@ -235,6 +303,11 @@ public class HdrImage
 
     }
 
+    /// <summary>
+    /// Function that returns the average luminosity of the file
+    /// </summary>
+    /// <param name="delta">limit value</param>
+    /// <returns>Float for the average luminosity</returns>
     public float average_luminosity(float delta = 1e-5f)
     {
         float cumsum = 0;
@@ -266,11 +339,19 @@ public class HdrImage
         }
     }
 
+    /// <summary>
+    /// Returns the factor for the clamp_image function
+    /// </summary>
+    /// <param name="x">factor</param>
+    /// <returns></returns>
     private float clamp(float x)
     {
         return x / (1 + x);
     }
 
+    /// <summary>
+    /// Function that clamps the image
+    /// </summary>
     public void clamp_image()
     {
         for (int i = 0; i < height; i++)

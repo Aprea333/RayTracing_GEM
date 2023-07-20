@@ -2,6 +2,9 @@
 
 namespace RayTracing;
 
+/// <summary>
+/// A simple path tracing renderer. The algorithm implemented here allows the caller to tune number of rays thrown at each iteration, as well as the maximum depth
+/// </summary>
 public class PathTracer:Renderer
 {
     public World Wld;
@@ -28,7 +31,6 @@ public class PathTracer:Renderer
         if (ray.depth > MaxDepth)
         {
             return Colour.black;
-
         }
 
 

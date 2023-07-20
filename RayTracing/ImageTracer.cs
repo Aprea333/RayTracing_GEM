@@ -44,10 +44,10 @@ public class ImageTracer
     }
 
 
-    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: RayTracing.Transformation; size: 585894MB")]
-    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Single[]; size: 158MB")]
-    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Single[]; size: 10401MB")]
-    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: System.Single[]; size: 33906MB")]
+    /// <summary>
+    /// Shoot several light rays crossing each of the pixels in the image.Use the sample_per_pixel (must be a perfect squared number) for a better resolution of the image
+    /// </summary>
+    /// <param name="rend">Type of renderer</param>
     public void fire_all_rays(Renderer rend)
     {
         var totalTicks = Image.height;
@@ -120,11 +120,6 @@ public class ImageTracer
         }
     }
 }
-
-
-
-
-
 
 public abstract class function
 {
