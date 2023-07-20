@@ -53,28 +53,42 @@ In order to use the library you can clone this repository through the command
 `git@github.com:Aprea333/RayTracing_GEM.git`
 
 Alternatively, you can download the latest version of the code from the [releases page](https://github.com/Aprea333/RayTracing_GEM/releases).
-To check that the code works as expected, uou can run the suite of tests using the following command:
+To check that the code works as expected, you can run the suite of tests using the following command:
+
 `dotnet test`
 
 To get command line help for the usage, and see all the commands for the different mode, use the command:
+
 `dotnet run`
 
 ### Demo mode
 <img  align= "right" width="300" src = "./RayTracing/Examples/demo.png"/>
-Use this mode to create a simple image. For example, running the following command
+Use this mode to create a simple image. In order to use this mode, you must go to the `RayTracing_GEM/RayTracing` directory and run the following command:
 
-`dotnet run -- demo[options]`
+`dotnet run demo[options]`
 
 the image on the right will be generated. This image is composed of randomly positioned and randomly colored spheres using the PCG random number generator implemented in the code.
 
 To view all the possible options of the demo command you can run
-`dotnet run --demo -help`
+`dotnet run demo -help`
 
 ### Render mode
+You can create your own images using this mode: it reads an input file describing the scene to render and creates the image. Use this  [tutorial](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/Examples/Tutorial.md) to learn how to write an imput file.
 
-Use this [tutorial](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/Examples/Tutorial.md)
+In order to use this mode, you must go to the `RayTracing_GEM/RayTracing` directory and run the following command:
 
-More information will be available shortly.
+`dotnet run render [arguments][options]`
+
+[Here](https://github.com/Aprea333/RayTracing_GEM/tree/master/RayTracing/texture) you can find some examples of input files.
+
+### Convert mode
+Use this mode if you need to convert a .pfm file into a LDR file running the following command:
+
+`dotnet run pfm2png --input_file [NAME] --output_file [NAME]`
+
+To view all the possible options you can run
+
+`dotnet run pfm2png -help`
 
 ## License
 The code is released under GNU General Public License. See the file [REFERENCE](https://github.com/Aprea333/RayTracing_GEM/blob/master/LICENSE) for further informations.
