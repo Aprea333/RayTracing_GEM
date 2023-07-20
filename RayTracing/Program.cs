@@ -15,11 +15,6 @@ public static partial class Program
     [Verb("demo", HelpText = "Demo")]
     private class DemoOption
     {
-        public DemoOption()
-        {
-           
-        }
-
         [Option("width", Default = 600, HelpText = "Width of the image to render")]
         public int Width { get; set; }
 
@@ -35,14 +30,11 @@ public static partial class Program
         
         [Option("output_file", Default = "image.png", HelpText = "path + output file name + .png")]
         public string output { get; set; } = null!;
-        
-        
-
-
     }
 
     static void RunDemo(DemoOption opts)
     {
+        Console.WriteLine("DEMO");
         int w = opts.Width;
         int h = opts.Height;
         World world = new World();
@@ -164,13 +156,11 @@ public static partial class Program
 
         [Option("input_file", Default = "texture/FirstScene.txt", HelpText = "File .txt for the scene")]
         public string file_txt { get; set; } = null!;
-        
-        
     }
 
     static void RunOptionRender(render_option opts)
     {
-        
+        Console.WriteLine("RENDER");
         int w = opts.Width;
         int h = opts.Height;
         string file = opts.file_txt;
@@ -200,10 +190,10 @@ public static partial class Program
     
     static void Main(string[] args)
     {
-        Parser.Default.ParseArguments< render_option>(args)
-            //.WithParsed<pfm2png_option>(RunOptionPfm)
+        Parser.Default.ParseArguments<DemoOption, render_option, pfm2png_option>(args)
+            .WithParsed<DemoOption>(RunDemo)
             .WithParsed<render_option>(RunOptionRender)
-
+            .WithParsed<pfm2png_option>(RunOptionPfm)
             .WithNotParsed(HandleError);
     }
 }
