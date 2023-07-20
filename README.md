@@ -101,7 +101,7 @@ See the file [REFERENCE](https://github.com/Aprea333/RayTracing_GEM/blob/master/
 <p float = "center">
 
 <img  src="./RayTracing/Examples/threesphere.png" height = "250" />
-<video src="./RayTracing/Examples/moon_earth.mp4" width=180/>
+<img align="right" src="./RayTracing/Examples/moon_earth.gif" width="300"/>
 <img  src="./RayTracing/Examples/Cornell_sphere.png" height = "250" />
 <img  src="./RayTracing/Examples/coke.png" height = "250" />
 <img  src="./RayTracing/Examples/demo.png" height = "250" />
