@@ -1,4 +1,7 @@
-﻿# Version 0.3.0
+# Version 1.0.0
+- Add render mode, from now on you can create images from an input file
+
+# Version 0.3.0
 - Add new shapes: Sphere, box, plane,Cylinder
 - Add Parser of the scene
 

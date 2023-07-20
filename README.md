@@ -79,7 +79,12 @@ In order to use this mode, you must go to the `RayTracing_GEM/RayTracing` direct
 
 `dotnet run render [arguments][options]`
 
-[Here](https://github.com/Aprea333/RayTracing_GEM/tree/master/RayTracing/texture) you can find some examples of input files.
+Here you ccan find some examples:
+- [Cornell example](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/texture/Cornell.txt) & [Result](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/Examples/Cornell_sphere.png)
+- [Csg example](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/texture/CsgScene.txt) & [Result](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/Examples/csg.mp4)
+- [Scene example](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/texture/FirstScene.txt) & [Result](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/Examples/coke.png)
+- [Four spheres example](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/texture/SecondScene.txt) & [Result](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/Examples/threesphere.png)    
+- [Another scene example](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/texture/spheres.txt) & [Result](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/Examples/first_image.png)
 
 ### Convert mode
 Use this mode if you need to convert a .pfm file into a LDR file running the following command:
@@ -97,9 +102,11 @@ The code is released under GNU General Public License. See the file [REFERENCE](
 See the file [REFERENCE](https://github.com/Aprea333/RayTracing_GEM/blob/master/CHANGELOG.md) for history
 
 ## Gallery
-Work in progress...
+
 <p float = "center">
 
+<img  src="./RayTracing/Examples/moon_earth.gif" width="350"/>
+<img  src="./RayTracing/Examples/csg.gif" width="350"/>
 <img  src="./RayTracing/Examples/threesphere.png" height = "250" />
 <img  src="./RayTracing/Examples/Cornell_sphere.png" height = "250" />
 <img  src="./RayTracing/Examples/coke.png" height = "250" />
