@@ -51,7 +51,7 @@ This library is available for Windows, Linux and MacOS systems.
 ## Usage
 In order to use the library you can clone this repository through the command
 
-`git@github.com:Aprea333/RayTracing_GEM.git`
+`git clone git@github.com:Aprea333/RayTracing_GEM.git`
 
 Alternatively, you can download the latest version of the code from the [releases page](https://github.com/Aprea333/RayTracing_GEM/releases).
 To check that the code works as expected, you can run the suite of tests using the following command:
@@ -66,7 +66,7 @@ To get command line help for the usage, and see all the commands for the differe
 <img  align= "right" width="300" src = "./RayTracing/Examples/demo.png"/>
 Use this mode to create a simple image. In order to use this mode, you must go to the `RayTracing_GEM/RayTracing` directory and run the following command:
 
-`dotnet run demo[options]`
+`dotnet run demo [arguments][options]`
 
 the image on the right will be generated. This image is composed of randomly positioned and randomly colored spheres using the PCG random number generator implemented in the code.
 
@@ -120,4 +120,5 @@ See the file [REFERENCE](https://github.com/Aprea333/RayTracing_GEM/blob/master/
 If you happen to find any issue or bug with our code, you're more than welcome to let us know.
 Either [contact us via email](mailto:michelamaria.dinatolo@studenti.unimi.it,giacomo.aprea@studenti.unimi.it,emanuele.ricci@studenti.unimi.it).
 
-To contribute to RayTracing_GEM, clone this repository locally and commit your code on a separate branch. Please write unit test for your code and then open a _pull request_. If you find any bug in our code, let us kno by opening an _issue_. We will be grateful to any contribution!
+## Contributing
+To contribute to RayTracing_GEM, clone this repository locally and commit your code on a separate branch. Please write unit test for your code and then open a _pull request_. If you find any bug in our code, let us know by opening an _issue_. We will be grateful to any contribution!
