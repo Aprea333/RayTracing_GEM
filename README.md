@@ -44,7 +44,7 @@ RayTracing_GEM requires .NET 7.0.201 to run. It is possible to download the late
 This library uses some external libraries. The user should not worry as .NET automatically imports them with the repository download. The libraries are:
 - [CommandLineParser](https://github.com/commandlineparser/commandline) to build the Command Line Interface
 - [ShellProgressBar](https://www.nuget.org/packages/ShellProgressBar/) to show a progress bar during while rendering
-- [ImageSharp](https://www.nuget.org/packages/SixLabors.ImageSharp/2.1.1) to converta pfm image into an LDR image
+- [ImageSharp](https://www.nuget.org/packages/SixLabors.ImageSharp/2.1.1) to convert a pfm image into an LDR image
 
 This library is available for Windows, Linux and MacOS systems.
 
