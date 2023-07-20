@@ -7,7 +7,7 @@
 ![Shield](https://img.shields.io/badge/build-passing-brightgreen.svg)
 ![Maintenance](https://img.shields.io/github/commit-activity/m/aprea333/RayTracing_GEM?color=yellow)
 ![Top Language](https://img.shields.io/github/languages/top/aprea333/RayTracing_GEM?color=red)
-![release](https://img.shields.io/badge/version-0.3.0-violet)
+![release](https://img.shields.io/badge/version-1.0.0-violet)
 ![GitHub contributors](https://img.shields.io/github/contributors/aprea333/RayTracing_GEM?color=white)
 
 Welcome to RayTracing_Gem!
