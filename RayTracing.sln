@@ -1,4 +1,4 @@
-﻿
+ ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RayTracing", "RayTracing\RayTracing.csproj", "{0F0F9EBB-4D23-45A3-8A45-1913A2F27D14}"
 EndProject
