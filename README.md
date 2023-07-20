@@ -60,6 +60,7 @@ To get command line help for the usage, and see all the commands for the differe
 `dotnet run`
 
 ### Demo mode
+<img  align= "right" width="150" src = "./RayTracing/Examples/demo.png"/>
 Use this mode to create a simple image. For example, running the following command
 
 `dotnet run -- demo[options]`
@@ -70,6 +71,7 @@ To view all the possible options of the demo command you can run
 `dotnet run --demo -help`
 
 ### Render mode
+
 Use this [tutorial](https://github.com/Aprea333/RayTracing_GEM/blob/master/RayTracing/Examples/Tutorial.md)
 
 More information will be available shortly.
