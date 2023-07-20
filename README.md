@@ -5,10 +5,11 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 ![Shield](https://img.shields.io/badge/build-passing-brightgreen.svg)
-![Maintenance](https://img.shields.io/github/commit-activity/m/aprea333/RayTracing_GEM?color=yellow)
-![Top Language](https://img.shields.io/github/languages/top/aprea333/RayTracing_GEM?color=red)
+[![Maintenance](https://img.shields.io/github/commit-activity/m/aprea333/RayTracing_GEM?color=yellow)](https://GitHub.com/aprea333/RayTracing_GEM/graphs/commit-activity)
+
+[![Top Language](https://img.shields.io/github/languages/top/aprea333/RayTracing_GEM?color=red)](https://GitHub.com/aprea333/RayTracing_GEM/graphs/realese)
 ![release](https://img.shields.io/badge/version-1.0.0-violet)
-![GitHub contributors](https://img.shields.io/github/contributors/aprea333/RayTracing_GEM?color=white)
+[![GitHub contributors](https://img.shields.io/github/contributors/aprea333/RayTracing_GEM?color=white)](https://GitHub.com/aprea333/RayTracing_GEM/graphs/contributors/)
 
 Welcome to RayTracing_Gem!
 This is a raytracing library written in C#. It was developed for the course _Numerical Methods for Photorealistic Image Generation_ held by Prof. [Maurizio Tomasi](https://github.com/ziotom78) at Università degli Studi di Milano (A.Y. 2022-2023).
