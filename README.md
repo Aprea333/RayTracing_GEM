@@ -83,8 +83,15 @@ See the file [REFERENCE](https://github.com/Aprea333/RayTracing_GEM/blob/master/
 ## Gallery
 Work in progress...
 <p float = "center">
-<img  src="./RayTracing/threesphere.png" height = "300" />
-</p>
+
+<img  src="./RayTracing/Examples/threesphere.png" height = "300" />
+<img  src="./RayTracing/Examples/Cornell_sphere.png" height = "300" />
+<img  src="./RayTracing/Examples/coke.png" height = "300" />
+<img  src="./RayTracing/Examples/demo.png" height = "300" />
+<img  src="./RayTracing/Examples/Cornell_sphere.png" height = "300" />
+<img  src="./RayTracing/Examples/first_image.png" height = "300" />
+<img  src="./RayTracing/Examples/Cornell_sphere.png" height = "300" />
+
 
 ## Issue tracking
 If you happen to find any issue or bug with our code, you're more than welcome to let us know.
