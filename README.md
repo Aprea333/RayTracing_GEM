@@ -1,4 +1,4 @@
-<img  align= "right" width="400" src = "./RayTracing/threesphere.png"/>
+<img  align= "right" width="400" src = "./RayTracing/Examples/threesphere.png"/>
 
 
 # RayTracing_GEM
@@ -60,7 +60,7 @@ To get command line help for the usage, and see all the commands for the differe
 `dotnet run`
 
 ### Demo mode
-<img  align= "right" width="150" src = "./RayTracing/Examples/demo.png"/>
+<img  align= "right" width="300" src = "./RayTracing/Examples/demo.png"/>
 Use this mode to create a simple image. For example, running the following command
 
 `dotnet run -- demo[options]`
