@@ -29,7 +29,7 @@ public static partial class Program
         [Option("camera", Default = "perspective", HelpText = "Type of camera")]
         public string Camera { get; set; }
         
-        [Option("output_file", Default = "Cornell_25-8.png", HelpText = "path + output file name + .png")]
+        [Option("output_file", Default = "output.png", HelpText = "path + output file name + .png")]
         public string output { get; set; } = null!;
         
         
@@ -378,23 +378,18 @@ public static partial class Program
         //var file = "texture/SecondScene.txt";
         var file = "texture/Cornell.txt";
         //var file = "texture/spheres.txt";
+        //var file = "texture/CsgScene.txt";
         
         var w = opts.Width;
         var h = opts.Height;
         
-
-
-        
-
         var output_pfm = "output.pfm";
        
         Stream output_stream = File.OpenWrite(opts.output);
         
         IDictionary<string,float> myDic = ((EnumKeyword[])Enum.GetValues(typeof(EnumKeyword))).ToDictionary(k => k.ToString(), v => (float)v);
 
-        
-
-        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 25, 'p', myDic,0.18f , 3f,3,8, 3 );
+        RenderScene.ExecuteRender(file, w,h, output_pfm, output_stream, 4, 'f', myDic,0.18f , 3f,3,4, 3 );
 
         /*
         Colour beige = new Colour(1, 0.9f, 0.5f);

@@ -85,13 +85,13 @@ public class Box:Shape
     /// <returns></returns>
     public Normal box_normal(Point p, Vec ray_dir)
     {
-        Normal result;
+        Normal result = default;
         if (Functions.are_close(p.x, Bound[0].x)) result = new Normal(-1f, 0f, 0f);
         else if (Functions.are_close(p.x, Bound[1].x)) result = new Normal(1f, 0f, 0f);
         else if (Functions.are_close(p.y, Bound[0].y)) result = new Normal(0f, -1f, 0f);
         else if (Functions.are_close(p.y, Bound[1].y)) result = new Normal(0f, 1f, 0f);
         else if (Functions.are_close(p.z, Bound[0].z)) result = new Normal(0f, 0f, -1f);
-        else result = new Normal(0f, 0f, 1f);
+        else if (Functions.are_close(p.z, Bound[1].z)) result = new Normal(0f, 0f, 1f);
         //normal is in the opposite direction to ray_dir
         if (result * ray_dir > 0) result = result.opposite_normal();
         return result;
